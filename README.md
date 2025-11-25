@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Zugo Web Application
+
+A Next.js web application for the Zugo vehicle rental platform, inspired by the React Native mobile app.
+
+## Features
+
+- **Authentication**: Login and registration with phone number and password
+- **Vehicle Booking**: Browse and book bikes and cars
+- **Vehicle Listing**: Register your own vehicles for rent
+- **Booking Management**: View and manage bookings (as renter or owner)
+- **Search & Filters**: Search vehicles by model, city, and category
+- **Responsive Design**: Mobile-first design matching the mobile app experience
+
+## Tech Stack
+
+- **Next.js 16** - React framework with App Router
+- **React 19** - UI library
+- **Tailwind CSS 4** - Styling
+- **JavaScript** - Programming language
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18 or higher
+- npm or yarn package manager
+
+### Installation
+
+1. Navigate to the project directory:
+```bash
+cd frontend/ZugoWeb/zugo
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── login/             # Login page
+│   ├── register/          # Registration page
+│   ├── book-bike/         # Browse and book bikes
+│   ├── book-car/          # Browse and book cars
+│   ├── my-bookings/       # User's bookings
+│   ├── owner-bookings/    # Owner's bookings management
+│   ├── settings/          # User settings
+│   ├── vehicle/           # Vehicle details and booking
+│   └── ...
+├── components/            # Reusable components
+│   └── Layout.js          # Main layout with navigation
+├── lib/                   # Utilities and configurations
+│   ├── api.js             # API endpoint configuration
+│   └── auth.js            # Authentication utilities
+└── ...
+```
 
-## Learn More
+## API Integration
 
-To learn more about Next.js, take a look at the following resources:
+The application connects to the backend API at `https://zugo-backend.onrender.com/`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Available Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Authentication**: `/login`, `/signup`, `/logout`
+- **Vehicles**: `/veh/getVehicle`, `/reg/register`
+- **Search**: `/search/vehicles`, `/search/vehicles/category`
+- **Bookings**: `/bookings/create`, `/bookings/user`, `/bookings/owner`
 
-## Deploy on Vercel
+See `src/lib/api.js` for the complete API configuration.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Authentication
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app uses localStorage to store authentication tokens and user data. Protected routes automatically redirect to the login page if the user is not authenticated.
+
+## Features in Detail
+
+### Home Page
+- Quick access to common actions (Book/List bike/car)
+- Tourist location rental options
+- Search functionality
+
+### Booking Flow
+1. Browse vehicles by category
+2. View vehicle details
+3. Select dates
+4. Create booking request
+5. Owner accepts/rejects
+6. Booking confirmation
+
+### Owner Features
+- Register vehicles
+- Manage booking requests
+- Accept/reject bookings
+- View earnings
+
+## Development
+
+### Adding New Pages
+
+Create a new directory in `src/app/` with a `page.js` file:
+
+```javascript
+'use client';
+
+export default function NewPage() {
+  return <div>New Page</div>;
+}
+```
+
+### Styling
+
+The app uses Tailwind CSS. Modify `src/app/globals.css` for global styles.
+
+### API Calls
+
+Use the API utilities from `src/lib/api.js`:
+
+```javascript
+import API from '@/lib/api';
+import { getToken } from '@/lib/auth';
+
+const response = await fetch(API.login, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`,
+  },
+  body: JSON.stringify(data),
+});
+```
+
+## Building for Production
+
+```bash
+npm run build
+npm start
+```
+
+## Notes
+
+- The app is designed to match the mobile app's UI/UX
+- Images and icons should be placed in the `public/` directory
+- The app uses client-side routing with Next.js App Router
+- Authentication state is managed client-side using localStorage
+
+## Future Enhancements
+
+- Payment integration
+- Real-time notifications
+- Map integration for location-based search
+- Image upload for vehicle registration
+- Enhanced filtering options
