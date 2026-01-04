@@ -32,16 +32,16 @@ export default function Landing() {
         {/* Content */}
         <div className="relative z-10 max-w-6xl mx-auto w-full">
           <div className="flex justify-center mb-4 animate-fade-in">
-            
-              <Image
-                src="/zugo.png"
-                alt="Zugo Logo"
-                width={120}
-                height={120}
-                className="object-contain"
-                priority
-              />
-           
+
+            <Image
+              src="/path2.png"
+              alt="Zugo Logo"
+              width={150}
+              height={150}
+              className="object-contain"
+              priority
+            />
+
           </div>
 
           <div className="text-center mb-6 animate-fade-in-up">
@@ -50,10 +50,10 @@ export default function Landing() {
               <span className="block text-white mt-1">Vehicle Rental Platform</span>
             </h1>
             <p className="text-sm md:text-base text-gray-100 max-w-2xl mx-auto mb-6 leading-relaxed drop-shadow-lg">
-              Rent bikes and cars on your own terms. No hidden charges, no fuel charges, 
+              Rent bikes and cars on your own terms. No hidden charges, no fuel charges,
               and complete freedom to travel wherever you want.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
               <button
                 onClick={() => document.getElementById('download-section')?.scrollIntoView({ behavior: 'smooth' })}
@@ -95,7 +95,7 @@ export default function Landing() {
             Why Choose Zugo?
           </h2>
           <p className="text-center text-sm text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Zugo is India's leading self-drive vehicle rental platform, making it easy 
+            Zugo is India's leading self-drive vehicle rental platform, making it easy
             for you to rent bikes and cars, or earn money by listing your own vehicle.
           </p>
 
@@ -158,7 +158,7 @@ export default function Landing() {
             Earn Money by Listing Your Vehicle
           </h2>
           <p className="text-center text-sm text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Turn your idle vehicle into a source of income. List your bike or car on Zugo 
+            Turn your idle vehicle into a source of income. List your bike or car on Zugo
             and start earning today.
           </p>
 
@@ -204,7 +204,7 @@ export default function Landing() {
             </div>
           </div>
 
-        
+
         </div>
       </div>
 
@@ -215,7 +215,7 @@ export default function Landing() {
             Start Your Rental Business
           </h2>
           <p className="text-center text-sm text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Register your rental business and manage multiple vehicles from one dashboard. 
+            Register your rental business and manage multiple vehicles from one dashboard.
             Perfect for rental agencies and fleet owners.
           </p>
 
