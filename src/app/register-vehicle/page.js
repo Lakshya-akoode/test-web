@@ -1,24 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isAuthenticated, getUser, getToken } from '@/lib/auth';
 import API from '@/lib/api';
 
-export default function RegisterVehiclePage() {
+function RegisterVehicleContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const vehicleType = searchParams.get('type') || 'bike';
     const vehicleCategory = vehicleType === 'car' ? '4-wheeler' : '2-wheeler';
-    
+
     const [loading, setLoading] = useState(false);
     const [showVehicleTypeModal, setShowVehicleTypeModal] = useState(false);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [isLoadingLocation, setIsLoadingLocation] = useState(true);
-    
+
     const [formData, setFormData] = useState({
         name: '',
         age: '',
@@ -107,10 +107,10 @@ export default function RegisterVehiclePage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validation
         if (
-            !formData.name || !formData.age || !formData.address || !formData.landmark || 
+            !formData.name || !formData.age || !formData.address || !formData.landmark ||
             !formData.pincode || !formData.city || !formData.state || !formData.contact ||
             !formData.vehicleModel || !formData.vehicleType || !formData.returnDuration ||
             !formData.rentalPrice || !formData.agreed || !formData.vehiclePhoto ||
@@ -535,12 +535,12 @@ export default function RegisterVehiclePage() {
                     <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100" onClick={(e) => e.stopPropagation()}>
                         <h3 className="text-2xl font-bold text-slate-900 mb-2 text-center">Select Vehicle Type</h3>
                         <p className="text-slate-600 mb-8 text-center">
-                            {vehicleCategory === '2-wheeler' 
-                                ? 'Choose the type of 2-wheeler you want to register' 
+                            {vehicleCategory === '2-wheeler'
+                                ? 'Choose the type of 2-wheeler you want to register'
                                 : 'Choose the type of 4-wheeler you want to register'
                             }
                         </p>
-                        
+
                         <div className="space-y-3 mb-6">
                             {vehicleCategory === '2-wheeler' ? (
                                 <>
@@ -549,14 +549,13 @@ export default function RegisterVehiclePage() {
                                             key={type}
                                             type="button"
                                             onClick={() => handleVehicleTypeSelect(type)}
-                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${
-                                                formData.vehicleType === type
+                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${formData.vehicleType === type
                                                     ? 'bg-slate-900 text-white shadow-lg'
                                                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                                            }`}
+                                                }`}
                                         >
                                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={type === 'Bike' ? "M13 10V3L4 14h7v7l9-11h-7z" : "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" } />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={type === 'Bike' ? "M13 10V3L4 14h7v7l9-11h-7z" : "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"} />
                                             </svg>
                                             <span>{type}</span>
                                         </button>
@@ -569,11 +568,10 @@ export default function RegisterVehiclePage() {
                                             key={type}
                                             type="button"
                                             onClick={() => handleVehicleTypeSelect(type)}
-                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${
-                                                formData.vehicleType === type
+                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${formData.vehicleType === type
                                                     ? 'bg-slate-900 text-white shadow-lg'
                                                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                                            }`}
+                                                }`}
                                         >
                                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -596,5 +594,20 @@ export default function RegisterVehiclePage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function RegisterVehiclePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        }>
+            <RegisterVehicleContent />
+        </Suspense>
     );
 }

@@ -10,7 +10,9 @@ import UsersManagement from '@/components/admin/UsersManagement';
 import RegisteredVehicles from '@/components/admin/RegisteredVehicles';
 import VehicleVerification from '@/components/admin/VehicleVerification';
 
-export default function AdminDashboard() {
+import { Suspense } from 'react';
+
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [admin, setAdmin] = useState(null);
@@ -32,7 +34,7 @@ export default function AdminDashboard() {
 
     const adminData = getAdmin();
     setAdmin(adminData);
-    
+
     // Fetch all dashboard data
     fetchAllDashboardData();
   }, [router]);
@@ -140,8 +142,8 @@ export default function AdminDashboard() {
         {/* Main Content */}
         <main className="p-6">
           {activeView === 'dashboard' && (
-            <DashboardStats 
-              stats={stats} 
+            <DashboardStats
+              stats={stats}
               revenueData={revenueData}
               loading={loading}
               onRefresh={fetchAllDashboardData}
@@ -153,6 +155,18 @@ export default function AdminDashboard() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
 

@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 
-export default function BookingConfirmationPage() {
+import { Suspense } from 'react';
+
+function BookingConfirmationContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookingId = searchParams.get('bookingId');
@@ -190,6 +192,21 @@ export default function BookingConfirmationPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function BookingConfirmationPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading confirmation...</p>
+                </div>
+            </div>
+        }>
+            <BookingConfirmationContent />
+        </Suspense>
     );
 }
 

@@ -6,7 +6,9 @@ import Link from 'next/link';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api-config';
 
-export default function PaymentPage() {
+import { Suspense } from 'react';
+
+function PaymentContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookingId = searchParams.get('bookingId');
@@ -120,7 +122,7 @@ export default function PaymentPage() {
                     <div className="lg:col-span-2 space-y-3">
                         <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
                             <h2 className="text-sm font-bold text-gray-900 mb-3">Payment Method</h2>
-                            
+
                             <div className="space-y-2">
                                 <label className="flex items-center gap-2 p-2 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition-all">
                                     <input
@@ -205,7 +207,7 @@ export default function PaymentPage() {
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 sticky top-2">
                             <h2 className="text-sm font-bold text-gray-900 mb-3">Booking Summary</h2>
-                            
+
                             <div className="space-y-2 mb-3">
                                 <div className="flex items-center gap-2">
                                     <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
@@ -265,6 +267,21 @@ export default function PaymentPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function PaymentPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading payment details...</p>
+                </div>
+            </div>
+        }>
+            <PaymentContent />
+        </Suspense>
     );
 }
 
