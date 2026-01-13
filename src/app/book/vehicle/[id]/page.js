@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { isAuthenticated, getUser, getToken } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import API from '@/lib/api';
+import Script from 'next/script';
 
 export default function BookVehiclePage() {
     const router = useRouter();
@@ -15,16 +16,15 @@ export default function BookVehiclePage() {
     const [vehicle, setVehicle] = useState(null);
     const [owner, setOwner] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
+    const [processing, setProcessing] = useState(false);
     const [error, setError] = useState('');
+    const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
-    // Booking form state
+    // Get data from localStorage (from previous page)
     const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
     const [totalDays, setTotalDays] = useState(1);
-    const [pickupLocation, setPickupLocation] = useState('');
-    const [dropoffLocation, setDropoffLocation] = useState('');
-    const [specialRequests, setSpecialRequests] = useState('');
+    const [pricePerDay, setPricePerDay] = useState(0);
+    const [vehicleImage, setVehicleImage] = useState('');
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -34,16 +34,41 @@ export default function BookVehiclePage() {
         }
         const currentUser = getUser();
         setUser(currentUser);
+
+        // Get booking details from localStorage first
+        const bookingDataStr = localStorage.getItem('bookingData');
+        if (bookingDataStr) {
+            try {
+                const bookingData = JSON.parse(bookingDataStr);
+                console.log('Booking data from localStorage:', bookingData);
+
+                if (bookingData.startDate) {
+                    setStartDate(bookingData.startDate);
+                }
+
+                if (bookingData.days) {
+                    setTotalDays(parseInt(bookingData.days) || 1);
+                }
+
+                // Set price from localStorage - this is the primary source
+                if (bookingData.price) {
+                    const price = parseInt(bookingData.price) || 0;
+                    console.log('Setting price from localStorage:', price);
+                    setPricePerDay(price);
+                }
+
+                if (bookingData.image) {
+                    setVehicleImage(bookingData.image);
+                }
+            } catch (error) {
+                console.error('Error parsing booking data:', error);
+            }
+        }
+
         if (id) {
             fetchVehicleDetails();
         }
     }, [id, router]);
-
-    useEffect(() => {
-        if (startDate) {
-            calculateEndDate();
-        }
-    }, [startDate, totalDays]);
 
     const fetchVehicleDetails = async () => {
         setLoading(true);
@@ -53,9 +78,22 @@ export default function BookVehiclePage() {
                 headers: { 'Content-Type': 'application/json' }
             });
             const vehicleData = await vehicleRes.json();
+            console.log('Vehicle data from API:', vehicleData);
 
             if (vehicleData.status === 'Success' && vehicleData.data) {
-                setVehicle(vehicleData.data);
+                const vehicleInfo = vehicleData.data;
+                setVehicle(vehicleInfo);
+
+                // Only set price from API if not already set from localStorage
+                setPricePerDay(prevPrice => {
+                    if (prevPrice && prevPrice > 0) {
+                        console.log('Using price from localStorage:', prevPrice);
+                        return prevPrice;
+                    }
+                    const apiPrice = vehicleInfo.rentalPrice || vehicleInfo.pricePerDay || vehicleInfo.price || 0;
+                    console.log('Using price from API:', apiPrice);
+                    return apiPrice;
+                });
             }
 
             // Fetch Owner Details
@@ -75,30 +113,19 @@ export default function BookVehiclePage() {
     };
 
     const calculateEndDate = () => {
-        if (!startDate) return;
+        if (!startDate) return '';
         const start = new Date(startDate);
         const end = new Date(start);
         end.setDate(end.getDate() + totalDays - 1);
-        setEndDate(end.toISOString().split('T')[0]);
+        return end.toISOString().split('T')[0];
     };
 
-    const handleDaysChange = (e) => {
-        const days = parseInt(e.target.value) || 1;
-        setTotalDays(days);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handlePayment = async () => {
         setError('');
 
         // Validation
-        if (!startDate || !endDate) {
-            setError('Please select start and end dates');
-            return;
-        }
-
-        if (!pickupLocation || !dropoffLocation) {
-            setError('Please provide pickup and dropoff locations');
+        if (!startDate) {
+            setError('Start date is required');
             return;
         }
 
@@ -113,10 +140,84 @@ export default function BookVehiclePage() {
             return;
         }
 
-        setSubmitting(true);
+        if (!razorpayLoaded) {
+            setError('Payment gateway is loading. Please wait...');
+            return;
+        }
+
+        setProcessing(true);
 
         try {
-            const pricePerDay = vehicle.rentalPrice || vehicle.pricePerDay || 0;
+            const endDate = calculateEndDate();
+            const totalAmount = totalDays * pricePerDay;
+
+            // Step 1: Create Razorpay order
+            const token = getToken();
+            const orderResponse = await fetch(API.createPaymentOrder, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    amount: totalAmount,
+                    currency: 'INR',
+                    receipt: `booking_${Date.now()}`
+                })
+            });
+
+            const orderData = await orderResponse.json();
+
+            if (orderData.status !== 'Success') {
+                setError('Failed to create payment order. Please try again.');
+                setProcessing(false);
+                return;
+            }
+
+            const order = orderData.data.order;
+
+            // Step 2: Open Razorpay checkout
+            const options = {
+                key: 'rzp_test_S2qqGKFsiIoeZL', // Razorpay Key ID (client-side)
+                amount: order.amount,
+                currency: order.currency,
+                name: 'Zugo Rentals',
+                description: `${vehicle.vehicleModel || vehicle.VehicleModel} Rental`,
+                order_id: order.id,
+                handler: async function (response) {
+                    // Payment successful - verify and create booking
+                    await verifyPaymentAndCreateBooking(response, endDate, totalAmount);
+                },
+                prefill: {
+                    name: user.username || user.fullName || 'User',
+                    email: user.email || '',
+                    contact: user.mobile || ''
+                },
+                theme: {
+                    color: '#000000'
+                },
+                modal: {
+                    ondismiss: function () {
+                        setProcessing(false);
+                    }
+                }
+            };
+
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+
+        } catch (err) {
+            console.error('Payment error:', err);
+            setError('Network error. Please try again.');
+            setProcessing(false);
+        }
+    };
+
+    const verifyPaymentAndCreateBooking = async (paymentResponse, endDate, totalAmount) => {
+        try {
+            const token = getToken();
+
+            // First, create the booking
             const bookingData = {
                 renterId: user.id,
                 renterName: user.username || user.fullName || 'User',
@@ -127,13 +228,12 @@ export default function BookVehiclePage() {
                 endDate: new Date(endDate).toISOString(),
                 totalDays: totalDays,
                 pricePerDay: pricePerDay,
-                pickupLocation: pickupLocation,
-                dropoffLocation: dropoffLocation,
-                specialRequests: specialRequests || ''
+                pickupLocation: owner?.Address || '',
+                dropoffLocation: owner?.Address || '',
+                specialRequests: ''
             };
 
-            const token = getToken();
-            const response = await fetch(API.createBooking, {
+            const bookingResponse = await fetch(API.createBooking, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,19 +242,42 @@ export default function BookVehiclePage() {
                 body: JSON.stringify(bookingData)
             });
 
-            const data = await response.json();
+            const bookingResult = await bookingResponse.json();
 
-            if (data.status === 'Success' && data.data?.bookingId) {
-                // Redirect to booking confirmation
-                router.push(`/booking-confirmation?bookingId=${data.data.bookingId}`);
+            if (bookingResult.status === 'Success' && bookingResult.data?.bookingId) {
+                // Verify payment
+                const verifyResponse = await fetch(API.verifyPayment, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        orderId: paymentResponse.razorpay_order_id,
+                        paymentId: paymentResponse.razorpay_payment_id,
+                        signature: paymentResponse.razorpay_signature,
+                        bookingId: bookingResult.data.bookingId,
+                        amount: totalAmount
+                    })
+                });
+
+                const verifyResult = await verifyResponse.json();
+
+                if (verifyResult.status === 'Success') {
+                    // Payment verified successfully
+                    router.push(`/booking-confirmation?bookingId=${bookingResult.data.bookingId}`);
+                } else {
+                    setError('Payment verification failed. Please contact support.');
+                    setProcessing(false);
+                }
             } else {
-                setError(data.message || 'Failed to create booking. Please try again.');
+                setError(bookingResult.message || 'Failed to create booking. Please try again.');
+                setProcessing(false);
             }
         } catch (err) {
-            console.error('Booking error:', err);
-            setError('Network error. Please try again.');
-        } finally {
-            setSubmitting(false);
+            console.error('Verification error:', err);
+            setError('Payment verification failed. Please contact support.');
+            setProcessing(false);
         }
     };
 
@@ -178,272 +301,202 @@ export default function BookVehiclePage() {
         );
     }
 
-    const pricePerDay = vehicle.rentalPrice || vehicle.pricePerDay || 0;
     const totalAmount = totalDays * pricePerDay;
-    const minDate = new Date().toISOString().split('T')[0];
+    const endDate = calculateEndDate();
 
     return (
-        <div className="h-screen bg-gray-50 overflow-hidden flex flex-col">
-            <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex-1 overflow-y-auto">
-                {/* Header */}
-                <div className="mb-4">
-                    <Link 
-                        href={`/vehicle/${id}`} 
-                        className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-2 text-xs"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        <span className="text-xs font-medium">Back</span>
-                    </Link>
-                    <h1 className="text-xl font-bold text-gray-900">Complete Your Booking</h1>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    {/* Booking Form */}
-                    <div className="lg:col-span-2">
-                        <form onSubmit={handleSubmit} className="space-y-3">
-                            {error && (
-                                <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs">
-                                    {error}
-                                </div>
-                            )}
-
-                            {/* Vehicle Summary Card */}
-                            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                                <h2 className="text-sm font-bold text-gray-900 mb-2">Vehicle Details</h2>
-                                <div className="flex items-center gap-3">
-                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                                        {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
-                                            <img
-                                                src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                                alt={vehicle.vehicleModel || vehicle.VehicleModel}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.style.display = 'none';
-                                                    e.target.nextSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div className={`w-full h-full ${vehicle.vehiclePhoto || vehicle.VehiclePhoto ? 'hidden' : 'flex'} items-center justify-center text-gray-400`}>
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-gray-900 mb-0.5">
-                                            {vehicle.vehicleModel || vehicle.VehicleModel}
-                                        </h3>
-                                        <p className="text-xs text-gray-600 mb-1">
-                                            {vehicle.vehicleType || 'Vehicle'}
-                                        </p>
-                                        <p className="text-sm font-bold text-gray-900">
-                                            ₹{pricePerDay} <span className="text-xs font-normal text-gray-600">per day</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Date Selection */}
-                            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                                <h2 className="text-sm font-bold text-gray-900 mb-2">Select Dates</h2>
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                            Start Date <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="date"
-                                            value={startDate}
-                                            min={minDate}
-                                            onChange={(e) => setStartDate(e.target.value)}
-                                            className="w-full px-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                            End Date <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="date"
-                                            value={endDate}
-                                            min={startDate || minDate}
-                                            onChange={(e) => setEndDate(e.target.value)}
-                                            className="w-full px-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                        Duration: {totalDays} day{totalDays > 1 ? 's' : ''}
-                                    </label>
-                                    <input
-                                        type="range"
-                                        min="1"
-                                        max="30"
-                                        value={totalDays}
-                                        onChange={handleDaysChange}
-                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
-                                    />
-                                    <div className="flex justify-between text-xs text-gray-400 mt-0.5">
-                                        <span>1</span>
-                                        <span>30</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Location Details */}
-                            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                                <h2 className="text-sm font-bold text-gray-900 mb-2">Location Details</h2>
-                                <div className="space-y-2">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                            Pickup Location <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={pickupLocation}
-                                            onChange={(e) => setPickupLocation(e.target.value)}
-                                            placeholder="Enter pickup address"
-                                            className="w-full px-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                            Dropoff Location <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={dropoffLocation}
-                                            onChange={(e) => setDropoffLocation(e.target.value)}
-                                            placeholder="Enter dropoff address"
-                                            className="w-full px-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Special Requests */}
-                            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                                <h2 className="text-sm font-bold text-gray-900 mb-2">Special Requests (Optional)</h2>
-                                <textarea
-                                    value={specialRequests}
-                                    onChange={(e) => setSpecialRequests(e.target.value)}
-                                    placeholder="Any special requests or notes for the owner..."
-                                    rows="2"
-                                    className="w-full px-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg outline-none transition-all focus:border-black focus:ring-1 focus:ring-black resize-none"
-                                />
-                            </div>
-
-                            {/* Submit Button */}
-                            <button
-                                type="submit"
-                                disabled={submitting}
-                                className="w-full bg-black text-white rounded-lg py-2.5 font-bold text-sm hover:bg-gray-800 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {submitting ? (
-                                    <div className="flex items-center justify-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                        <span>Creating...</span>
-                                    </div>
-                                ) : (
-                                    'Confirm Booking'
-                                )}
-                            </button>
-                        </form>
+        <>
+            <Script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                onLoad={() => setRazorpayLoaded(true)}
+                onError={() => setError('Failed to load payment gateway')}
+            />
+            <div className="min-h-screen bg-gray-50 pb-20">
+                <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 pt-24">
+                    {/* Header */}
+                    <div className="mb-6">
+                        <Link
+                            href={`/vehicle/${id}`}
+                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-3"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span className="font-medium">Back to Vehicle</span>
+                        </Link>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Complete Your Booking</h1>
+                        <p className="text-gray-600 mt-1">Review details and make payment</p>
                     </div>
 
-                    {/* Booking Summary Sidebar */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 sticky top-4">
-                            <h2 className="text-sm font-bold text-gray-900 mb-3">Booking Summary</h2>
-                            
-                            <div className="space-y-2 mb-3">
-                                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                                        {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
-                                            <img
-                                                src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                                alt={vehicle.vehicleModel || vehicle.VehicleModel}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.style.display = 'none';
+                    {error && (
+                        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="space-y-6">
+                        {/* Invoice Section */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-900 mb-6">Invoice</h2>
+
+                            {/* Vehicle Info */}
+                            <div className="flex items-start gap-4 pb-6 border-b border-gray-100">
+                                <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                                    {(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? (
+                                        <img
+                                            src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto}
+                                            alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                if (e.target.nextSibling) {
                                                     e.target.nextSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div className={`w-full h-full ${vehicle.vehiclePhoto || vehicle.VehiclePhoto ? 'hidden' : 'flex'} items-center justify-center text-gray-400`}>
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-gray-900 text-xs truncate">
-                                            {vehicle.vehicleModel || vehicle.VehicleModel}
-                                        </h3>
-                                        <p className="text-xs text-gray-600">{vehicle.vehicleType || 'Vehicle'}</p>
+                                                }
+                                            }}
+                                        />
+                                    ) : null}
+                                    <div className={`w-full h-full ${(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? 'hidden' : 'flex'} items-center justify-center text-gray-400`}>
+                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
                                     </div>
                                 </div>
-
-                                <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-gray-600">Price per day</span>
-                                        <span className="font-bold text-gray-900">₹{pricePerDay}</span>
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                        {vehicle.vehicleModel || vehicle.VehicleModel}
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                                            {vehicle.vehicleType || 'Vehicle'}
+                                        </span>
+                                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                                            {vehicle.City}
+                                        </span>
                                     </div>
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-gray-600">Duration</span>
-                                        <span className="font-bold text-gray-900">{totalDays} day{totalDays > 1 ? 's' : ''}</span>
-                                    </div>
-                                    {startDate && (
-                                        <div className="pt-1.5 border-t border-gray-100">
-                                            <div className="text-xs text-gray-500 mb-0.5">Start Date</div>
-                                            <div className="text-xs font-medium text-gray-900">
-                                                {new Date(startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {endDate && (
-                                        <div>
-                                            <div className="text-xs text-gray-500 mb-0.5">End Date</div>
-                                            <div className="text-xs font-medium text-gray-900">
-                                                {new Date(endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="pt-2 border-t border-gray-200">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-sm font-bold text-gray-900">Total</span>
-                                        <span className="text-lg font-bold text-gray-900">₹{totalAmount}</span>
-                                    </div>
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Payment after owner accepts
-                                    </p>
                                 </div>
                             </div>
 
-                            {/* Owner Info */}
-                            {owner && (
-                                <div className="pt-2 border-t border-gray-100">
-                                    <h3 className="text-xs font-bold text-gray-900 mb-1">Owner</h3>
-                                    <p className="text-xs text-gray-600">{owner.Name || owner.fullName || 'N/A'}</p>
-                                    {owner.ContactNo && (
-                                        <p className="text-xs text-gray-600 mt-0.5">{owner.ContactNo}</p>
-                                    )}
+                            {/* Booking Details */}
+                            <div className="py-6 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-1">Start Date</p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {startDate ? new Date(startDate).toLocaleDateString('en-IN', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            }) : 'Not selected'}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-1">End Date</p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {endDate ? new Date(endDate).toLocaleDateString('en-IN', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            }) : 'Not selected'}
+                                        </p>
+                                    </div>
                                 </div>
-                            )}
+
+                                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-blue-900 font-semibold">Total Duration</p>
+                                            <p className="text-xs text-blue-700 mt-1">
+                                                {startDate && endDate ? `${new Date(startDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })} - ${new Date(endDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}` : ''}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-blue-900">{totalDays}</p>
+                                            <p className="text-xs text-blue-700">day{totalDays > 1 ? 's' : ''}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Price Breakdown */}
+                            <div className="pt-6 border-t border-gray-100 space-y-3">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Price per day</span>
+                                    <span className="font-bold text-gray-900">₹{pricePerDay}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Duration</span>
+                                    <span className="font-bold text-gray-900">{totalDays} day{totalDays > 1 ? 's' : ''}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Subtotal</span>
+                                    <span className="font-bold text-gray-900">₹{totalDays * pricePerDay}</span>
+                                </div>
+                                <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
+                                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
+                                    <span className="text-2xl font-bold text-gray-900">₹{totalAmount}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Pickup Location */}
+                        {owner && (owner.latitude && owner.longitude) && (
+                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">Pickup Location</h2>
+                                <div className="space-y-4">
+                                    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                                        <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-gray-900 mb-1">{owner.Address || 'Pickup Address'}</p>
+                                            <p className="text-sm text-gray-600">
+                                                {owner.Landmark && `${owner.Landmark}, `}
+                                                {owner.City}, {owner.State} - {owner.Pincode}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="rounded-xl overflow-hidden border border-gray-200">
+                                        <iframe
+                                            width="100%"
+                                            height="300"
+                                            frameBorder="0"
+                                            style={{ border: 0 }}
+                                            src={`https://www.google.com/maps?q=${owner.latitude},${owner.longitude}&hl=es;z=14&output=embed`}
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Payment Button */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <button
+                                onClick={handlePayment}
+                                disabled={processing || !razorpayLoaded}
+                                className="w-full bg-black text-white rounded-xl py-4 font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {processing ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Processing...</span>
+                                    </div>
+                                ) : !razorpayLoaded ? (
+                                    'Loading Payment Gateway...'
+                                ) : (
+                                    `Pay ₹${totalAmount}`
+                                )}
+                            </button>
+                            <p className="text-xs text-gray-500 text-center mt-3">
+                                🔒 Your payment is secure and encrypted
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
-

@@ -55,8 +55,8 @@ export default function RentalsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-50 pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[90%] mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
                     <div>
@@ -67,7 +67,7 @@ export default function RentalsPage() {
                             </Link>
                         </div>
                         <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight tracking-tight">
-                            Permium <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600">Rentals</span>
+                            Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600">Rentals</span>
                         </h1>
                         <p className="text-gray-500 mt-2 text-lg font-medium">Browse verified rental services near you</p>
                     </div>
@@ -102,7 +102,7 @@ export default function RentalsPage() {
 
                 {/* Rentals Grid */}
                 {!loading && rentals.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                         {rentals.map((rental, idx) => (
                             <div
                                 key={rental._id}

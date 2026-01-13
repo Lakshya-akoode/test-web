@@ -1,5 +1,5 @@
-const endpoint = `https://zugo-backend.onrender.com/`;
-// const endpoint = `http://localhost:3001/`;
+// const endpoint = `https://zugo-backend.onrender.com/`;
+const endpoint = `http://localhost:3001/`;
 
 export const API = {
   endpoint: endpoint,
@@ -36,6 +36,13 @@ export const API = {
   getRenterBookings: `${endpoint}bookings/renter`,
   getOwnerBookings: `${endpoint}bookings/owner`,
   cancelBooking: `${endpoint}bookings/cancel`,
+  getBookingById: `${endpoint}bookings`,
+
+  // Payment endpoints
+  createPaymentOrder: `${endpoint}payments/create-order`,
+  verifyPayment: `${endpoint}payments/verify`,
+  getPaymentStatus: `${endpoint}payments/status`,
+  createOfflineBooking: `${endpoint}payments/offline-booking`,
 
   // Admin endpoints
   adminLogin: `${endpoint}admin/login`,

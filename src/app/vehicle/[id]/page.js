@@ -44,13 +44,11 @@ export default function VehicleDetailsPage() {
             const vehicleData = await vehicleRes.json();
 
             console.log('Vehicle API Response:', vehicleData);
-            
+
             if (vehicleData.status === 'Success' && vehicleData.data) {
                 // Handle nested structure: data.vehicle or flat data
                 const vehicle = vehicleData.data.vehicle || vehicleData.data;
-                console.log('Vehicle data loaded:', vehicle);
-                console.log('Vehicle photo URL:', vehicle?.vehiclePhoto || vehicle?.VehiclePhoto);
-                
+                console.log('Parsed Vehicle Object:', params);
                 if (vehicle) {
                     setVehicle(vehicle);
                 } else {
@@ -70,7 +68,7 @@ export default function VehicleDetailsPage() {
             });
             const ownerData = await ownerRes.json();
             console.log('Owner API Response:', ownerData);
-            
+
             if (ownerData.status === 'Success' && ownerData.data) {
                 setOwner(ownerData.data);
             }
@@ -145,10 +143,11 @@ export default function VehicleDetailsPage() {
         );
     }
 
-    // Calculate Price
-    const price = pricingType === 'daily'
-        ? (vehicle.rentalPrice || 0)
-        : (vehicle.hourlyPrice || Math.round((vehicle.rentalPrice || 0) / 8));
+
+    // Calculate Price based on pricing type
+    const price = pricingType === 'hourly'
+        ? (vehicle.hourlyPrice || vehicle.hourlyRate || 0)
+        : (params.price || vehicle.rentalPrice || 0);
 
     const totalPrice = pricingType === 'daily'
         ? price * days
@@ -158,11 +157,11 @@ export default function VehicleDetailsPage() {
         <div className="min-h-screen bg-gray-50 pb-20 font-sans">
 
 
-            <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+            <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 pt-24">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* Left Column: Image & Info */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
                         <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-96 relative">
                             {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
@@ -190,7 +189,7 @@ export default function VehicleDetailsPage() {
 
                         {/* Vehicle Title & Specs */}
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">{vehicle.vehicleModel || vehicle.VehicleModel}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{vehicle.vehicleModel || vehicle.VehicleModel}</h1>
                             <div className="flex flex-wrap gap-2 text-sm text-gray-600 mb-6">
                                 <span className="px-3 py-1 bg-gray-100 rounded-full">{vehicle.vehicleType}</span>
                                 <span className="px-3 py-1 bg-gray-100 rounded-full">{vehicle.fuelType || 'Petrol'}</span>
@@ -250,7 +249,14 @@ export default function VehicleDetailsPage() {
                                     >Daily</button>
                                     <button
                                         onClick={() => setPricingType('hourly')}
-                                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${pricingType === 'hourly' ? 'bg-white shadow-sm text-black' : 'text-gray-500'}`}
+                                        disabled={!vehicle.hourlyPrice && !vehicle.hourlyRate}
+                                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${pricingType === 'hourly'
+                                            ? 'bg-white shadow-sm text-black'
+                                            : (!vehicle.hourlyPrice && !vehicle.hourlyRate)
+                                                ? 'text-gray-300 cursor-not-allowed'
+                                                : 'text-gray-500'
+                                            }`}
+                                        title={(!vehicle.hourlyPrice && !vehicle.hourlyRate) ? 'Hourly pricing not available for this vehicle' : ''}
                                     >Hourly</button>
                                 </div>
                             </div>
@@ -301,12 +307,27 @@ export default function VehicleDetailsPage() {
                             </div>
 
                             {isAvailable ? (
-                                <Link 
-                                    href={`/book/vehicle/${id}?startDate=${startDate}&days=${days}`}
-                                    className="block w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center"
+                                <button
+                                    onClick={() => {
+                                        // Store booking data in localStorage
+                                        localStorage.setItem('bookingData', JSON.stringify({
+                                            vehicleId: id,
+                                            startDate: startDate,
+                                            days: days,
+                                            hours: hours,
+                                            pricingType: pricingType,
+                                            price: vehicle.rentalPrice || 0,
+                                            image: vehicle.vehiclePhoto || vehicle.VehiclePhoto || '',
+                                            vehicleModel: vehicle.vehicleModel || vehicle.VehicleModel,
+                                            vehicleType: vehicle.vehicleType,
+                                            city: vehicle.City
+                                        }));
+                                        router.push(`/book/vehicle/${id}`);
+                                    }}
+                                    className="block w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-center cursor-pointer"
                                 >
                                     Book Now
-                                </Link>
+                                </button>
                             ) : (
                                 <button
                                     onClick={checkAvailability}
