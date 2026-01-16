@@ -1,0 +1,10 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow admin and authentication routes
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://zugo.co.in/sitemap.xml
