@@ -207,10 +207,10 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button 
-                            type="button" 
-                            onClick={() => googleLogin()} 
+                    <div className="grid grid-cols-1 gap-3">
+                        <button
+                            type="button"
+                            onClick={() => googleLogin()}
                             disabled={isGoogleLoading || isLoading}
                             className="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-lg py-2 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
                         >
@@ -220,10 +220,6 @@ export default function LoginPage() {
                                 <Image src="/google.png" alt="Google" width={18} height={18} />
                             )}
                             <span className="text-xs font-medium text-gray-700">Google</span>
-                        </button>
-                        <button className="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-lg py-2 hover:bg-gray-50 transition-all shadow-sm">
-                            <Image src="/apple-logo.png" alt="Apple" width={18} height={18} className="text-black" />
-                            <span className="text-xs font-medium text-gray-700">Apple</span>
                         </button>
                     </div>
 

@@ -552,14 +552,14 @@ export default function RootPage() {
             </div>
           </div>
 
-          <div className="text-center">
+          {/* <div className="text-center">
             <button
               onClick={() => document.getElementById('download-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg font-bold text-sm hover:bg-gray-800 transition-all duration-300 shadow-lg hover:scale-105 transform"
             >
               Download App to Register Business
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -618,93 +618,10 @@ export default function RootPage() {
         </div>
       </div>
 
-      {/* Download App Section */}
-      <div id="download-section" className="py-12 px-5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-        <div className="max-w-4xl mx-auto">
-          {/* Header Section */}
-          <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Download the Zugo App
-            </h2>
-            <p className="text-sm md:text-base text-gray-300 mb-1 max-w-xl mx-auto">
-              Get the full Zugo experience on your mobile device
-            </p>
-            <p className="text-xs text-gray-400 max-w-lg mx-auto">
-              One app for everything - rent vehicles, list your own, manage bookings, and track earnings
-            </p>
-          </div>
-
-          {/* Download Buttons Card */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl max-w-xl mx-auto mb-6">
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch">
-              {/* iOS Button */}
-              <button className="group flex-1 px-4 py-3 bg-black/80 hover:bg-black text-white rounded-xl font-bold transition-all duration-300 flex flex-col items-center justify-center gap-2 shadow-lg hover:shadow-white/20 hover:scale-105 transform border border-white/10 min-h-[90px]">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <Image src="/apple-logo.png" alt="Apple" width={20} height={20} className="brightness-0 invert" />
-                </div>
-                <div className="text-center">
-                  <div className="text-[10px] text-gray-400 group-hover:text-gray-300 transition-colors mb-0.5">Download on the</div>
-                  <div className="text-sm leading-tight font-bold">App Store</div>
-                </div>
-              </button>
-
-              {/* Android Button */}
-              <button className="group flex-1 px-4 py-3 bg-white text-gray-900 rounded-xl font-bold hover:bg-gray-50 transition-all duration-300 flex flex-col items-center justify-center gap-2 shadow-lg hover:shadow-white/30 hover:scale-105 transform min-h-[90px]">
-                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                  <Image src="/google.png" alt="Google" width={20} height={20} />
-                </div>
-                <div className="text-center">
-                  <div className="text-[10px] text-gray-500 group-hover:text-gray-600 transition-colors mb-0.5">GET IT ON</div>
-                  <div className="text-sm leading-tight font-bold">Google Play</div>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-3 max-w-2xl mx-auto">
-            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 text-center hover:bg-white/10 transition-all duration-300">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xs font-semibold text-white mb-0.5">Easy Booking</h3>
-              <p className="text-[10px] text-gray-400">Book in seconds</p>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 text-center hover:bg-white/10 transition-all duration-300">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xs font-semibold text-white mb-0.5">Secure Payments</h3>
-              <p className="text-xs text-gray-400">Safe & reliable</p>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 text-center hover:bg-white/10 transition-all duration-300">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xs font-semibold text-white mb-0.5">24/7 Support</h3>
-              <p className="text-[10px] text-gray-400">Always available</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Download App Section - Hidden for now */}
+      {/* <div id="download-section"></div> */}
 
       {/* Footer */}
-      <div className="py-8 px-5 bg-white border-t border-gray-200">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-sm text-gray-500 mb-2">
-            By continuing, you agree to Zugo's Terms of Service and Privacy Policy
-          </p>
-          <p className="text-xs text-gray-400">
-            © 2024 Zugo. All rights reserved.
-          </p>
-        </div>
-      </div>
     </div >
   );
 }

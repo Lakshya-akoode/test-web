@@ -262,10 +262,10 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <button 
-                            type="button" 
-                            onClick={() => googleLogin()} 
+                    <div className="grid grid-cols-1 gap-4">
+                        <button
+                            type="button"
+                            onClick={() => googleLogin()}
                             disabled={isGoogleLoading || isLoading}
                             className="flex items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl py-3 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
                         >
@@ -275,10 +275,6 @@ export default function RegisterPage() {
                                 <Image src="/google.png" alt="Google" width={20} height={20} />
                             )}
                             <span className="text-sm font-medium text-gray-700">Google</span>
-                        </button>
-                        <button className="flex items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl py-3 hover:bg-gray-50 transition-all shadow-sm">
-                            <Image src="/apple-logo.png" alt="Apple" width={20} height={20} className="text-black" />
-                            <span className="text-sm font-medium text-gray-700">Apple</span>
                         </button>
                     </div>
 

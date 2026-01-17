@@ -62,5 +62,29 @@ export default function sitemap() {
             changeFrequency: 'daily',
             priority: 0.7,
         },
+        {
+            url: `${baseUrl}/privacy-policy`,
+            lastModified: '2026-01-01',
+            changeFrequency: 'yearly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/terms-and-conditions`,
+            lastModified: '2026-01-01',
+            changeFrequency: 'yearly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/cancellation-refund-policy`,
+            lastModified: '2026-01-01',
+            changeFrequency: 'yearly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/shipping-policy`,
+            lastModified: '2026-01-01',
+            changeFrequency: 'yearly',
+            priority: 0.5,
+        },
     ];
 }

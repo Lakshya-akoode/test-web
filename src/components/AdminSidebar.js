@@ -30,6 +30,12 @@ export default function AdminSidebar({ activeView, setActiveView }) {
       label: 'Registered Vehicles',
       icon: '🚗',
       path: '/admin/dashboard?view=register-rental'
+    },
+    {
+      id: 'messages',
+      label: 'Messages',
+      icon: '💬',
+      path: '/admin/dashboard?view=messages'
     }
   ];
 
@@ -49,7 +55,7 @@ export default function AdminSidebar({ activeView, setActiveView }) {
           <h2 className="text-xl font-bold text-gray-800 mb-2">Admin Panel</h2>
           <div className="h-1 w-12 bg-blue-600 rounded"></div>
         </div>
-        
+
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const isActive = activeView === item.id || (item.id === 'dashboard' && !activeView);
@@ -57,11 +63,10 @@ export default function AdminSidebar({ activeView, setActiveView }) {
               <li key={item.id}>
                 <button
                   onClick={() => handleMenuClick(item)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
                       ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-semibold'
                       : 'text-gray-700 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <span className="text-2xl">{item.icon}</span>
                   <span className="text-sm">{item.label}</span>

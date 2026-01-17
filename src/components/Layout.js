@@ -6,6 +6,7 @@ import { getUser, isAuthenticated } from '@/lib/auth';
 import Image from 'next/image';
 
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -18,9 +19,12 @@ export default function Layout({ children }) {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
-      {children}
+      <main className="flex-grow">
+        {children}
+      </main>
+      <Footer />
     </div>
   );
 }

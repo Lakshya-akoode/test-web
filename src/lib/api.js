@@ -1,5 +1,5 @@
-const endpoint = `https://zugo-backend.onrender.com/`;
-// const endpoint = `http://localhost:3001/`;
+// const endpoint = `https://zugo-backend.onrender.com/`;
+const endpoint = `http://localhost:3001/`;
 
 export const API = {
   endpoint: endpoint,
@@ -59,7 +59,12 @@ export const API = {
   adminRTORequests: `${endpoint}admin/rto-requests`,
   adminUpdateRTOStatus: `${endpoint}admin/rto-status`,
   adminPendingVehicleVerifications: `${endpoint}admin/pending-vehicle-verifications`,
+  adminPendingVehicleVerifications: `${endpoint}admin/pending-vehicle-verifications`,
   adminVerifyVehicle: `${endpoint}admin/verify-vehicle`,
+
+  // Contact endpoints
+  contactSend: `${endpoint}contact/send`,
+  contactMessages: `${endpoint}contact/messages`,
 };
 
 export default API;
