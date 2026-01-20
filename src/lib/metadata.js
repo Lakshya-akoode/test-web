@@ -2,9 +2,9 @@
 
 export const siteConfig = {
     name: 'Zugo',
-    description: 'India\'s largest self-drive vehicle rental platform. Rent bikes and cars on your own terms. No hidden charges, no fuel charges, and complete freedom to travel wherever you want.',
+    description: 'India\'s largest self-drive vehicle rental platform. Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel.',
     url: 'https://zugo.co.in',
-    ogImage: 'https://zugo.co.in/og-image.jpg',
+    ogImage: 'https://zugo.co.in/logo1.png',
     keywords: [
         'vehicle rental India',
         'bike rental',
@@ -112,7 +112,7 @@ export function generateMetadata({
 export const pageMetadata = {
     home: {
         title: 'Zugo - India\'s Largest Self-Drive Vehicle Rental Platform',
-        description: 'Rent bikes and cars on your own terms. No hidden charges, no fuel charges, and complete freedom to travel. Book vehicles instantly across 100+ cities in India.',
+        description: 'Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel. Book vehicles instantly across 100+ cities.',
         keywords: [
             'vehicle rental India',
             'bike rental India',

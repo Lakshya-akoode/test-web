@@ -199,7 +199,17 @@ export default function VehicleDetailsPage() {
                             {/* About Owner */}
                             {owner && (
                                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                    <h3 className="text-lg font-bold mb-4">Hosted by {owner.Name || owner.fullName}</h3>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-bold">Hosted by {owner.Name || owner.fullName}</h3>
+                                        {owner.userId && (
+                                            <Link
+                                                href={`/host/${owner.userId}`}
+                                                className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors"
+                                            >
+                                                View Profile & Reviews &rarr;
+                                            </Link>
+                                        )}
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">

@@ -1,5 +1,5 @@
-// export const API_BASE_URL = 'http://localhost:3001';
-export const API_BASE_URL = 'https://zugo-backend.onrender.com';
+export const API_BASE_URL = 'http://localhost:3001';
+// export const API_BASE_URL = 'https://zugo-backend.onrender.com';
 
 
 export const API_ENDPOINTS = {
@@ -20,4 +20,7 @@ export const API_ENDPOINTS = {
     RENTALS: '/search/rentals',
     RENTAL_VEHICLES: '/search/rental', // + /:id/vehicles
     GET_USER_BOOKINGS: '/bookings/user',
+    HOST_PROFILE: '/reviews/profile', // + /:id
+    HOST_REVIEWS: '/reviews/host', // + /:id
+    ADD_REVIEW: '/reviews/add',
 };

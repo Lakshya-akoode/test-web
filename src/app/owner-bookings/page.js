@@ -15,6 +15,11 @@ export default function OwnerBookingsPage() {
     const [user, setUser] = useState(null);
     const [activeFilter, setActiveFilter] = useState('all');
 
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedBookingId, setSelectedBookingId] = useState(null);
+    const [paymentMode, setPaymentMode] = useState('online');
+    const [processing, setProcessing] = useState(false);
+
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
@@ -32,7 +37,8 @@ export default function OwnerBookingsPage() {
         try {
             setLoading(true);
             const token = getToken();
-            const userId = getUser()?._id || getUser()?.id;
+            const userData = getUser();
+            const userId = userData?._id || userData?.id;
 
             if (!userId) {
                 console.error('User ID not found');
@@ -69,22 +75,63 @@ export default function OwnerBookingsPage() {
         }
     };
 
-    const handleStatusUpdate = async (bookingId, newStatus) => {
+    const handleActionClick = (bookingId, action) => {
+        if (action === 'accepted') {
+            setSelectedBookingId(bookingId);
+            setPaymentMode('online'); // Reset to default
+            setShowPaymentModal(true);
+        } else {
+            handleStatusUpdate(bookingId, action);
+        }
+    };
+
+    const confirmAccept = async () => {
+        if (!selectedBookingId) return;
+        await handleStatusUpdate(selectedBookingId, 'accepted', paymentMode);
+        setShowPaymentModal(false);
+        setSelectedBookingId(null);
+    };
+
+    const handleStatusUpdate = async (bookingId, newStatus, selectedPaymentMode = null, paymentStatus = null) => {
         try {
+            setProcessing(true);
             const token = getToken();
+            const userData = getUser();
+            const ownerId = userData?._id || userData?.id;
+
+            const body = {
+                bookingId,
+                status: newStatus,
+                ownerId: ownerId
+            };
+
+            if (selectedPaymentMode) {
+                body.paymentMethod = selectedPaymentMode;
+            }
+
+            if (paymentStatus) {
+                body.paymentStatus = paymentStatus;
+            }
+
             const response = await fetch(`${API_BASE_URL}/bookings/status`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    bookingId,
-                    status: newStatus
-                })
+                body: JSON.stringify(body)
             });
 
-            const data = await response.json();
+            // Handle non-JSON responses (like 404 Not Found HTML/Text)
+            const contentType = response.headers.get("content-type");
+            let data;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(`Server returned non-JSON response: ${text}`);
+            }
+
             if (data.status === 'Success') {
                 fetchBookings();
             } else {
@@ -92,7 +139,44 @@ export default function OwnerBookingsPage() {
             }
         } catch (error) {
             console.error('Update status error:', error);
-            alert('Error updating booking status');
+            alert('Error updating booking status: ' + error.message);
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleCompleteBooking = async (bookingId) => {
+        try {
+            if (!window.confirm('Are you sure you want to mark this booking as completed?')) return;
+
+            setProcessing(true);
+            const token = getToken();
+            const userData = getUser();
+            const ownerId = userData?._id || userData?.id;
+
+            const response = await fetch(`${API_BASE_URL}/bookings/complete`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    bookingId,
+                    ownerId
+                })
+            });
+
+            const data = await response.json();
+            if (data.status === 'Success') {
+                fetchBookings();
+            } else {
+                alert(data.message || 'Failed to complete booking');
+            }
+        } catch (error) {
+            console.error('Complete booking error:', error);
+            alert('Error completing booking');
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -182,6 +266,86 @@ export default function OwnerBookingsPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+            {/* Payment Mode Selection Modal */}
+            {showPaymentModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-100">
+                        <div className="p-6">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Accept Booking</h3>
+                            <p className="text-gray-600 mb-6">Please select how the renter will make the payment.</p>
+
+                            <div className="space-y-3 mb-8">
+                                <label
+                                    className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMode === 'online'
+                                        ? 'border-blue-500 bg-blue-50'
+                                        : 'border-gray-200 hover:border-gray-300'
+                                        }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="paymentMode"
+                                        value="online"
+                                        checked={paymentMode === 'online'}
+                                        onChange={() => setPaymentMode('online')}
+                                        className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
+                                    />
+                                    <div className="ml-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-gray-900">Online Payment</span>
+                                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Recommended</span>
+                                        </div>
+                                        <p className="text-sm text-gray-500 mt-1">Secure payment via Zugo Platform</p>
+                                    </div>
+                                </label>
+
+                                <label
+                                    className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMode === 'offline'
+                                        ? 'border-blue-500 bg-blue-50'
+                                        : 'border-gray-200 hover:border-gray-300'
+                                        }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="paymentMode"
+                                        value="offline"
+                                        checked={paymentMode === 'offline'}
+                                        onChange={() => setPaymentMode('offline')}
+                                        className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300"
+                                    />
+                                    <div className="ml-4">
+                                        <span className="font-bold text-gray-900">Cash / Offline</span>
+                                        <p className="text-sm text-gray-500 mt-1">Collect payment directly from renter</p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowPaymentModal(false)}
+                                    className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmAccept}
+                                    disabled={processing}
+                                    className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {processing ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        'Confirm Accept'
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header Section */}
             <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16">
                 <div className="max-w-7xl mx-auto px-6">
@@ -362,33 +526,67 @@ export default function OwnerBookingsPage() {
                                                 <p className="text-2xl font-extrabold text-gray-900">
                                                     ₹{booking.totalAmount}
                                                 </p>
-                                                <p className="text-xs text-gray-600 mt-1">
-                                                    ₹{Math.round(booking.totalAmount / booking.totalDays)}/day
-                                                </p>
+
+                                                {/* Payment Status Toggle */}
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <span className="text-xs text-gray-500">Payment:</span>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const newStatus = booking.paymentStatus === 'paid' ? 'pending' : 'paid';
+                                                            handleStatusUpdate(booking._id, booking.status, null, newStatus);
+                                                        }}
+                                                        className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${booking.paymentStatus === 'paid'
+                                                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                            : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                                                            }`}
+                                                    >
+                                                        {booking.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="flex gap-3 pt-4 border-t border-gray-100">
+                                        <div className="flex flex-col gap-2 pt-4 border-t border-gray-100">
                                             {booking.status === 'pending' && (
-                                                <>
+                                                <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => handleStatusUpdate(booking._id, 'accepted')}
+                                                        onClick={() => handleActionClick(booking._id, 'accepted')}
                                                         className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all text-center shadow-lg hover:shadow-xl text-sm"
                                                     >
                                                         ✓ Accept
                                                     </button>
                                                     <button
-                                                        onClick={() => handleStatusUpdate(booking._id, 'rejected')}
+                                                        onClick={() => handleActionClick(booking._id, 'rejected')}
                                                         className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold hover:from-red-700 hover:to-red-800 transition-all text-center shadow-lg hover:shadow-xl text-sm"
                                                     >
                                                         ✕ Reject
                                                     </button>
-                                                </>
+                                                </div>
                                             )}
+
+                                            {booking.status === 'accepted' && (
+                                                <button
+                                                    onClick={() => handleStatusUpdate(booking._id, 'confirmed')}
+                                                    className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all text-center shadow-md text-sm"
+                                                >
+                                                    Confirm Booking
+                                                </button>
+                                            )}
+
+                                            {booking.status === 'confirmed' && (
+                                                <button
+                                                    onClick={() => handleCompleteBooking(booking._id)}
+                                                    className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-bold hover:from-purple-700 hover:to-violet-700 transition-all text-center shadow-md text-sm"
+                                                >
+                                                    Mark as Completed
+                                                </button>
+                                            )}
+
                                             <Link
                                                 href={`/bookings/${booking._id}`}
-                                                className={`${booking.status === 'pending' ? 'w-full mt-2' : 'flex-1'} px-4 py-3 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200 transition-all text-center text-sm`}
+                                                className={`w-full px-4 py-3 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200 transition-all text-center text-sm`}
                                             >
                                                 View Details
                                             </Link>
