@@ -99,7 +99,7 @@ export function generateMetadata({
         },
         verification: {
             // Add verification codes when available
-            google: '', // Add Google Search Console verification code
+            google: 'hzf-CVVNwBGb4kXxB757RNdlLFz_3X2SNsYrQK4er94',
             yandex: '',
             bing: '',
         },
