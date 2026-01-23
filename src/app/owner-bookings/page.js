@@ -217,6 +217,15 @@ export default function OwnerBookingsPage() {
                 icon: '✓',
                 label: 'Confirmed'
             },
+            in_progress: {
+                color: 'from-amber-500 to-yellow-600',
+                bg: 'bg-amber-50',
+                text: 'text-amber-700',
+                border: 'border-amber-200',
+                icon: '🛵',
+                label: 'Ride Ongoing',
+                pulse: true
+            },
             completed: {
                 color: 'from-purple-500 to-violet-600',
                 bg: 'bg-purple-50',
@@ -262,7 +271,14 @@ export default function OwnerBookingsPage() {
         );
     }
 
-    const stats = getStats();
+    const stats = {
+        total: bookings.length,
+        pending: bookings.filter(b => b.status === 'pending').length,
+        accepted: bookings.filter(b => b.status === 'accepted').length,
+        confirmed: bookings.filter(b => b.status === 'confirmed').length,
+        in_progress: bookings.filter(b => b.status === 'in_progress').length,
+        completed: bookings.filter(b => b.status === 'completed').length,
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -367,7 +383,7 @@ export default function OwnerBookingsPage() {
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-6 py-12">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
                     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all">
                         <div className="text-3xl font-extrabold text-gray-900">{stats.total}</div>
                         <div className="text-sm text-gray-600 mt-1">Total Bookings</div>
@@ -383,6 +399,10 @@ export default function OwnerBookingsPage() {
                     <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-4 border border-green-200">
                         <div className="text-3xl font-extrabold text-green-700">{stats.confirmed}</div>
                         <div className="text-sm text-green-600 mt-1">Confirmed</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-4 border border-amber-200">
+                        <div className="text-3xl font-extrabold text-amber-700">{stats.in_progress}</div>
+                        <div className="text-sm text-amber-600 mt-1">Ongoing</div>
                     </div>
                     <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200">
                         <div className="text-3xl font-extrabold text-purple-700">{stats.completed}</div>
@@ -410,6 +430,7 @@ export default function OwnerBookingsPage() {
                         { id: 'pending', label: 'Pending', count: stats.pending },
                         { id: 'accepted', label: 'Accepted', count: stats.accepted },
                         { id: 'confirmed', label: 'Confirmed', count: stats.confirmed },
+                        { id: 'in_progress', label: 'Ongoing', count: stats.in_progress },
                         { id: 'completed', label: 'Completed', count: stats.completed },
                     ].map(filter => (
                         <button
@@ -577,10 +598,19 @@ export default function OwnerBookingsPage() {
 
                                             {booking.status === 'confirmed' && (
                                                 <button
-                                                    onClick={() => handleCompleteBooking(booking._id)}
-                                                    className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-bold hover:from-purple-700 hover:to-violet-700 transition-all text-center shadow-md text-sm"
+                                                    onClick={() => handleStatusUpdate(booking._id, 'in_progress')}
+                                                    className="w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold hover:from-amber-600 hover:to-orange-600 transition-all text-center shadow-md text-sm flex items-center justify-center gap-2"
                                                 >
-                                                    Mark as Completed
+                                                    <span className="text-lg">▶</span> Start Ride
+                                                </button>
+                                            )}
+
+                                            {booking.status === 'in_progress' && (
+                                                <button
+                                                    onClick={() => handleCompleteBooking(booking._id)}
+                                                    className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-bold hover:from-purple-700 hover:to-violet-700 transition-all text-center shadow-md text-sm flex items-center justify-center gap-2"
+                                                >
+                                                    <span className="text-lg">🏁</span> Complete Ride
                                                 </button>
                                             )}
 

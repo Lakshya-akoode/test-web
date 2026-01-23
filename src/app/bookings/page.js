@@ -80,44 +80,59 @@ export default function MyBookingsPage() {
     const getStatusConfig = (status) => {
         const configs = {
             confirmed: {
-                color: 'from-green-500 to-emerald-600',
-                bg: 'bg-green-50',
-                text: 'text-green-700',
-                border: 'border-green-200',
-                icon: '✓',
+                color: 'text-green-600',
+                bg: 'bg-green-500/10',
+                border: 'border-green-500/20',
+                icon: (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                ),
                 label: 'Confirmed'
             },
             accepted: {
-                color: 'from-blue-500 to-indigo-600',
-                bg: 'bg-blue-50',
-                text: 'text-blue-700',
-                border: 'border-blue-200',
-                icon: '💳',
-                label: 'Payment Required',
+                color: 'text-blue-600',
+                bg: 'bg-blue-500/10',
+                border: 'border-blue-500/20',
+                icon: (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                ),
+                label: 'Payment Due',
                 pulse: true
             },
             completed: {
-                color: 'from-purple-500 to-violet-600',
-                bg: 'bg-purple-50',
-                text: 'text-purple-700',
-                border: 'border-purple-200',
-                icon: '🎉',
+                color: 'text-purple-600',
+                bg: 'bg-purple-500/10',
+                border: 'border-purple-500/20',
+                icon: (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                ),
                 label: 'Completed'
             },
             rejected: {
-                color: 'from-red-500 to-red-600',
-                bg: 'bg-red-50',
-                text: 'text-red-700',
-                border: 'border-red-200',
-                icon: '✕',
+                color: 'text-red-600',
+                bg: 'bg-red-500/10',
+                border: 'border-red-500/20',
+                icon: (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                ),
                 label: 'Rejected'
             },
             cancelled: {
-                color: 'from-gray-400 to-gray-500',
-                bg: 'bg-gray-50',
-                text: 'text-gray-700',
-                border: 'border-gray-200',
-                icon: '⊘',
+                color: 'text-gray-600',
+                bg: 'bg-gray-500/10',
+                border: 'border-gray-500/20',
+                icon: (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                ),
                 label: 'Cancelled'
             }
         };
@@ -132,10 +147,10 @@ export default function MyBookingsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 font-medium">Loading your bookings...</p>
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600 font-medium">Loading...</p>
                 </div>
             </div>
         );
@@ -144,80 +159,100 @@ export default function MyBookingsPage() {
     const stats = getStats();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+        <div className="min-h-screen bg-gray-50/50 pb-20">
             {/* Header Section */}
-            <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16">
-                <div className="max-w-7xl mx-auto px-6">
-                    <Link href="/home" className="inline-flex items-center gap-2 text-slate-300 hover:text-white mb-6 transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
+            <section className="relative bg-black text-white pt-24 pb-32 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+
+                <div className="relative max-w-7xl mx-auto px-6">
+                    <Link href="/home" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group">
+                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
                         <span className="text-sm font-medium">Back to Home</span>
                     </Link>
-                    <div className="max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
-                            My <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Bookings</span>
-                        </h1>
-                        <p className="text-xl text-slate-300">Manage and track all your vehicle rental bookings</p>
+
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <span className="inline-block px-3 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded-full text-xs font-bold mb-4 uppercase tracking-wider">
+                                Dashboard
+                            </span>
+                            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
+                                My <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Bookings</span>
+                            </h1>
+                            <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
+                                Track your ongoing rentals, view past trips, and manage booking status.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-6 py-12">
+            <div className="relative max-w-7xl mx-auto px-4 md:px-6 -mt-20 z-10">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all">
-                        <div className="text-3xl font-extrabold text-gray-900">{stats.total}</div>
-                        <div className="text-sm text-gray-600 mt-1">Total Bookings</div>
+                    <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="text-4xl font-extrabold text-gray-900 mb-1">{stats.total}</div>
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Bookings</div>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
-                        <div className="text-3xl font-extrabold text-blue-700">{stats.active}</div>
-                        <div className="text-sm text-blue-600 mt-1">Payment Due</div>
+                    <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="text-4xl font-extrabold text-blue-600 mb-1">{stats.active}</div>
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Payment Due</div>
                     </div>
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-4 border border-green-200">
-                        <div className="text-3xl font-extrabold text-green-700">{stats.confirmed}</div>
-                        <div className="text-sm text-green-600 mt-1">Confirmed</div>
+                    <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="text-4xl font-extrabold text-green-600 mb-1">{stats.confirmed}</div>
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Confirmed</div>
                     </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200">
-                        <div className="text-3xl font-extrabold text-purple-700">{stats.completed}</div>
-                        <div className="text-sm text-purple-600 mt-1">Completed</div>
+                    <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="text-4xl font-extrabold text-purple-600 mb-1">{stats.completed}</div>
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed</div>
                     </div>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="bg-white rounded-2xl p-2 shadow-sm border border-gray-100 mb-6 flex gap-2 overflow-x-auto">
-                    {[
-                        { id: 'all', label: 'All', count: stats.total },
-                        { id: 'accepted', label: 'Payment Due', count: stats.active },
-                        { id: 'confirmed', label: 'Confirmed', count: stats.confirmed },
-                        { id: 'completed', label: 'Completed', count: stats.completed },
-                    ].map(filter => (
-                        <button
-                            key={filter.id}
-                            onClick={() => setActiveFilter(filter.id)}
-                            className={`px-4 py-2 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${activeFilter === filter.id
-                                ? 'bg-black text-white shadow-md'
-                                : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            {filter.label} {filter.count > 0 && `(${filter.count})`}
-                        </button>
-                    ))}
+                <div className="mb-8 overflow-x-auto pb-2">
+                    <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl w-fit border border-gray-100 shadow-sm">
+                        {[
+                            { id: 'all', label: 'All', count: stats.total },
+                            { id: 'accepted', label: 'Payment Due', count: stats.active },
+                            { id: 'confirmed', label: 'Confirmed', count: stats.confirmed },
+                            { id: 'completed', label: 'Completed', count: stats.completed },
+                        ].map(filter => (
+                            <button
+                                key={filter.id}
+                                onClick={() => setActiveFilter(filter.id)}
+                                className={`px-6 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 ${activeFilter === filter.id
+                                    ? 'bg-black text-white shadow-lg '
+                                    : 'text-gray-500 hover:bg-gray-50'
+                                    }`}
+                            >
+                                {filter.label}
+                                {filter.count > 0 && (
+                                    <span className={`px-1.5 py-0.5 rounded-md text-[10px] ${activeFilter === filter.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                        {filter.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Bookings List */}
                 {filteredBookings.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
-                        <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="bg-white rounded-3xl p-16 text-center shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                             <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
                             {activeFilter === 'all' ? 'No Bookings Yet' : `No ${activeFilter} Bookings`}
                         </h3>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-gray-500 mb-8 max-w-sm mx-auto">
                             {activeFilter === 'all'
                                 ? 'Start by searching for vehicles and making your first booking!'
                                 : `You don't have any ${activeFilter} bookings at the moment.`
@@ -225,109 +260,84 @@ export default function MyBookingsPage() {
                         </p>
                         {activeFilter === 'all' && (
                             <Link
-                                href="/book/bike"
-                                className="inline-block px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
+                                href="/book/car"
+                                className="inline-block px-8 py-3.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition-all shadow-lg hover:shadow-xl hover:scale-105"
                             >
-                                Search Vehicles
+                                Explore Vehicles
                             </Link>
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         {filteredBookings.map((booking, index) => {
                             const statusConfig = getStatusConfig(booking.status);
                             return (
                                 <div
                                     key={booking._id}
-                                    className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300 overflow-hidden"
+                                    className="group bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 hover:border-gray-200 transition-all duration-300 overflow-hidden flex flex-col sm:flex-row h-full"
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
-                                    <div className="relative">
-                                        {/* Vehicle Image with Gradient Overlay */}
-                                        <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200">
-                                            {booking.vehiclePhoto ? (
-                                                <img
-                                                    src={booking.vehiclePhoto}
-                                                    alt={booking.vehicleModel}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => {
-                                                        e.target.style.display = 'none';
-                                                    }}
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-
-                                            {/* Status Badge */}
-                                            <div className={`absolute top-4 right-4 px-3 py-2 rounded-xl backdrop-blur-md ${statusConfig.bg} ${statusConfig.border} border-2 ${statusConfig.pulse ? 'animate-pulse' : ''}`}>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-lg">{statusConfig.icon}</span>
-                                                    <span className={`text-xs font-bold ${statusConfig.text}`}>
-                                                        {statusConfig.label}
-                                                    </span>
-                                                </div>
+                                    {/* Vehicle Image */}
+                                    <div className="relative h-48 sm:h-auto sm:w-2/5 bg-gray-100">
+                                        {booking.vehiclePhoto ? (
+                                            <img
+                                                src={booking.vehiclePhoto}
+                                                alt={booking.vehicleModel}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
                                             </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
 
-                                            {/* Vehicle Name Overlay */}
-                                            <div className="absolute bottom-4 left-4 right-4">
-                                                <h3 className="text-xl font-bold text-white mb-1 drop-shadow-lg">
-                                                    {booking.vehicleModel}
-                                                </h3>
-                                                <p className="text-sm text-white/90 drop-shadow">
-                                                    Owner: {booking.ownerName || 'N/A'}
-                                                </p>
-                                            </div>
+                                        {/* Mobile overlay text */}
+                                        <div className="absolute bottom-3 left-3 right-3 sm:hidden">
+                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold backdrop-blur-md bg-white/90 ${statusConfig.color} shadow-sm`}>
+                                                {statusConfig.icon} {statusConfig.label}
+                                            </span>
                                         </div>
                                     </div>
 
                                     {/* Booking Info */}
-                                    <div className="p-6">
-                                        <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <div className="flex-1 p-6 flex flex-col relative">
+                                        <div className="flex justify-between items-start mb-4">
                                             <div>
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <span className="text-xs text-gray-600 font-medium">Booking Period</span>
+                                                <div className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold mb-2 ${statusConfig.bg} ${statusConfig.color} ${statusConfig.border} border`}>
+                                                    {statusConfig.icon} {statusConfig.label}
                                                 </div>
-                                                <p className="text-sm font-bold text-gray-900">
-                                                    {formatDate(booking.startDate)}
-                                                </p>
-                                                <p className="text-sm font-bold text-gray-900">
-                                                    to {formatDate(booking.endDate)}
-                                                </p>
-                                                <p className="text-xs text-gray-600 mt-1">
-                                                    {booking.totalDays} day{booking.totalDays > 1 ? 's' : ''}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <span className="text-xs text-gray-600 font-medium">Total Amount</span>
-                                                </div>
-                                                <p className="text-2xl font-extrabold text-gray-900">
-                                                    ₹{booking.totalAmount}
-                                                </p>
-                                                <p className="text-xs text-gray-600 mt-1">
-                                                    ₹{Math.round(booking.totalAmount / booking.totalDays)}/day
-                                                </p>
+                                                <h3 className="text-xl font-extrabold text-gray-900 line-clamp-1" title={booking.vehicleModel}>
+                                                    {booking.vehicleModel}
+                                                </h3>
+                                                <p className="text-sm text-gray-500 font-medium">Owner: {booking.ownerName || 'Unknown'}</p>
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons */}
-                                        <div className="flex gap-3 pt-4 border-t border-gray-100">
+                                        <div className="grid grid-cols-2 gap-4 mb-6">
+                                            <div className="bg-gray-50 rounded-2xl p-3">
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Dates</p>
+                                                <p className="text-sm font-bold text-gray-900">{formatDate(booking.startDate)}</p>
+                                                <p className="text-xs text-gray-500">to {formatDate(booking.endDate)}</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-2xl p-3">
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Total</p>
+                                                <p className="text-lg font-bold text-gray-900">₹{booking.totalAmount}</p>
+                                                <p className="text-xs text-gray-500">{booking.totalDays} Days</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-auto">
                                             <Link
                                                 href={`/bookings/${booking._id}`}
-                                                className="flex-1 px-4 py-3 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200 transition-all text-center text-sm"
+                                                className="block w-full py-3 bg-black text-white rounded-xl font-bold text-center text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl group-hover:scale-[1.02] active:scale-[0.98]"
                                             >
-                                                View Details
+                                                View Booking Details
                                             </Link>
                                         </div>
                                     </div>

@@ -1,5 +1,5 @@
-const endpoint = `https://zugo-backend.onrender.com/`;
-// const endpoint = `http://localhost:3001/`;
+// const endpoint = `https://zugo-backend.onrender.com/`;
+const endpoint = `http://localhost:5001/`;
 
 export const API = {
   endpoint: endpoint,

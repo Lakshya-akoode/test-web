@@ -98,89 +98,111 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="h-screen flex bg-white overflow-hidden">
+        <div className="min-h-screen flex bg-white">
             {/* Left Side: Branding / Image */}
-            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-gray-900">
+            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-black">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 z-10 opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 z-10"></div>
                 <Image
                     src="/background.png"
                     alt="Background"
                     fill
-                    className="object-cover opacity-60"
+                    className="object-cover opacity-40 mix-blend-overlay"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                <div className="absolute bottom-10 left-10 right-10 text-white">
-                    <h2 className="text-3xl font-bold mb-2">Start your journey today.</h2>
-                    <p className="text-gray-300 text-base">Join India's largest self-drive vehicle rental community.</p>
+                <div className="absolute bottom-0 left-0 right-0 p-16 z-20">
+                    <div className="mb-6">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/20 uppercase tracking-widest">
+                            Welcome Back
+                        </span>
+                    </div>
+                    <h2 className="text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+                        Start your journey <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">with Zugo.</span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-md leading-relaxed">
+                        Join India's largest self-drive vehicle rental community. Experience freedom on the road.
+                    </p>
                 </div>
             </div>
 
             {/* Right Side: Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-10">
-                <div className="w-full max-w-sm space-y-5">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12">
+                <div className="w-full max-w-md space-y-8">
                     <div className="text-center lg:text-left">
-                        <Link href="/" className="inline-block mb-4">
+                        <Link href="/" className="inline-block mb-8 group">
                             <Image
                                 src="/black_logo.png"
                                 alt="ZUGO"
-                                width={100}
-                                height={32}
-                                className="object-contain"
+                                width={120}
+                                height={40}
+                                className="object-contain group-hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                        <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-                        <p className="mt-1 text-sm text-gray-600">Please enter your details to sign in.</p>
+                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Sign In</h1>
+                        <p className="mt-2 text-gray-500">Welcome back! Please enter your details.</p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-6">
                         {error && (
-                            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs">
+                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium flex items-center gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 {error}
                             </div>
                         )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-gray-700">Phone Number</label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">+91</span>
-                                <input
-                                    type="tel"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                    placeholder="9876543210"
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-3 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black text-sm"
-                                    required
-                                />
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Phone Number</label>
+                                <div className="relative group">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm group-focus-within:text-black transition-colors">+91</span>
+                                    <input
+                                        type="tel"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                        placeholder="9876543210"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3.5 pl-12 pr-4 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter your password"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3.5 px-4 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold uppercase tracking-wider bg-transparent p-1"
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-gray-700">Password</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Enter your password"
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black text-sm"
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-medium"
-                                >
-                                    {showPassword ? 'Hide' : 'Show'}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black" />
-                                <span className="text-xs text-gray-600">Remember me</span>
+                        <div className="flex items-center justify-between pt-2">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <div className="relative flex items-center">
+                                    <input type="checkbox" className="peer sr-only" />
+                                    <div className="w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-black peer-checked:border-black transition-all"></div>
+                                    <svg className="w-3 h-3 text-white absolute top-1 left-1 opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
                             </label>
-                            <Link href="/forgot-password" className="text-xs font-medium text-black hover:underline">
+                            <Link href="/forgot-password" className="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors">
                                 Forgot Password?
                             </Link>
                         </div>
@@ -188,44 +210,42 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-black text-white rounded-lg py-3 font-bold text-sm hover:bg-gray-800 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-black text-white rounded-xl py-4 font-bold text-base hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
                             ) : (
                                 'Sign In'
                             )}
                         </button>
                     </form>
 
-                    <div className="relative my-4">
+                    <div className="relative py-4">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200"></div>
+                            <div className="w-full border-t border-gray-100"></div>
                         </div>
-                        <div className="relative flex justify-center text-xs">
-                            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                        <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                            <span className="px-4 bg-white text-gray-400 font-bold">Or continue with</span>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3">
-                        <button
-                            type="button"
-                            onClick={() => googleLogin()}
-                            disabled={isGoogleLoading || isLoading}
-                            className="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-lg py-2 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {isGoogleLoading ? (
-                                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                                <Image src="/google.png" alt="Google" width={18} height={18} />
-                            )}
-                            <span className="text-xs font-medium text-gray-700">Google</span>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        onClick={() => googleLogin()}
+                        disabled={isGoogleLoading || isLoading}
+                        className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-100 rounded-xl py-3.5 hover:bg-gray-50 hover:border-gray-200 transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {isGoogleLoading ? (
+                            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                        ) : (
+                            <Image src="/google.png" alt="Google" width={20} height={20} className="group-hover:scale-110 transition-transform" />
+                        )}
+                        <span className="text-sm font-bold text-gray-700 group-hover:text-gray-900">Google Account</span>
+                    </button>
 
-                    <p className="text-center text-xs text-gray-600 mt-4">
+                    <p className="text-center text-sm text-gray-500 font-medium pt-4">
                         Don't have an account?{' '}
-                        <Link href="/register" className="text-black font-bold hover:underline">
+                        <Link href="/register" className="text-black font-bold hover:text-blue-600 transition-colors hover:underline">
                             Create Account
                         </Link>
                     </p>

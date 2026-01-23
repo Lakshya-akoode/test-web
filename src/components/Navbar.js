@@ -99,9 +99,9 @@ export default function Navbar() {
                                             <div className={`text-xs font-bold leading-tight ${isTransparent ? 'text-white' : 'text-gray-900'}`}>User</div>
                                             <div className={`text-[10px] font-semibold uppercase tracking-wide ${isTransparent ? 'text-gray-300' : 'text-gray-500'}`}>VERIFIED</div>
                                         </div>
-                                        <div className={`w-9 h-9 lg:w-10 lg:h-10 ${isTransparent ? 'bg-white/20 ring-2 ring-white/30' : 'bg-gray-900 ring-2 ring-gray-200'} rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold shadow-md`}>
+                                        <Link href="/profile" className={`w-9 h-9 lg:w-10 lg:h-10 ${isTransparent ? 'bg-white/20 ring-2 ring-white/30' : 'bg-gray-900 ring-2 ring-gray-200'} rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold shadow-md hover:scale-105 transition-transform cursor-pointer`}>
                                             {(user?.Name || user?.username || 'U').charAt(0).toUpperCase()}
-                                        </div>
+                                        </Link>
                                     </div>
                                     <button
                                         onClick={handleLogout}

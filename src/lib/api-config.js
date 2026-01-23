@@ -1,5 +1,5 @@
-// export const API_BASE_URL = 'http://localhost:3001';
-export const API_BASE_URL = 'https://zugo-backend.onrender.com';
+export const API_BASE_URL = 'http://localhost:5001';
+// export const API_BASE_URL = 'https://zugo-backend.onrender.com';
 
 
 export const API_ENDPOINTS = {
@@ -23,4 +23,5 @@ export const API_ENDPOINTS = {
     HOST_PROFILE: '/reviews/profile', // + /:id
     HOST_REVIEWS: '/reviews/host', // + /:id
     ADD_REVIEW: '/reviews/add',
+    GET_USER: '/getUser',
 };

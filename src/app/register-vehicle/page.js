@@ -186,362 +186,429 @@ function RegisterVehicleContent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+        <div className="min-h-screen bg-gray-50/50">
             {/* Header Section */}
-            <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-12">
-                <div className="max-w-4xl mx-auto px-6">
-                    <Link href="/home" className="inline-flex items-center gap-2 text-slate-300 hover:text-white mb-6 transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
+            <section className="relative bg-black text-white pt-24 pb-32 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+
+                <div className="relative max-w-5xl mx-auto px-6">
+                    <Link href="/home" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group">
+                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
                         <span className="text-sm font-medium">Back to Home</span>
                     </Link>
-                    <h1 className="text-4xl md:text-5xl font-extrabold mb-2">
-                        {vehicleCategory === '2-wheeler' ? 'Register Bike/Scooty' : 'Register Car'}
-                    </h1>
-                    <p className="text-slate-300">List your vehicle and start earning</p>
+
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <span className="inline-block px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-full text-xs font-bold mb-4 uppercase tracking-wider">
+                                Host Your Vehicle
+                            </span>
+                            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
+                                Register {vehicleCategory === '2-wheeler' ? 'Bike' : 'Car'}
+                            </h1>
+                            <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
+                                Join India's largest vehicle sharing community. List your vehicle and start earning passive income today.
+                            </p>
+                        </div>
+                        <div className="hidden md:block">
+                            {/* Decorative element or illustration could go here */}
+                            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl opacity-20 rotate-12 blur-2xl"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* Form Section */}
-            <section className="max-w-4xl mx-auto px-6 py-12">
-                <div className="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100">
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        {/* Personal Information */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Personal Information</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Name of Lister *</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        placeholder="Enter full name"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Age of Lister *</label>
-                                    <input
-                                        type="number"
-                                        name="age"
-                                        value={formData.age}
-                                        onChange={handleChange}
-                                        placeholder="Enter age"
-                                        min="18"
-                                        max="100"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Address *</label>
-                                    <textarea
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        placeholder="Enter full address"
-                                        rows="3"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all resize-none"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Landmark *</label>
-                                    <input
-                                        type="text"
-                                        name="landmark"
-                                        value={formData.landmark}
-                                        onChange={handleChange}
-                                        placeholder="E.g., Near XYZ Mall"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Pincode *</label>
-                                    <input
-                                        type="text"
-                                        name="pincode"
-                                        value={formData.pincode}
-                                        onChange={handleChange}
-                                        placeholder="Enter 6-digit pincode"
-                                        maxLength="6"
-                                        pattern="[0-9]{6}"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">City *</label>
-                                    <input
-                                        type="text"
-                                        name="city"
-                                        value={formData.city}
-                                        onChange={handleChange}
-                                        placeholder="Enter city"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">State *</label>
-                                    <input
-                                        type="text"
-                                        name="state"
-                                        value={formData.state}
-                                        onChange={handleChange}
-                                        placeholder="Enter state"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Contact No *</label>
-                                    <input
-                                        type="tel"
-                                        name="contact"
-                                        value={formData.contact}
-                                        onChange={handleChange}
-                                        placeholder="Enter 10-digit contact number"
-                                        maxLength="10"
-                                        pattern="[0-9]{10}"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
+            <div className="max-w-5xl mx-auto px-6 -mt-20 relative z-10 pb-20">
+                <form onSubmit={handleSubmit} className="space-y-8">
+
+                    {/* Personal Information Card */}
+                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Personal Details</h2>
+                                <p className="text-sm text-gray-500">Your basic information for verifying identity</p>
                             </div>
                         </div>
 
-                        {/* Vehicle Location */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-slate-900 mb-4">Vehicle Location *</h2>
-                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                                {isLoadingLocation ? (
-                                    <div className="flex items-center gap-3 text-slate-600">
-                                        <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
-                                        <span>Loading your location...</span>
-                                    </div>
-                                ) : latitude && longitude ? (
-                                    <div className="flex items-center gap-3 text-green-700">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Full Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Rahul Sharma"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Age</label>
+                                <input
+                                    type="number"
+                                    name="age"
+                                    value={formData.age}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 25"
+                                    min="18"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Address</label>
+                                <textarea
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    placeholder="Enter your full permanent address"
+                                    rows="2"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Landmark</label>
+                                <input
+                                    type="text"
+                                    name="landmark"
+                                    value={formData.landmark}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Near City Mall"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Pincode</label>
+                                <input
+                                    type="text"
+                                    name="pincode"
+                                    value={formData.pincode}
+                                    onChange={handleChange}
+                                    placeholder="110001"
+                                    maxLength="6"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">City</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    value={formData.city}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">State</label>
+                                <input
+                                    type="text"
+                                    name="state"
+                                    value={formData.state}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Contact Number</label>
+                                <input
+                                    type="tel"
+                                    name="contact"
+                                    value={formData.contact}
+                                    onChange={handleChange}
+                                    placeholder="10-digit mobile number"
+                                    maxLength="10"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Vehicle Location Card */}
+                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Pickup Location</h2>
+                                <p className="text-sm text-gray-500">Where will the user pick up the vehicle?</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-50 border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                            {isLoadingLocation ? (
+                                <div className="space-y-3">
+                                    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                    <p className="font-medium text-gray-600">Fetching accurate location...</p>
+                                </div>
+                            ) : latitude && longitude ? (
+                                <div className="space-y-4">
+                                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
+                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span className="font-mono text-sm">Location: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
                                     </div>
-                                ) : (
-                                    <div className="flex items-center gap-3 text-red-600">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                        </svg>
-                                        <div>
-                                            <p className="font-medium">No location found</p>
-                                            <p className="text-sm text-slate-600">Please enable location access</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={loadLocation}
-                                            className="ml-auto px-4 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all text-sm"
-                                        >
-                                            Get Location
-                                        </button>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900">Location Pinned Successfully</h3>
+                                        <p className="text-gray-500 font-mono mt-1 text-sm bg-gray-100 py-1 px-3 rounded-lg inline-block">
+                                            {latitude.toFixed(6)}, {longitude.toFixed(6)}
+                                        </p>
                                     </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Documents */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Documents</h2>
-                            <div className="space-y-5">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Upload Photo of Bike/Car *</label>
-                                    <p className="text-xs text-slate-500 mb-3">You can upload JPG, JPEG, PNG. Uploaded files should not exceed 1MB.</p>
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleFileChange(e, 'vehiclePhoto')}
-                                            className="w-full px-5 py-3.5 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-900 file:text-white file:cursor-pointer hover:file:bg-slate-800"
-                                            required
-                                        />
-                                        {formData.vehiclePhoto && (
-                                            <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.vehiclePhoto.name}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Upload Valid Address Proof *</label>
-                                    <p className="text-xs text-slate-500 mb-3">Address proof (Aadhaar card, Voter ID, Passport). Uploaded files should not exceed 1MB.</p>
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => handleFileChange(e, 'addressPhoto')}
-                                            className="w-full px-5 py-3.5 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-900 file:text-white file:cursor-pointer hover:file:bg-slate-800"
-                                            required
-                                        />
-                                        {formData.addressPhoto && (
-                                            <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.addressPhoto.name}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Upload Vehicle RC *</label>
-                                    <p className="text-xs text-slate-500 mb-3">Vehicle registration certificate. Uploaded files should not exceed 1MB.</p>
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => handleFileChange(e, 'vehicleRC')}
-                                            className="w-full px-5 py-3.5 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-900 file:text-white file:cursor-pointer hover:file:bg-slate-800"
-                                            required
-                                        />
-                                        {formData.vehicleRC && (
-                                            <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.vehicleRC.name}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Upload Pollution Certificate *</label>
-                                    <p className="text-xs text-slate-500 mb-3">PUC certificate. Uploaded files should not exceed 1MB.</p>
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => handleFileChange(e, 'PUC')}
-                                            className="w-full px-5 py-3.5 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-900 file:text-white file:cursor-pointer hover:file:bg-slate-800"
-                                            required
-                                        />
-                                        {formData.PUC && (
-                                            <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.PUC.name}</p>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Vehicle Information */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Vehicle Information</h2>
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Bike / Car Model *</label>
-                                    <input
-                                        type="text"
-                                        name="vehicleModel"
-                                        value={formData.vehicleModel}
-                                        onChange={handleChange}
-                                        placeholder="E.g., Honda Activa 6G, Maruti Swift"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Vehicle Type *</label>
                                     <button
                                         type="button"
-                                        onClick={() => setShowVehicleTypeModal(true)}
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all flex items-center justify-between text-left"
+                                        onClick={loadLocation}
+                                        className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline"
                                     >
-                                        <span className={formData.vehicleType ? 'text-slate-900' : 'text-slate-400'}>
-                                            {formData.vehicleType || (vehicleCategory === '2-wheeler' ? 'Select: Bike or Scooty' : 'Select: Sedan, SUV, or Hatchback')}
-                                        </span>
-                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                        Update Location
                                     </button>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Return Duration *</label>
-                                    <input
-                                        type="text"
-                                        name="returnDuration"
-                                        value={formData.returnDuration}
-                                        onChange={handleChange}
-                                        placeholder="e.g., 5 days, 2 weeks"
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
-                                        required
-                                    />
-                                    <p className="text-xs text-slate-500 mt-2">This is a period when you expect your bike/car to be returned.</p>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-500">
+                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
                                     <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">Rental Price (per day) *</label>
+                                        <h3 className="text-lg font-bold text-gray-900">Location Required</h3>
+                                        <p className="text-gray-500 mt-1 max-w-sm mx-auto">We need your current location to show your vehicle to nearby renters.</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={loadLocation}
+                                        className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-black transition-all"
+                                    >
+                                        Allow Location Access
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Documents Upload */}
+                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Verification Documents</h2>
+                                <p className="text-sm text-gray-500">Upload clear photos of required documents</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[
+                                { label: 'Vehicle Photo', field: 'vehiclePhoto', desc: 'Front view of your vehicle' },
+                                { label: 'Address Proof', field: 'addressPhoto', desc: 'Aadhaar / Voter ID / Passport' },
+                                { label: 'RC Book/Card', field: 'vehicleRC', desc: 'Registration Certificate' },
+                                { label: 'Pollution (PUC)', field: 'PUC', desc: 'Valid Pollution Certificate' },
+                            ].map((doc, idx) => (
+                                <div key={idx} className="space-y-2">
+                                    <label className="text-sm font-semibold text-gray-700 ml-1">{doc.label}</label>
+                                    <div className={`relative group border-2 border-dashed rounded-xl p-6 transition-all text-center
+                                        ${formData[doc.field] ? 'border-green-500 bg-green-50/30' : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'}
+                                    `}>
+                                        <input
+                                            type="file"
+                                            accept="image/*,.pdf"
+                                            onChange={(e) => handleFileChange(e, doc.field)}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            required
+                                        />
+                                        <div className="flex flex-col items-center">
+                                            {formData[doc.field] ? (
+                                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-2">
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                            ) : (
+                                                <div className="w-10 h-10 bg-gray-100 group-hover:bg-blue-100 rounded-full flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-colors mb-2">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                    </svg>
+                                                </div>
+                                            )}
+
+                                            {formData[doc.field] ? (
+                                                <>
+                                                    <p className="text-sm font-bold text-gray-900 truncate max-w-[200px]">{formData[doc.field].name}</p>
+                                                    <p className="text-xs text-green-600 font-medium">Click to change</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="text-sm font-medium text-gray-900 group-hover:text-blue-600">Click to upload</p>
+                                                    <p className="text-xs text-gray-400">{doc.desc}</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Vehicle Details */}
+                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Vehicle Information</h2>
+                                <p className="text-sm text-gray-500">Details about the vehicle you are listing</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Vehicle Model</label>
+                                <input
+                                    type="text"
+                                    name="vehicleModel"
+                                    value={formData.vehicleModel}
+                                    onChange={handleChange}
+                                    placeholder={vehicleCategory === '2-wheeler' ? "e.g. Honda Activa 6G" : "e.g. Maruti Swift Dzire"}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Vehicle Type</label>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowVehicleTypeModal(true)}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none flex items-center justify-between group"
+                                >
+                                    <span className={formData.vehicleType ? 'text-gray-900 font-medium' : 'text-gray-400'}>
+                                        {formData.vehicleType || (vehicleCategory === '2-wheeler' ? 'Select Bike / Scooty' : 'Select Car Type')}
+                                    </span>
+                                    <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-700 ml-1">Availability Duration</label>
+                                <input
+                                    type="text"
+                                    name="returnDuration"
+                                    value={formData.returnDuration}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 5 days, 2 weeks"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                    required
+                                />
+                                <p className="text-xs text-gray-500 ml-1">How long is the vehicle available for?</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-gray-700 ml-1">Daily Rental Price (₹)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₹</span>
                                         <input
                                             type="number"
                                             name="rentalPrice"
                                             value={formData.rentalPrice}
                                             onChange={handleChange}
-                                            placeholder="e.g., 500, 1000"
+                                            placeholder="500"
                                             min="0"
-                                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
+                                            className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none font-bold text-gray-900"
                                             required
                                         />
-                                        <p className="text-xs text-slate-500 mt-2">Enter the daily rental price for your vehicle in ₹.</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">Hourly Price (optional)</label>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-gray-700 ml-1">Hourly Price (Optional)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₹</span>
                                         <input
                                             type="number"
                                             name="hourlyPrice"
                                             value={formData.hourlyPrice}
                                             onChange={handleChange}
-                                            placeholder="e.g., 50, 100"
+                                            placeholder="50"
                                             min="0"
-                                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all"
+                                            className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none font-bold text-gray-900"
                                         />
-                                        <p className="text-xs text-slate-500 mt-2">Enter the hourly rental price for your vehicle in ₹ (optional).</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Terms and Conditions */}
-                        <div className="flex items-start gap-3 p-5 bg-slate-50 rounded-xl border border-slate-200">
+                    {/* Terms Confirmation */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-200 flex items-start gap-4">
+                        <div className="relative flex items-center mt-1">
                             <input
                                 type="checkbox"
                                 name="agreed"
                                 checked={formData.agreed}
                                 onChange={handleChange}
-                                className="w-5 h-5 mt-0.5 rounded border-slate-300 text-slate-900 focus:ring-slate-200 cursor-pointer"
+                                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-200 cursor-pointer"
                                 required
                             />
-                            <label className="text-sm text-slate-700 cursor-pointer">
-                                I have read and agree to the <Link href="/terms" className="text-slate-900 font-bold underline">terms and conditions</Link>.
-                            </label>
                         </div>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            I confirm that I am the owner of this vehicle and I agree to the <Link href="/terms" className="text-blue-600 font-bold hover:underline">Terms & Conditions</Link> of Zugo. I confirm all provided documents are authentic.
+                        </p>
+                    </div>
 
-                        {/* Submit Button */}
-                        <div className="pt-6 border-t border-slate-200">
-                            <button
-                                type="submit"
-                                disabled={loading || !latitude || !longitude}
-                                className="w-full px-6 py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed text-lg"
-                            >
-                                {loading ? 'SUBMITTING...' : 'SUBMIT'}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        disabled={loading || !latitude || !longitude}
+                        className="w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg hover:bg-black hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl shadow-gray-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                        {loading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                Creating Listing...
+                            </span>
+                        ) : 'Submit Listing Application'}
+                    </button>
+                </form>
+            </div>
 
             {/* Vehicle Type Selection Modal */}
             {showVehicleTypeModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowVehicleTypeModal(false)}>
-                    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100" onClick={(e) => e.stopPropagation()}>
-                        <h3 className="text-2xl font-bold text-slate-900 mb-2 text-center">Select Vehicle Type</h3>
-                        <p className="text-slate-600 mb-8 text-center">
-                            {vehicleCategory === '2-wheeler'
-                                ? 'Choose the type of 2-wheeler you want to register'
-                                : 'Choose the type of 4-wheeler you want to register'
-                            }
-                        </p>
+                    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-gray-100 transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
+                        <div className="text-center mb-8">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Select Category</h3>
+                            <p className="text-gray-500">What kind of {vehicleCategory} are you listing?</p>
+                        </div>
 
-                        <div className="space-y-3 mb-6">
+                        <div className="space-y-3 mb-8">
                             {vehicleCategory === '2-wheeler' ? (
                                 <>
                                     {['Bike', 'Scooty'].map((type) => (
@@ -549,15 +616,28 @@ function RegisterVehicleContent() {
                                             key={type}
                                             type="button"
                                             onClick={() => handleVehicleTypeSelect(type)}
-                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${formData.vehicleType === type
-                                                    ? 'bg-slate-900 text-white shadow-lg'
-                                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            className={`w-full p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 ${formData.vehicleType === type
+                                                ? 'border-blue-500 bg-blue-50'
+                                                : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
                                                 }`}
                                         >
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={type === 'Bike' ? "M13 10V3L4 14h7v7l9-11h-7z" : "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"} />
-                                            </svg>
-                                            <span>{type}</span>
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.vehicleType === type ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
+                                                }`}>
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={type === 'Bike' ? "M13 10V3L4 14h7v7l9-11h-7z" : "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"} />
+                                                </svg>
+                                            </div>
+                                            <div className="text-left">
+                                                <div className={`font-bold text-lg ${formData.vehicleType === type ? 'text-blue-900' : 'text-gray-700'}`}>{type}</div>
+                                                <div className="text-xs text-gray-500">Standard {type.toLowerCase()} registration</div>
+                                            </div>
+                                            {formData.vehicleType === type && (
+                                                <div className="ml-auto text-blue-500">
+                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            )}
                                         </button>
                                     ))}
                                 </>
@@ -568,15 +648,28 @@ function RegisterVehicleContent() {
                                             key={type}
                                             type="button"
                                             onClick={() => handleVehicleTypeSelect(type)}
-                                            className={`w-full px-5 py-4 rounded-xl font-bold transition-all duration-200 flex items-center gap-3 ${formData.vehicleType === type
-                                                    ? 'bg-slate-900 text-white shadow-lg'
-                                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            className={`w-full p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 ${formData.vehicleType === type
+                                                ? 'border-blue-500 bg-blue-50'
+                                                : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
                                                 }`}
                                         >
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>{type}</span>
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.vehicleType === type ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
+                                                }`}>
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="text-left">
+                                                <div className={`font-bold text-lg ${formData.vehicleType === type ? 'text-blue-900' : 'text-gray-700'}`}>{type}</div>
+                                                <div className="text-xs text-gray-500">4-seater {type.toLowerCase()}</div>
+                                            </div>
+                                            {formData.vehicleType === type && (
+                                                <div className="ml-auto text-blue-500">
+                                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            )}
                                         </button>
                                     ))}
                                 </>
@@ -586,7 +679,7 @@ function RegisterVehicleContent() {
                         <button
                             type="button"
                             onClick={() => setShowVehicleTypeModal(false)}
-                            className="w-full px-5 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-all"
+                            className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
                         >
                             Cancel
                         </button>
@@ -603,7 +696,7 @@ export default function RegisterVehiclePage() {
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading...</p>
+                    <p className="text-gray-600 font-medium">Loading...</p>
                 </div>
             </div>
         }>

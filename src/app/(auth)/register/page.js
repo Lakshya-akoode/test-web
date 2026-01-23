@@ -118,169 +118,179 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen flex bg-white">
             {/* Left Side: Branding / Image */}
-            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-gray-900">
+            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-black">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 z-10 opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 z-10"></div>
                 <Image
                     src="/background.png"
                     alt="Background"
                     fill
-                    className="object-cover opacity-60"
+                    className="object-cover opacity-40 mix-blend-overlay"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                <div className="absolute bottom-12 left-12 right-12 text-white">
-                    <h2 className="text-4xl font-bold mb-4">Join the community.</h2>
-                    <p className="text-gray-300 text-lg">Create an account to start renting bikes and cars instantly.</p>
+                <div className="absolute bottom-0 left-0 right-0 p-16 z-20">
+                    <div className="mb-6">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/20 uppercase tracking-widest">
+                            Join Us
+                        </span>
+                    </div>
+                    <h2 className="text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+                        Become part of the <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Revolution.</span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-md leading-relaxed">
+                        Create an account to start your premium rental experience. Fast, secure, and hassle-free.
+                    </p>
                 </div>
             </div>
 
             {/* Right Side: Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 overflow-y-auto">
-                <div className="w-full max-w-md space-y-6">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-8 overflow-y-auto">
+                <div className="w-full max-w-md space-y-4 my-auto">
                     <div className="text-center lg:text-left">
-                        <Link href="/" className="inline-block mb-6">
+                        <Link href="/" className="inline-block mb-4 group">
                             <Image
                                 src="/black_logo.png"
                                 alt="ZUGO"
-                                width={120}
-                                height={40}
-                                className="object-contain"
+                                width={100}
+                                height={32}
+                                className="object-contain group-hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                        <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-                        <p className="mt-2 text-gray-600">Enter your details to register.</p>
+                        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Create Account</h1>
+                        <p className="mt-1 text-sm text-gray-500">Enter your details to register.</p>
                     </div>
 
-                    <form onSubmit={handleRegister} className="space-y-5">
+                    <form onSubmit={handleRegister} className="space-y-3">
                         {error && (
-                            <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-xs font-medium flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 {error}
                             </div>
                         )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Full Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="John Doe"
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Mobile Number</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">+91</span>
+                        <div className="space-y-3">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-700">Full Name</label>
                                 <input
-                                    type="tel"
-                                    name="mobile"
-                                    value={formData.mobile}
-                                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                                    placeholder="9876543210"
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-12 pr-4 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    placeholder="John Doe"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm"
                                     required
                                 />
                             </div>
-                        </div>
 
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="john@example.com"
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
-                                required
-                            />
-                        </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-700">Mobile Number</label>
+                                <div className="relative group">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-xs group-focus-within:text-black transition-colors">+91</span>
+                                    <input
+                                        type="tel"
+                                        name="mobile"
+                                        value={formData.mobile}
+                                        onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                                        placeholder="9876543210"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-10 pr-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm"
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Password</label>
-                                <div className="relative">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-700">Email Address</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="john@example.com"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm"
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-gray-700">Password</label>
                                     <input
                                         type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
                                         placeholder="••••••••"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm"
                                         required
                                     />
                                 </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Confirm Password</label>
-                                <div className="relative">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-gray-700">Confirm</label>
                                     <input
                                         type={showPassword ? 'text' : 'password'}
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                         placeholder="••••••••"
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm"
                                         required
                                     />
                                 </div>
                             </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="text-xs text-gray-500 hover:text-gray-700 underline"
-                            >
-                                {showPassword ? 'Hide Passwords' : 'Show Passwords'}
-                            </button>
-                        </div>
 
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="text-[10px] font-bold text-gray-500 hover:text-black uppercase tracking-wider transition-colors"
+                                >
+                                    {showPassword ? 'Hide Passwords' : 'Show Passwords'}
+                                </button>
+                            </div>
+                        </div>
 
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-black text-white rounded-xl py-4 font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-black text-white rounded-xl py-3 font-bold text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {isLoading ? (
-                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
                             ) : (
                                 'Create Account'
                             )}
                         </button>
                     </form>
 
-                    <div className="relative my-6">
+                    <div className="relative py-2">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200"></div>
+                            <div className="w-full border-t border-gray-100"></div>
                         </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white text-gray-500">Or sign up with</span>
+                        <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
+                            <span className="px-3 bg-white text-gray-400 font-bold">Or sign up with</span>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <button
-                            type="button"
-                            onClick={() => googleLogin()}
-                            disabled={isGoogleLoading || isLoading}
-                            className="flex items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl py-3 hover:bg-gray-50 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
-                        >
-                            {isGoogleLoading ? (
-                                <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                                <Image src="/google.png" alt="Google" width={20} height={20} />
-                            )}
-                            <span className="text-sm font-medium text-gray-700">Google</span>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        onClick={() => googleLogin()}
+                        disabled={isGoogleLoading || isLoading}
+                        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl py-2.5 hover:bg-gray-50 hover:border-gray-300 transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {isGoogleLoading ? (
+                            <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                        ) : (
+                            <Image src="/google.png" alt="Google" width={18} height={18} className="group-hover:scale-110 transition-transform" />
+                        )}
+                        <span className="text-xs font-bold text-gray-700 group-hover:text-gray-900">Google Account</span>
+                    </button>
 
-                    <p className="text-center text-sm text-gray-600 pt-2">
+                    <p className="text-center text-xs text-gray-500 font-medium pt-2">
                         Already have an account?{' '}
-                        <Link href="/login" className="text-black font-bold hover:underline">
+                        <Link href="/login" className="text-black font-bold hover:text-blue-600 transition-colors hover:underline">
                             Sign In
                         </Link>
                     </p>
