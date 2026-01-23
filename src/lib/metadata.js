@@ -61,7 +61,7 @@ export function generateMetadata({
         publisher: siteConfig.name,
         metadataBase: new URL(siteConfig.url),
         alternates: {
-            canonical: canonical || siteConfig.url,
+            canonical: canonical,
         },
         openGraph: {
             type: 'website',
@@ -182,5 +182,15 @@ export const pageMetadata = {
             'rental agency',
             'vehicle rental partnership',
         ],
+    },
+    login: {
+        title: 'Login',
+        description: 'Login to your Zugo account to manage your bookings and rentals.',
+        keywords: ['login', 'zugo login', 'sign in'],
+    },
+    register: {
+        title: 'Sign Up',
+        description: 'Create a new account on Zugo to start renting bikes and cars.',
+        keywords: ['register', 'sign up', 'create account', 'zugo register'],
     },
 };
