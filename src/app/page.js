@@ -62,7 +62,7 @@ export default function RootPage() {
 
           <div className="text-center mb-10 animate-fade-in-up">
             <h1 className="text-4xl md:text-3xl font-bold tracking-tight text-white mb-6 leading-tight drop-shadow-2xl">
-              India's Largest Self-Drive Vehicle Rental Platform
+              India's Most Flexible Self-Drive Vehicle Rental Platform
               <span className="block text-white mt-1"></span>
             </h1>
             <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed font-medium drop-shadow-lg">
@@ -111,9 +111,10 @@ export default function RootPage() {
             <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
               Why Choose Zugo?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Zugo is India's leading self-drive vehicle rental platform, making it easy
-              for you to rent bikes and cars, or earn money by listing your own vehicle.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Zugo is India's most flexible self-drive vehicle rental platform, dedicated to transforming how you travel.
+              We make it incredibly easy for you to rent bikes and rent cars for any duration.
+              By connecting verified vehicle owners with trusted renters, we create a community built on freedom, flexibility, and trust.
             </p>
           </div>
 
@@ -124,7 +125,8 @@ export default function RootPage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Easy Booking</h3>
               <p className="text-base text-gray-600 leading-relaxed">
-                Book your favorite bike or car in just a few clicks. No paperwork, no hassle.
+                Experience a seamless booking process with our user-friendly app and website.
+                Browse verified bikes and cars, look at the images, and book your perfect ride in just a few clicks.
               </p>
             </div>
 
@@ -134,7 +136,8 @@ export default function RootPage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Flexible Plans</h3>
               <p className="text-base text-gray-600 leading-relaxed">
-                Choose from hourly, daily, or weekly rental plans that suit your needs.
+                We offer highly flexible rental plans tailored to your needs.
+                Choose from hourly rentals, daily plans, or weekly and monthly subscriptions.
               </p>
             </div>
 
@@ -144,7 +147,8 @@ export default function RootPage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">24/7 Support</h3>
               <p className="text-base text-gray-600 leading-relaxed">
-                Our support team is always ready to help you with any queries or issues.
+                Our dedicated support team is available 24/7 to assist you.
+                Drive with confidence knowing we have got your back with roadside assistance.
               </p>
             </div>
           </div>
@@ -433,6 +437,34 @@ export default function RootPage() {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* About Zugo - SEO Rich Section */}
+      <div className="py-24 px-5 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 tracking-tight">
+            Experience the Freedom of Self-Drive with Zugo
+          </h2>
+          <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify md:text-center">
+            <p>
+              Zugo is revolutionizing the mobility landscape in <strong>India</strong> by empowering you to travel on your own terms.
+              As a premier <strong>self-drive vehicle rental platform</strong>, we bridge the gap between vehicle owners and those seeking a reliable ride.
+              Gone are the days of depending on cabs or rigid schedules; with Zugo, you have the vehicle you need, right when you need it.
+            </p>
+            <p>
+              Our extensive fleet includes everything from fuel-efficient scooters and powerful motorcycles to comfortable sedans and spacious SUVs.
+              Whether you need to <strong>rent a bike</strong> for navigating city traffic or <strong>rent a car</strong> for a family vacation,
+              Zugo offers a diverse range of vehicles to suit every budget and preference. We operate in over 100 cities across India,
+              ensuring that wherever you go, a Zugo vehicle is never far away.
+            </p>
+            <p>
+              We pride ourselves on transparency and affordability. Our pricing is straightforward—what you see is what you pay.
+              There are no hidden charges, and you don&apos;t have to worry about rising fuel costs eating into your budget.
+              Plus, for vehicle owners, Zugo provides a unique opportunity to earn passive income by listing your idle vehicles on our secure platform.
+              Join the self-drive revolution today and discover a smarter, more convenient way to travel.
+            </p>
           </div>
         </div>
       </div>

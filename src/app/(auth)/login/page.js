@@ -121,7 +121,7 @@ export default function LoginPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">with Zugo.</span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                        Join India's largest self-drive vehicle rental community. Experience freedom on the road.
+                        Join India's most flexible self-drive vehicle rental community. Experience freedom on the road.
                     </p>
                 </div>
             </div>

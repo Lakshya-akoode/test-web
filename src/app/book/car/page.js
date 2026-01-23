@@ -236,47 +236,72 @@ export default function BookCarPage() {
                 )}
             </div>
 
-            {/* Radius Modal */}
-            {showRadiusModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowRadiusModal(false)}>
-                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
-                        <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Search Radius</h3>
-                            <p className="text-gray-500">Find cars within {searchRadius}km of your location</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 mb-8">
-                            {[10, 25, 50, 100].map((radius) => (
-                                <button
-                                    key={radius}
-                                    onClick={() => {
-                                        setSearchRadius(radius);
-                                        setShowRadiusModal(false);
-                                    }}
-                                    className={`px-4 py-4 rounded-xl font-bold text-lg transition-all border-2 ${searchRadius === radius
-                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                            : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200'
-                                        }`}
-                                >
-                                    {radius} km
-                                </button>
-                            ))}
-                        </div>
-                        <button
-                            onClick={() => setShowRadiusModal(false)}
-                            className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
-                        >
-                            Cancel
-                        </button>
+            {/* SEO Content Section */}
+            <section className="max-w-7xl mx-auto px-6 py-12 mb-10">
+                <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-sm">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Rent a Car with Zugo?</h2>
+                    <div className="prose prose-lg text-gray-600 max-w-none">
+                        <p className="mb-4">
+                            Planning a road trip or need a comfortable ride for the city? <strong>Rent a car</strong> with Zugo and enjoy the privacy and freedom of a personal vehicle. As a leading <strong>self-drive car rental</strong> platform, we offer a seamless booking experience.
+                        </p>
+                        <p className="mb-4">
+                            Forget the hassle of cabs and drivers. With our <strong>car rental service</strong>, you are in the driver's seat. Choose from our premium fleet of hatchbacks, sedans, and SUVs. Our <strong>four-wheeler rental</strong> options are perfect for:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-2 mb-6">
+                            <li><strong>Weekend Getaways:</strong> Spacious SUVs for family trips.</li>
+                            <li><strong>City Commutes:</strong> Compact hatchbacks for easy parking.</li>
+                            <li><strong>Business Travel:</strong> Premium sedans for a professional impression.</li>
+                        </ul>
+                        <p>
+                            When you search for "<strong>car rental near me</strong>", trust Zugo for quality and reliability. We provide well-maintained vehicles with optional unlimited kilometer plans. Start your journey with the best <strong>self-drive car</strong> service in India.
+                        </p>
                     </div>
                 </div>
-            )}
-        </div>
+            </section>
+
+            {/* Radius Modal */}
+            {
+                showRadiusModal && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowRadiusModal(false)}>
+                        <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
+                            <div className="text-center mb-8">
+                                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Search Radius</h3>
+                                <p className="text-gray-500">Find cars within {searchRadius}km of your location</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 mb-8">
+                                {[10, 25, 50, 100].map((radius) => (
+                                    <button
+                                        key={radius}
+                                        onClick={() => {
+                                            setSearchRadius(radius);
+                                            setShowRadiusModal(false);
+                                        }}
+                                        className={`px-4 py-4 rounded-xl font-bold text-lg transition-all border-2 ${searchRadius === radius
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                            : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200'
+                                            }`}
+                                    >
+                                        {radius} km
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => setShowRadiusModal(false)}
+                                className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

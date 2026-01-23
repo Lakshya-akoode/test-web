@@ -182,8 +182,8 @@ export default function BookBikePage() {
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === tab
-                                            ? 'bg-white text-black shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-900'
+                                        ? 'bg-white text-black shadow-sm'
+                                        : 'text-gray-500 hover:text-gray-900'
                                         }`}
                                 >
                                     {tab}
@@ -291,47 +291,73 @@ export default function BookBikePage() {
                 )}
             </div>
 
-            {/* Radius Modal */}
-            {showRadiusModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowRadiusModal(false)}>
-                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
-                        <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Search Radius</h3>
-                            <p className="text-gray-500">Find bikes within {searchRadius}km of your location</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 mb-8">
-                            {[10, 25, 50, 100].map((radius) => (
-                                <button
-                                    key={radius}
-                                    onClick={() => {
-                                        setSearchRadius(radius);
-                                        setShowRadiusModal(false);
-                                    }}
-                                    className={`px-4 py-4 rounded-xl font-bold text-lg transition-all border-2 ${searchRadius === radius
-                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                            : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200'
-                                        }`}
-                                >
-                                    {radius} km
-                                </button>
-                            ))}
-                        </div>
-                        <button
-                            onClick={() => setShowRadiusModal(false)}
-                            className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
-                        >
-                            Cancel
-                        </button>
+            {/* SEO Content Section */}
+            <section className="max-w-7xl mx-auto px-6 py-12 mb-10">
+                <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-sm">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Rent a Bike with Zugo?</h2>
+                    <div className="prose prose-lg text-gray-600 max-w-none">
+                        <p className="mb-4">
+                            Looking to <strong>rent a bike</strong> for your daily commute or a weekend getaway? Zugo is your one-stop solution for affordable and convenient <strong>two-wheeler rentals</strong>. We offer a wide range of verified bikes and scooters to suit every need.
+                        </p>
+                        <p className="mb-4">
+                            Whether you want to <strong>rent a scooty</strong> for easy city navigation or a powerful motorcycle for a long ride, our platform connects you with trusted vehicle owners. With Zugo, you get:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-2 mb-6">
+                            <li><strong>Transparent Pricing:</strong> No hidden charges. Pay only for what you see.</li>
+                            <li><strong>Wide Variety:</strong> From Honda Activa to Royal Enfield, find your perfect <strong>bike on rent</strong>.</li>
+                            <li><strong>Flexible Plans:</strong> Rent by the hour, day, week, or month.</li>
+                            <li><strong>Zero Fuel Cost:</strong> Pay only for the rental duration.</li>
+                        </ul>
+                        <p>
+                            Search for "<strong>rent bike near me</strong>" and you'll find Zugo ready to serve you. Experience the freedom of self-drive with India's most flexible vehicle rental platform. Book your ride today!
+                        </p>
                     </div>
                 </div>
-            )}
-        </div>
+            </section>
+
+            {/* Radius Modal */}
+            {
+                showRadiusModal && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowRadiusModal(false)}>
+                        <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
+                            <div className="text-center mb-8">
+                                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Search Radius</h3>
+                                <p className="text-gray-500">Find bikes within {searchRadius}km of your location</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 mb-8">
+                                {[10, 25, 50, 100].map((radius) => (
+                                    <button
+                                        key={radius}
+                                        onClick={() => {
+                                            setSearchRadius(radius);
+                                            setShowRadiusModal(false);
+                                        }}
+                                        className={`px-4 py-4 rounded-xl font-bold text-lg transition-all border-2 ${searchRadius === radius
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                            : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200'
+                                            }`}
+                                    >
+                                        {radius} km
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => setShowRadiusModal(false)}
+                                className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

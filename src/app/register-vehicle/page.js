@@ -211,7 +211,7 @@ function RegisterVehicleContent() {
                                 Register {vehicleCategory === '2-wheeler' ? 'Bike' : 'Car'}
                             </h1>
                             <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
-                                Join India's largest vehicle sharing community. List your vehicle and start earning passive income today.
+                                Join India's most unique vehicle sharing community. List your vehicle and start earning passive income today.
                             </p>
                         </div>
                         <div className="hidden md:block">

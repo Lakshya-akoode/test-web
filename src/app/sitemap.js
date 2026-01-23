@@ -4,7 +4,7 @@ export default function sitemap() {
     return [
         {
             url: baseUrl,
-            lastModified: '2026-01-01',
+            lastModified: new Date().toISOString().split('T')[0],
             changeFrequency: 'daily',
             priority: 1,
         },

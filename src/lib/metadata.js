@@ -2,7 +2,7 @@
 
 export const siteConfig = {
     name: 'Zugo',
-    description: 'India\'s largest self-drive vehicle rental platform. Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel.',
+    description: 'India\'s most flexible self-drive vehicle rental platform. Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel.',
     url: 'https://zugo.co.in',
     ogImage: 'https://zugo.co.in/black_logo.png',
     keywords: [
@@ -111,7 +111,7 @@ export function generateMetadata({
 // Page-specific metadata presets
 export const pageMetadata = {
     home: {
-        title: 'Zugo - India\'s Largest Self-Drive Vehicle Rental Platform',
+        title: 'Zugo - India\'s Most Flexible Self-Drive Vehicle Rental Platform',
         description: 'Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel. Book vehicles instantly across 100+ cities.',
         keywords: [
             'vehicle rental India',
@@ -124,27 +124,29 @@ export const pageMetadata = {
         ],
     },
     bookBike: {
-        title: 'Book Bikes for Rent',
-        description: 'Find and book bikes for rent near you. Wide selection of bikes available for hourly, daily, and weekly rentals. Transparent pricing with no hidden charges.',
+        title: 'Rent Bike in India - Self Drive Bikes & Scooters | Zugo',
+        description: 'Looking to rent a bike or scooty? Zugo offers the best self-drive two-wheeler rental service in India. Book bikes on rent near you starting at ₹20/hour. No hidden charges.',
         keywords: [
-            'bike rental',
             'rent bike',
+            'bike rental',
+            'scooty rental',
+            'bike on rent',
             'two wheeler rental',
-            'bike booking',
-            'scooter rental',
-            'bike on rent near me',
+            'rent bike near me',
+            'scooter rental India',
         ],
     },
     bookCar: {
-        title: 'Book Cars for Rent',
-        description: 'Rent self-drive cars near you. Choose from sedans, SUVs, hatchbacks and more. Flexible rental plans - hourly, daily, or weekly. Book now!',
+        title: 'Rent Car in India - Self Drive Cars & SUVs | Zugo',
+        description: 'Rent self-drive cars in India with Zugo. Choose from a wide range of hatchbacks, sedans, and SUVs. Best car rental service near you with unlimited kilometers options.',
         keywords: [
+            'rent car',
             'car rental',
             'self drive car',
-            'rent car',
-            'four wheeler rental',
-            'car booking',
-            'self drive car rental near me',
+            'car rental near me',
+            'rent car for self drive',
+            'suv rental',
+            'car booking India',
         ],
     },
     rentals: {
