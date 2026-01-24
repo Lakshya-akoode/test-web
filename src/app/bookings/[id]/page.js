@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useToast } from '@/context/ToastContext';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api-config';
@@ -10,7 +11,7 @@ import API from '@/lib/api';
 
 export default function BookingDetailsPage() {
     const params = useParams();
-    const router = useRouter(); // Changed order to match others for consistency
+    const router = useRouter();
     const toast = useToast();
     const { id } = params;
     const [booking, setBooking] = useState(null);
@@ -83,59 +84,76 @@ export default function BookingDetailsPage() {
         }
     };
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString, includeTime = false) => {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        if (includeTime) {
+            options.hour = '2-digit';
+            options.minute = '2-digit';
+        }
+        return date.toLocaleDateString('en-IN', options);
     };
 
     const getStatusConfig = (status) => {
         const configs = {
             pending: {
-                color: 'from-orange-500 to-orange-600',
-                bg: 'bg-orange-50',
-                text: 'text-orange-700',
-                icon: '⏳',
+                color: 'text-orange-600',
+                bg: 'bg-orange-500/10',
+                border: 'border-orange-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                ),
                 label: 'Pending Owner Approval',
                 step: 1
             },
             confirmed: {
-                color: 'from-green-500 to-emerald-600',
-                bg: 'bg-green-50',
-                text: 'text-green-700',
-                icon: '✓',
+                color: 'text-green-600',
+                bg: 'bg-green-500/10',
+                border: 'border-green-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                ),
                 label: 'Confirmed by Owner',
                 step: 3
             },
             accepted: {
-                color: 'from-blue-500 to-indigo-600',
-                bg: 'bg-blue-50',
-                text: 'text-blue-700',
-                icon: '💳',
+                color: 'text-blue-600',
+                bg: 'bg-blue-500/10',
+                border: 'border-blue-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                ),
                 label: 'Payment Required',
                 step: 2
             },
             completed: {
-                color: 'from-purple-500 to-violet-600',
-                bg: 'bg-purple-50',
-                text: 'text-purple-700',
-                icon: '🎉',
+                color: 'text-purple-600',
+                bg: 'bg-purple-500/10',
+                border: 'border-purple-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                ),
                 label: 'Trip Completed',
                 step: 4
             },
             rejected: {
-                color: 'from-red-500 to-red-600',
-                bg: 'bg-red-50',
-                text: 'text-red-700',
-                icon: '✕',
+                color: 'text-red-600',
+                bg: 'bg-red-500/10',
+                border: 'border-red-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                ),
                 label: 'Rejected by Owner',
                 step: 0
             },
             cancelled: {
-                color: 'from-gray-400 to-gray-500',
-                bg: 'bg-gray-50',
-                text: 'text-gray-700',
-                icon: '⊘',
+                color: 'text-gray-600',
+                bg: 'bg-gray-500/10',
+                border: 'border-gray-500/20',
+                icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                ),
                 label: 'Cancelled',
                 step: 0
             }
@@ -146,29 +164,54 @@ export default function BookingDetailsPage() {
     const getProgress = () => {
         const steps = [
             { id: 'requested', label: 'Requested', icon: '📝' },
-            { id: 'approved', label: 'Owner Accepts', icon: '👍' },
-            { id: 'payment', label: 'Payment', icon: '💳' },
+            { id: 'payment', label: 'Payment', icon: '💳' }, // Swapped for correct flow logic if needed, adapting based on backend status flow
+            { id: 'approved', label: 'Confirmed', icon: '👍' },
+            // Note: Flow might be Requested -> Owner Accepts (Payment Due) -> User Pays (Confirmed) -> Active -> Completed
+            // Adjusting steps based on statusConfig logic above:
+            // 1: Pending (Requested)
+            // 2: Accepted (Payment Required)
+            // 3: Confirmed (Active)
+            // 4: Completed
             { id: 'active', label: 'Active', icon: '🚗' },
             { id: 'completed', label: 'Completed', icon: '✔️' }
         ];
 
-        const config = getStatusConfig(booking.status);
+        // Simplified steps for visualisation
+        const visualSteps = [
+            { id: 'requested', label: 'Requested', step: 1 },
+            { id: 'payment', label: 'Payment', step: 2 },
+            { id: 'confirmed', label: 'Confirmed', step: 3 },
+            { id: 'completed', label: 'Completed', step: 4 }
+        ];
+
+        const config = getStatusConfig(booking?.status);
         const currentStep = config.step;
 
-        return steps.map((step, index) => ({
+        return visualSteps.map((step) => ({
             ...step,
-            isComplete: index < currentStep,
-            isCurrent: index === currentStep,
-            isPending: index > currentStep
+            isComplete: step.step < currentStep,
+            isCurrent: step.step === currentStep,
+            isPending: step.step > currentStep
         }));
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 font-medium">Loading booking details...</p>
+            <div className="min-h-screen bg-gray-50/50">
+                <section className="bg-black h-64 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-zinc-900"></div>
+                </section>
+                <div className="max-w-6xl mx-auto px-6 -mt-32 relative z-10">
+                    <div className="h-80 bg-white rounded-3xl shadow-sm animate-pulse mb-6"></div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="h-48 bg-white rounded-3xl shadow-sm animate-pulse"></div>
+                            <div className="h-32 bg-white rounded-3xl shadow-sm animate-pulse"></div>
+                        </div>
+                        <div className="space-y-6">
+                            <div className="h-64 bg-white rounded-3xl shadow-sm animate-pulse"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -176,7 +219,7 @@ export default function BookingDetailsPage() {
 
     if (!booking) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">Booking Not Found</h2>
                     <Link href="/bookings" className="px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all">
@@ -191,101 +234,92 @@ export default function BookingDetailsPage() {
     const progress = getProgress();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-            {/* Header Section */}
-            <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16">
-                <div className="max-w-6xl mx-auto px-6">
-                    <Link href="/bookings" className="inline-flex items-center gap-2 text-slate-300 hover:text-white mb-6 transition-colors group">
-                        <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        <span className="text-sm font-medium">Back to Bookings</span>
+        <div className="min-h-screen bg-gray-50/50 pb-20 font-sans">
+            {/* Premium Header */}
+            <section className="relative bg-black text-white pt-24 pb-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-[#050505] to-black opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
+
+                {/* Decorative blobs */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px] -ml-20 -mb-20"></div>
+
+                <div className="relative max-w-6xl mx-auto px-6 z-10">
+                    <Link href="/bookings" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors group text-sm font-medium">
+                        <span className="p-1 rounded-full bg-white/10 group-hover:bg-white/20 transition-all">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </span>
+                        Back to Bookings
                     </Link>
-                    <div className="max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
-                            Booking <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Details</span>
-                        </h1>
-                        <p className="text-xl text-slate-300">View and manage your booking information</p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4 backdrop-blur-md border ${statusConfig.bg} ${statusConfig.color} ${statusConfig.border}`}>
+                                {statusConfig.icon}
+                                {statusConfig.label}
+                            </span>
+                            <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
+                                Booking <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">#{booking._id.slice(-6).toUpperCase()}</span>
+                            </h1>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Main Content */}
-            <div className="max-w-6xl mx-auto px-6 py-12">
-                {/* Hero Section */}
-                <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-6">
-                    <div className="relative h-80 bg-gradient-to-br from-gray-900 to-gray-700">
+            <div className="relative max-w-6xl mx-auto px-6 -mt-32 z-10">
+                {/* Hero Card */}
+                <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden mb-8">
+                    <div className="relative h-64 md:h-96 w-full bg-gray-900 group">
                         {booking.vehiclePhoto ? (
-                            <>
-                                <img
-                                    src={booking.vehiclePhoto}
-                                    alt={booking.vehicleModel}
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-                            </>
+                            <Image
+                                src={booking.vehiclePhoto}
+                                alt={booking.vehicleModel}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                priority
+                            />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
+                            <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                         )}
-
-                        {/* Overlay Content */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                            <div className="flex items-end justify-between gap-4">
-                                <div className="flex-1">
-                                    <h1 className="text-4xl font-extrabold mb-2 drop-shadow-lg">
-                                        {booking.vehicleModel}
-                                    </h1>
-                                    <p className="text-lg text-white/90 mb-1">Owner: {booking.ownerName || 'N/A'}</p>
-                                    <p className="text-sm text-white/75">Booking ID: {booking._id.slice(-8)}</p>
-                                </div>
-                                <div className={`px-6 py-3 rounded-2xl backdrop-blur-md ${statusConfig.bg} border-2 border-white/20`}>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-3xl">{statusConfig.icon}</span>
-                                        <div>
-                                            <div className={`text-xs font-medium ${statusConfig.text}`}>Status</div>
-                                            <div className={`text-lg font-bold ${statusConfig.text}`}>{statusConfig.label}</div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <h2 className="text-3xl md:text-5xl font-black mb-2">{booking.vehicleModel}</h2>
+                            <div className="flex items-center gap-2 text-white/80">
+                                <span className="p-1 bg-white/20 rounded-full">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                </span>
+                                <span>Owned by {booking.ownerName}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Progress Timeline */}
+                {/* Progress Timeline (Only active bookings) */}
                 {booking.status !== 'rejected' && booking.status !== 'cancelled' && (
-                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-6">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6">Booking Progress</h2>
+                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8">
                         <div className="relative">
-                            {/* Progress Line */}
-                            <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200"></div>
+                            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-100 -translate-y-1/2 rounded-full"></div>
                             <div
-                                className="absolute top-5 left-0 h-1 bg-gradient-to-r from-green-500 to-green-600 transition-all duration-1000"
-                                style={{ width: `${(statusConfig.step / 4) * 100}%` }}
+                                className="absolute top-1/2 left-0 h-1 bg-black -translate-y-1/2 rounded-full transition-all duration-1000"
+                                style={{ width: `${((statusConfig.step - 1) / 3) * 100}%` }}
                             ></div>
 
-                            {/* Steps */}
                             <div className="relative flex justify-between">
-                                {progress.map((step, index) => (
-                                    <div key={step.id} className="flex flex-col items-center">
-                                        <div
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all ${step.isComplete
-                                                ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg'
-                                                : step.isCurrent
-                                                    ? `bg-gradient-to-br ${statusConfig.color} text-white shadow-lg animate-pulse`
-                                                    : 'bg-gray-200 text-gray-500'
-                                                }`}
-                                        >
-                                            {step.icon}
-                                        </div>
-                                        <p className={`text-xs font-medium text-center max-w-[80px] ${step.isComplete || step.isCurrent ? 'text-gray-900' : 'text-gray-500'
+                                {progress.map((step) => (
+                                    <div key={step.id} className="flex flex-col items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all z-10 ${step.isComplete ? 'bg-black border-black text-white' :
+                                                step.isCurrent ? 'bg-white border-black text-black scale-110' :
+                                                    'bg-white border-gray-200 text-gray-300'
                                             }`}>
-                                            {step.label}
-                                        </p>
+                                            {step.isComplete ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                            ) : (
+                                                <span className="text-xs font-bold">{step.step}</span>
+                                            )}
+                                        </div>
+                                        <span className={`text-xs font-bold uppercase tracking-wider ${step.isComplete || step.isCurrent ? 'text-black' : 'text-gray-400'
+                                            }`}>{step.label}</span>
                                     </div>
                                 ))}
                             </div>
@@ -293,102 +327,92 @@ export default function BookingDetailsPage() {
                     </div>
                 )}
 
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Column - Details */}
-                    <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left: Details */}
+                    <div className="lg:col-span-2 space-y-8">
                         {/* Booking Period */}
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Booking Period</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
-                                    <p className="text-xs text-blue-600 font-medium mb-1">Start Date</p>
-                                    <p className="text-lg font-bold text-blue-900">{formatDate(booking.startDate)}</p>
+                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <span className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-lg">🗓️</span>
+                                Trip Schedule
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Start Date</p>
+                                    <p className="text-lg font-bold text-gray-900">{formatDate(booking.startDate)}</p>
+                                    <p className="text-xs text-gray-500">10:00 AM</p>
                                 </div>
-                                <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-100">
-                                    <p className="text-xs text-purple-600 font-medium mb-1">End Date</p>
-                                    <p className="text-lg font-bold text-purple-900">{formatDate(booking.endDate)}</p>
+                                <div className="hidden md:flex items-center justify-center text-gray-300">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                 </div>
-                                <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
-                                    <p className="text-xs text-green-600 font-medium mb-1">Duration</p>
-                                    <p className="text-lg font-bold text-green-900">{booking.totalDays} day{booking.totalDays > 1 ? 's' : ''}</p>
+                                <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 text-right md:text-left">
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">End Date</p>
+                                    <p className="text-lg font-bold text-gray-900">{formatDate(booking.endDate)}</p>
+                                    <p className="text-xs text-gray-500">10:00 AM</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Pickup Location */}
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Pickup Location</h2>
-                            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
-                                <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
+                        {/* Location */}
+                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <span className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-lg">📍</span>
+                                Pickup Location
+                            </h3>
+                            <div className="flex gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                 </div>
-                                <p className="text-gray-700 flex-1">{booking.pickupLocation || 'Location not specified'}</p>
+                                <div>
+                                    <p className="font-bold text-gray-900 text-lg mb-1">{booking.pickupLocation || 'Location details provided by owner'}</p>
+                                    <p className="text-gray-500 text-sm">Please arrive 10 minutes before the scheduled time.</p>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Special Requests */}
-                        {booking.specialRequests && (
-                            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4">Special Requests</h2>
-                                <p className="text-gray-700 p-4 bg-gray-50 rounded-2xl">{booking.specialRequests}</p>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Right Column - Summary & Actions */}
+                    {/* Right: Summary & Payment */}
                     <div className="space-y-6">
-                        {/* Price Summary - Sticky */}
-                        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 lg:sticky lg:top-24">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Payment Summary</h2>
-                            <div className="space-y-3">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Price per day</span>
-                                    <span className="font-bold">₹{Math.round(booking.totalAmount / booking.totalDays)}</span>
+                        <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6">
+                            <h3 className="text-lg font-bold text-gray-900 mb-6">Payment Summary</h3>
+                            <div className="space-y-4 mb-6">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Price per day</span>
+                                    <span className="font-medium">₹{Math.round((booking.totalAmount || 0) / (booking.totalDays || 1))}</span>
                                 </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Number of days</span>
-                                    <span className="font-bold">{booking.totalDays}</span>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Duration</span>
+                                    <span className="font-medium">{booking.totalDays} Days</span>
                                 </div>
-                                <div className="pt-3 border-t-2 border-gray-200 flex justify-between items-center">
-                                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                                    <span className="text-3xl font-extrabold text-gray-900">₹{booking.totalAmount}</span>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Platform Fee</span>
+                                    <span className="font-medium text-green-600">Included</span>
+                                </div>
+                                <div className="h-px bg-gray-100 my-4"></div>
+                                <div className="flex justify-between items-center">
+                                    <span className="font-bold text-gray-900">Total Amount</span>
+                                    <span className="text-2xl font-black text-gray-900">₹{booking.totalAmount}</span>
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="mt-6 space-y-3">
-                                {booking.status === 'pending' && (
-                                    <button
-                                        onClick={handleCancelBooking}
-                                        disabled={cancelling}
-                                        className="w-full px-6 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-                                    >
-                                        {cancelling ? 'Cancelling...' : 'Cancel Booking'}
-                                    </button>
-                                )}
-                            </div>
+                            {booking.status === 'pending' && (
+                                <button
+                                    onClick={handleCancelBooking}
+                                    disabled={cancelling}
+                                    className="w-full py-3.5 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-colors disabled:opacity-50"
+                                >
+                                    {cancelling ? 'Processing...' : 'Cancel Booking'}
+                                </button>
+                            )}
                         </div>
 
-                        {/* Owner Info */}
-                        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-lg p-6 text-white">
-                            <h2 className="text-lg font-bold mb-4">Vehicle Owner</h2>
-                            <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center">
-                                    <span className="text-2xl font-bold">
-                                        {(booking.ownerName || 'O').charAt(0).toUpperCase()}
-                                    </span>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-lg">{booking.ownerName || 'Owner'}</p>
-                                    {booking.ownerPhone && (
-                                        <p className="text-sm text-white/75">{booking.ownerPhone}</p>
-                                    )}
-                                </div>
-                            </div>
+                        {/* Support / Help */}
+                        <div className="bg-gray-900 rounded-3xl p-6 text-white text-center">
+                            <p className="font-bold mb-2">Need Help?</p>
+                            <p className="text-sm text-gray-400 mb-4">Have questions about your booking?</p>
+                            <Link href="/contact" className="inline-block px-6 py-2 bg-white text-black rounded-lg font-bold text-xs hover:bg-gray-200 transition-colors">
+                                Contact Support
+                            </Link>
                         </div>
                     </div>
                 </div>

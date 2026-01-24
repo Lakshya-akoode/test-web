@@ -1,5 +1,5 @@
-const endpoint = `https://zugo-backend.onrender.com/`;
-// const endpoint = `http://localhost:5001/`;
+// const endpoint = `https://zugo-backend.onrender.com/`;
+const endpoint = `http://localhost:5001/`;
 
 export const API = {
   endpoint: endpoint,
@@ -10,6 +10,7 @@ export const API = {
   logout: `${endpoint}logout`,
   getUser: `${endpoint}getUser`,
   googleAuth: `${endpoint}google-auth`,
+  getReferralStats: `${endpoint}user/referral`,
 
   // Vehicle endpoints
   getVehicle: `${endpoint}veh/getVehicle`,
@@ -44,6 +45,12 @@ export const API = {
   getPaymentStatus: `${endpoint}payments/status`,
   createOfflineBooking: `${endpoint}payments/offline-booking`,
 
+  // Earnings
+  earningsAnalytics: `${endpoint}earnings/analytics`,
+  getOwnerEarnings: `${endpoint}earnings/owner`,
+  getEarningsSummary: `${endpoint}earnings/summary`,
+  getTopVehicles: `${endpoint}earnings/top-vehicles`,
+
   // Admin endpoints
   adminLogin: `${endpoint}admin/login`,
   adminLogout: `${endpoint}admin/logout`,
@@ -60,7 +67,9 @@ export const API = {
   adminUpdateRTOStatus: `${endpoint}admin/rto-status`,
   adminPendingVehicleVerifications: `${endpoint}admin/pending-vehicle-verifications`,
   adminPendingVehicleVerifications: `${endpoint}admin/pending-vehicle-verifications`,
+  adminPendingVehicleVerifications: `${endpoint}admin/pending-vehicle-verifications`,
   adminVerifyVehicle: `${endpoint}admin/verify-vehicle`,
+  adminOwnerRevenueAnalytics: `${endpoint}admin/owner-revenue-analytics`,
 
   // Contact endpoints
   contactSend: `${endpoint}contact/send`,

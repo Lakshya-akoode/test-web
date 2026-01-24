@@ -315,6 +315,13 @@ export default function RegisterRentalPage() {
             const data = await response.json();
 
             if (data.status === 'Success') {
+                // Update local user role
+                const currentUser = getUser();
+                if (currentUser) {
+                    const updatedUser = { ...currentUser, userType: 'rental_owner' };
+                    setAuth(currentUser.token, updatedUser); // Assuming setAuth updates localStorage
+                }
+
                 toast.success(data.message || 'Rental Form Submitted Successfully!');
                 router.push('/home');
             } else {

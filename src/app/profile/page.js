@@ -153,6 +153,38 @@ export default function ProfilePage() {
                         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
                             <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Quick Links</h2>
                             <div className="space-y-3">
+                                {user?.userType === 'rental_owner' && (
+                                    <Link href="/dashboard/analytics" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
+                                        <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-gray-900">Analytics</h3>
+                                            <p className="text-xs text-gray-500">View earnings & stats</p>
+                                        </div>
+                                        <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </Link>
+                                )}
+
+                                <Link href="/refer-earn" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
+                                    <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-gray-900">Refer & Earn</h3>
+                                        <p className="text-xs text-gray-500">Invite friends, earn points</p>
+                                    </div>
+                                    <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+
                                 <Link href="/bookings" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
                                     <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

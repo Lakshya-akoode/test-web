@@ -36,6 +36,12 @@ export default function AdminSidebar({ activeView, setActiveView }) {
       label: 'Messages',
       icon: '💬',
       path: '/admin/dashboard?view=messages'
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: '📈',
+      path: '/admin/dashboard?view=analytics'
     }
   ];
 
@@ -64,8 +70,8 @@ export default function AdminSidebar({ activeView, setActiveView }) {
                 <button
                   onClick={() => handleMenuClick(item)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
-                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-semibold'
+                    : 'text-gray-700 hover:bg-gray-50'
                     }`}
                 >
                   <span className="text-2xl">{item.icon}</span>

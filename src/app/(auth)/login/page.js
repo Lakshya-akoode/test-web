@@ -10,7 +10,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -63,8 +63,9 @@ export default function LoginPage() {
         setError('');
         setIsLoading(true);
 
-        if (phoneNumber.length < 10) {
-            setError('Please enter a valid 10-digit phone number');
+        // Basic validation
+        if (!identifier.trim()) {
+            setError('Please enter your email or phone number');
             setIsLoading(false);
             return;
         }
@@ -76,7 +77,7 @@ export default function LoginPage() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    mobile: phoneNumber,
+                    identifier: identifier,
                     password: password,
                 }),
             });
@@ -155,14 +156,18 @@ export default function LoginPage() {
 
                         <div className="space-y-5">
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700">Phone Number</label>
+                                <label className="text-sm font-bold text-gray-700">Email or Phone Number</label>
                                 <div className="relative group">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm group-focus-within:text-black transition-colors">+91</span>
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
                                     <input
-                                        type="tel"
-                                        value={phoneNumber}
-                                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                        placeholder="9876543210"
+                                        type="text"
+                                        value={identifier}
+                                        onChange={(e) => setIdentifier(e.target.value)}
+                                        placeholder="Enter email or mobile number"
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3.5 pl-12 pr-4 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium"
                                         required
                                     />

@@ -15,7 +15,8 @@ export default function RegisterPage() {
         mobile: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        referralCode: ''
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -92,6 +93,7 @@ export default function RegisterPage() {
                     mobile: formData.mobile,
                     email: formData.email,
                     password: formData.password,
+                    referralCode: formData.referralCode || undefined
                 }),
             });
 
@@ -249,6 +251,18 @@ export default function RegisterPage() {
                                 >
                                     {showPassword ? 'Hide Passwords' : 'Show Passwords'}
                                 </button>
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-700">Referral Code (Optional)</label>
+                                <input
+                                    type="text"
+                                    name="referralCode"
+                                    value={formData.referralCode}
+                                    onChange={handleChange}
+                                    placeholder="Enter code if you have one"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black font-medium text-sm border-dashed"
+                                />
                             </div>
                         </div>
 

@@ -9,6 +9,7 @@ import DashboardStats from '@/components/admin/DashboardStats';
 import UsersManagement from '@/components/admin/UsersManagement';
 import RegisteredVehicles from '@/components/admin/RegisteredVehicles';
 import VehicleVerification from '@/components/admin/VehicleVerification';
+import OwnerRevenueAnalytics from '@/components/admin/OwnerRevenueAnalytics';
 import AdminMessages from '@/components/admin/AdminMessages';
 
 import { Suspense } from 'react';
@@ -121,6 +122,7 @@ function DashboardContent() {
                   {activeView === 'users' && 'Users Management'}
                   {activeView === 'register-rental' && 'Registered Vehicles & Rentals'}
                   {activeView === 'messages' && 'Messages & Inquiries'}
+                  {activeView === 'analytics' && 'Revenue Analytics'}
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
                   Welcome back, {admin?.fullName || admin?.username}
@@ -155,6 +157,7 @@ function DashboardContent() {
           {activeView === 'users' && <UsersManagement />}
           {activeView === 'register-rental' && <RegisteredVehicles />}
           {activeView === 'messages' && <AdminMessages />}
+          {activeView === 'analytics' && <OwnerRevenueAnalytics />}
         </main>
       </div>
     </div>

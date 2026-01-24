@@ -180,6 +180,20 @@ function RegisterVehicleContent() {
             const data = await response.json();
 
             if (data.status === 'Success') {
+                // Update local user role
+                const currentUser = getUser();
+                if (currentUser) {
+                    const updatedUser = { ...currentUser, userType: 'rental_owner' };
+                    // Assuming setAuth or a similar method is available to update localStorage
+                    // Since setAuth is not imported, we use localStorage directly if needed, 
+                    // or better, if setAuth is available in auth lib but not imported, we check imports.
+                    // Checking imports: import { isAuthenticated, getUser, getToken } from '@/lib/auth';
+                    // We need to import setAuth.
+                    if (typeof window !== 'undefined') {
+                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                    }
+                }
+
                 toast.success('Vehicle registered successfully!');
                 router.push('/my-vehicles');
             } else {
