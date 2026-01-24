@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useToast } from '@/context/ToastContext';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import { API_BASE_URL } from '@/lib/api-config';
 import API from '@/lib/api';
 
 export default function BookingDetailsPage() {
-    const router = useRouter();
     const params = useParams();
+    const router = useRouter(); // Changed order to match others for consistency
+    const toast = useToast();
     const { id } = params;
     const [booking, setBooking] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -68,14 +70,14 @@ export default function BookingDetailsPage() {
 
             const data = await response.json();
             if (data.status === 'Success') {
-                alert('Booking cancelled successfully');
+                toast.success('Booking cancelled successfully');
                 fetchBookingDetails();
             } else {
-                alert(data.message || 'Failed to cancel booking');
+                toast.error(data.message || 'Failed to cancel booking');
             }
         } catch (error) {
             console.error('Cancel booking error:', error);
-            alert('Failed to cancel booking');
+            toast.error('Failed to cancel booking');
         } finally {
             setCancelling(false);
         }

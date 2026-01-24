@@ -47,7 +47,7 @@ export default function RootPage() {
 
         {/* Content */}
         <div className="relative z-10 max-w-6xl mx-auto w-full">
-          <div className="flex justify-center mb-4 animate-fade-in">
+          <div className="hidden md:flex justify-center mb-4 animate-fade-in">
 
             <Image
               src="/path2.png"
@@ -61,9 +61,9 @@ export default function RootPage() {
           </div>
 
           <div className="text-center mb-10 animate-fade-in-up">
-            <h1 className="text-4xl md:text-3xl font-bold tracking-tight text-white mb-6 leading-tight drop-shadow-2xl">
-              India's Most Flexible Self-Drive Vehicle Rental Platform
-              <span className="block text-white mt-1"></span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-6 leading-tight drop-shadow-2xl">
+              India's Most Flexible
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400 mt-2">Self-Drive Rental</span>
             </h1>
             <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed font-medium drop-shadow-lg">
               Rent bikes and cars on your own terms. No hidden charges, no fuel charges,
@@ -87,18 +87,44 @@ export default function RootPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto animate-fade-in-up">
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-lg">10K+</div>
-              <div className="text-xs md:text-sm text-gray-200 font-semibold">Vehicles</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto animate-fade-in-up mt-8">
+            {/* Verified Vehicles */}
+            <div className="group flex items-center gap-4 bg-black/40 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:bg-black/50 hover:border-white/20">
+              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shadow-inner group-hover:bg-white/10 transition-all duration-300 border border-white/5">
+                <svg className="w-6 h-6 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-2xl font-black text-white tracking-tight leadng-none mb-0.5 group-hover:text-green-400 transition-colors">Verified</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Vehicles</div>
+              </div>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-lg">50K+</div>
-              <div className="text-xs md:text-sm text-gray-200 font-semibold">Happy Customers</div>
+
+            {/* Affordable Pricing */}
+            <div className="group flex items-center gap-4 bg-black/40 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:bg-black/50 hover:border-white/20">
+              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shadow-inner group-hover:bg-white/10 transition-all duration-300 border border-white/5">
+                <svg className="w-6 h-6 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-blue-400 transition-colors">Affordable</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Pricing</div>
+              </div>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1 drop-shadow-lg">100+</div>
-              <div className="text-xs md:text-sm text-gray-200 font-semibold">Cities</div>
+
+            {/* Flexible Bookings */}
+            <div className="group flex items-center gap-4 bg-black/40 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:bg-black/50 hover:border-white/20">
+              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shadow-inner group-hover:bg-white/10 transition-all duration-300 border border-white/5">
+                <svg className="w-6 h-6 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-purple-400 transition-colors">Flexible</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Bookings</div>
+              </div>
             </div>
           </div>
         </div>
@@ -453,12 +479,12 @@ export default function RootPage() {
               As a premier <strong>self-drive vehicle rental platform</strong>, we bridge the gap between vehicle owners and those seeking a reliable ride.
               Gone are the days of depending on cabs or rigid schedules; with Zugo, you have the vehicle you need, right when you need it.
             </p>
-            <p>
+            {/* <p>
               Our extensive fleet includes everything from fuel-efficient scooters and powerful motorcycles to comfortable sedans and spacious SUVs.
               Whether you need to <strong>rent a bike</strong> for navigating city traffic or <strong>rent a car</strong> for a family vacation,
               Zugo offers a diverse range of vehicles to suit every budget and preference. We operate in over 100 cities across India,
               ensuring that wherever you go, a Zugo vehicle is never far away.
-            </p>
+            </p> */}
             <p>
               We pride ourselves on transparency and affordability. Our pricing is straightforward—what you see is what you pay.
               There are no hidden charges, and you don&apos;t have to worry about rising fuel costs eating into your budget.

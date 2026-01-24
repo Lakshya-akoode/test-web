@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
@@ -10,6 +10,11 @@ export default function RentalsPage() {
     const [loading, setLoading] = useState(true);
     // Default location (e.g., Delhi) if user location is not available immediately
     const [userLocation, setUserLocation] = useState({ latitude: 28.6139, longitude: 77.2090 });
+
+    // Search & Filter States
+    const [searchQuery, setSearchQuery] = useState('');
+    const [cityFilter, setCityFilter] = useState('');
+    const [radius, setRadius] = useState(5000); // Default 5km
 
     // Fetch rentals
     useEffect(() => {
@@ -33,13 +38,13 @@ export default function RentalsPage() {
         if (userLocation.latitude && userLocation.longitude) {
             fetchRentals();
         }
-    }, [userLocation]);
+    }, [userLocation, radius]);
 
     const fetchRentals = async () => {
         try {
             setLoading(true);
             // Construct URL with lat/long
-            let url = `${API_BASE_URL}${API_ENDPOINTS.RENTALS}?latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=5000&limit=50`;
+            let url = `${API_BASE_URL}${API_ENDPOINTS.RENTALS}?latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=${radius}&limit=50`;
 
             const res = await fetch(url);
             const data = await res.json();
@@ -54,11 +59,29 @@ export default function RentalsPage() {
         }
     };
 
+    // Client-side Filtering Logic
+    const filteredRentals = useMemo(() => {
+        return rentals.filter(rental => {
+            // 1. Text Search (Business Name or Owner Name)
+            const searchLower = searchQuery.toLowerCase();
+            const nameMatch = (rental.businessName || '').toLowerCase().includes(searchLower) ||
+                (rental.ownerName || '').toLowerCase().includes(searchLower);
+
+            // 2. City Filter
+            const cityLower = cityFilter.toLowerCase();
+            const cityMatch = !cityFilter ||
+                (rental.City || '').toLowerCase().includes(cityLower) ||
+                (rental.location || '').toLowerCase().includes(cityLower);
+
+            return nameMatch && cityMatch;
+        });
+    }, [rentals, searchQuery, cityFilter]);
+
     return (
         <div className="min-h-screen bg-gray-50 pt-32 pb-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-[90%] mx-auto">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <Link href="/home" className="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors">
@@ -70,6 +93,65 @@ export default function RentalsPage() {
                             Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600">Rentals</span>
                         </h1>
                         <p className="text-gray-500 mt-2 text-lg font-medium">Browse verified rental services near you</p>
+                    </div>
+                </div>
+
+                {/* Sticky Search & Filter Bar */}
+                <div className="sticky top-24 z-30 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 border border-white/20 p-4">
+                        <div className="flex flex-col lg:flex-row gap-4">
+                            {/* Search Inputs Group */}
+                            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4">
+                                {/* Search Text */}
+                                <div className="md:col-span-5 relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="block w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent text-gray-900 placeholder-gray-500 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                                        placeholder="Search by rental name..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+
+                                {/* City Filter */}
+                                <div className="md:col-span-4 relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="block w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent text-gray-900 placeholder-gray-500 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                                        placeholder="Filter by city..."
+                                        value={cityFilter}
+                                        onChange={(e) => setCityFilter(e.target.value)}
+                                    />
+                                </div>
+
+                                {/* Radius Dropdown */}
+                                <div className="md:col-span-3 relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    </div>
+                                    <select
+                                        value={radius}
+                                        onChange={(e) => setRadius(Number(e.target.value))}
+                                        className="block w-full pl-11 pr-10 py-3 bg-gray-50 border-transparent text-gray-900 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium appearance-none cursor-pointer"
+                                    >
+                                        <option value={5000}>Within 5 km</option>
+                                        <option value={10000}>Within 10 km</option>
+                                        <option value={20000}>Within 20 km</option>
+                                        <option value={50000}>Within 50 km</option>
+                                        <option value={100000}>Within 100 km</option>
+                                    </select>
+                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -90,22 +172,30 @@ export default function RentalsPage() {
                 )}
 
                 {/* Empty State */}
-                {!loading && rentals.length === 0 && (
+                {!loading && filteredRentals.length === 0 && (
                     <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm">
                         <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <span className="text-4xl">store</span>
+                            <span className="text-4xl">🔍</span>
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">No Rentals Found Near You</h3>
-                        <p className="text-gray-500 max-w-md mx-auto">We couldn't find any rental services in your current location. Try changing your search options.</p>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">No Rentals Found</h3>
+                        <p className="text-gray-500 max-w-md mx-auto">
+                            We couldn't find any rental services matching your search for "{searchQuery || cityFilter}".
+                        </p>
+                        <button
+                            onClick={() => { setSearchQuery(''); setCityFilter(''); setRadius(5000); }}
+                            className="mt-6 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                        >
+                            Clear Filters
+                        </button>
                     </div>
                 )}
 
                 {/* Rentals Grid */}
-                {!loading && rentals.length > 0 && (
+                {!loading && filteredRentals.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                        {rentals.map((rental, idx) => (
+                        {filteredRentals.map((rental, idx) => (
                             <div
-                                key={rental._id}
+                                key={rental._id || idx}
                                 className="group relative bg-white rounded-3xl overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 border border-gray-100 h-full flex flex-col transform hover:-translate-y-1"
                             >
                                 {/* Image Container */}
@@ -129,11 +219,13 @@ export default function RentalsPage() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
 
                                     {/* Distance Badge */}
-                                    <div className="absolute top-4 right-4 z-10">
-                                        <span className="px-3 py-1 bg-black/50 text-white text-xs font-bold rounded-full backdrop-blur-md border border-white/20 flex items-center gap-1">
-                                            📍 {rental.distance} km
-                                        </span>
-                                    </div>
+                                    {rental.distance != null && (
+                                        <div className="absolute top-4 right-4 z-10">
+                                            <span className="px-3 py-1 bg-black/50 text-white text-xs font-bold rounded-full backdrop-blur-md border border-white/20 flex items-center gap-1">
+                                                📍 {rental.distance} km
+                                            </span>
+                                        </div>
+                                    )}
 
                                     {/* Location on Image Bottom */}
                                     <div className="absolute bottom-4 left-4 right-4 z-10">

@@ -32,6 +32,12 @@ export default function BookVehiclePage() {
             router.push('/login');
             return;
         }
+
+        // Check if Razorpay is already loaded
+        if (typeof window !== 'undefined' && window.Razorpay) {
+            setRazorpayLoaded(true);
+        }
+
         const currentUser = getUser();
         setUser(currentUser);
 
@@ -311,188 +317,211 @@ export default function BookVehiclePage() {
                 onLoad={() => setRazorpayLoaded(true)}
                 onError={() => setError('Failed to load payment gateway')}
             />
-            <div className="min-h-screen bg-gray-50 pb-20">
-                <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 pt-24">
-                    {/* Header */}
-                    <div className="mb-6">
+            <div className="min-h-screen bg-gray-50/50 pb-20 font-sans">
+                {/* Header Background */}
+                <div className="bg-white border-b border-gray-100 pt-24 pb-8 px-4 md:px-6">
+                    <div className="max-w-7xl mx-auto">
                         <Link
                             href={`/vehicle/${id}`}
-                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-3"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-900 mb-4 transition-colors group"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
-                            <span className="font-medium">Back to Vehicle</span>
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-all">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </div>
+                            Back to Vehicle
                         </Link>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Complete Your Booking</h1>
-                        <p className="text-gray-600 mt-1">Review details and make payment</p>
+                        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">Complete Request</h1>
                     </div>
+                </div>
 
+                <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
                     {error && (
-                        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
-                            {error}
+                        <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-700 animate-fadeIn">
+                            <svg className="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span className="font-medium mt-0.5">{error}</span>
                         </div>
                     )}
 
-                    <div className="space-y-6">
-                        {/* Invoice Section */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900 mb-6">Invoice</h2>
+                    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 relative">
+                        {/* Left Column: Details */}
+                        <div className="flex-1 space-y-8">
 
-                            {/* Vehicle Info */}
-                            <div className="flex items-start gap-4 pb-6 border-b border-gray-100">
-                                <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
-                                    {(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? (
-                                        <img
-                                            src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto}
-                                            alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                e.target.style.display = 'none';
-                                                if (e.target.nextSibling) {
-                                                    e.target.nextSibling.style.display = 'flex';
-                                                }
-                                            }}
-                                        />
-                                    ) : null}
-                                    <div className={`w-full h-full ${(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? 'hidden' : 'flex'} items-center justify-center text-gray-400`}>
-                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
+                            {/* Vehicle Card */}
+                            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm overflow-hidden">
+                                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <span className="w-2 h-6 bg-black rounded-full"></span>
+                                    Vehicle Details
+                                </h2>
+                                <div className="flex gap-6">
+                                    <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
+                                        {(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? (
+                                            <img
+                                                src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto}
+                                                alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                                                }}
+                                            />
+                                        ) : null}
+                                        <div className={`w-full h-full ${(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? 'hidden' : 'flex'} items-center justify-center text-gray-300`}>
+                                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                        {vehicle.vehicleModel || vehicle.VehicleModel}
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
-                                            {vehicle.vehicleType || 'Vehicle'}
-                                        </span>
-                                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
-                                            {vehicle.City}
-                                        </span>
+                                    <div className="flex-1 py-1">
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <span className="inline-block px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-wider mb-2">
+                                                    {vehicle?.vehicleType}
+                                                </span>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-1">{vehicle?.vehicleModel || vehicle?.VehicleModel}</h3>
+                                                <p className="text-gray-500 font-medium">{vehicle?.City}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Booking Details */}
-                            <div className="py-6 space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-xs text-gray-500 mb-1">Start Date</p>
-                                        <p className="text-base font-bold text-gray-900">
-                                            {startDate ? new Date(startDate).toLocaleDateString('en-IN', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric'
-                                            }) : 'Not selected'}
+                            {/* Booking Dates */}
+                            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <span className="w-2 h-6 bg-blue-500 rounded-full"></span>
+                                    Trip Duration
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Start Date</p>
+                                        <p className="text-lg font-bold text-gray-900">
+                                            {startDate ? new Date(startDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) : 'Select Date'}
                                         </p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs text-gray-500 mb-1">End Date</p>
-                                        <p className="text-base font-bold text-gray-900">
-                                            {endDate ? new Date(endDate).toLocaleDateString('en-IN', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric'
-                                            }) : 'Not selected'}
+                                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">End Date</p>
+                                        <p className="text-lg font-bold text-gray-900">
+                                            {endDate ? new Date(endDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) : 'Select Date'}
                                         </p>
                                     </div>
                                 </div>
-
-                                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm text-blue-900 font-semibold">Total Duration</p>
-                                            <p className="text-xs text-blue-700 mt-1">
-                                                {startDate && endDate ? `${new Date(startDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })} - ${new Date(endDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}` : ''}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-2xl font-bold text-blue-900">{totalDays}</p>
-                                            <p className="text-xs text-blue-700">day{totalDays > 1 ? 's' : ''}</p>
-                                        </div>
-                                    </div>
+                                <div className="mt-4 p-4 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center gap-3 text-blue-800">
+                                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span className="font-bold">{totalDays} Day{totalDays > 1 ? 's' : ''} Booking</span>
                                 </div>
                             </div>
 
-                            {/* Price Breakdown */}
-                            <div className="pt-6 border-t border-gray-100 space-y-3">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Price per day</span>
-                                    <span className="font-bold text-gray-900">₹{pricePerDay}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Duration</span>
-                                    <span className="font-bold text-gray-900">{totalDays} day{totalDays > 1 ? 's' : ''}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-bold text-gray-900">₹{totalDays * pricePerDay}</span>
-                                </div>
-                                <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
-                                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                                    <span className="text-2xl font-bold text-gray-900">₹{totalAmount}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Pickup Location */}
-                        {owner && (owner.latitude && owner.longitude) && (
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4">Pickup Location</h2>
-                                <div className="space-y-4">
-                                    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-                                        <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-bold text-gray-900 mb-1">{owner.Address || 'Pickup Address'}</p>
-                                            <p className="text-sm text-gray-600">
-                                                {owner.Landmark && `${owner.Landmark}, `}
-                                                {owner.City}, {owner.State} - {owner.Pincode}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-xl overflow-hidden border border-gray-200">
+                            {/* Pickup Location */}
+                            {owner && (owner.latitude && owner.longitude) && (
+                                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                                    <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                        <span className="w-2 h-6 bg-green-500 rounded-full"></span>
+                                        Pickup Location
+                                    </h2>
+                                    <div className="rounded-2xl overflow-hidden border border-gray-200 h-64 mb-4 relative group">
                                         <iframe
                                             width="100%"
-                                            height="300"
+                                            height="100%"
                                             frameBorder="0"
                                             style={{ border: 0 }}
                                             src={`https://www.google.com/maps?q=${owner.latitude},${owner.longitude}&hl=es;z=14&output=embed`}
                                             allowFullScreen
                                         ></iframe>
+                                        <div className="absolute inset-0 pointer-events-none border-4 border-white/50 rounded-2xl"></div>
+                                    </div>
+                                    <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-2xl">
+                                        <div className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-gray-200">
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900">{owner.Address || 'Pickup Address'}</p>
+                                            <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                                                {owner.Landmark && `${owner.Landmark}, `}
+                                                {owner.City}, {owner.State} - {owner.Pincode}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Right Column: Sticky Summary */}
+                        <div className="lg:w-[420px] shrink-0">
+                            <div className="sticky top-28 space-y-6">
+                                <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-xl shadow-gray-200/50">
+                                    <h2 className="text-2xl font-black text-gray-900 mb-6">Payment Summary</h2>
+
+                                    <div className="space-y-4 mb-8">
+                                        <div className="flex justify-between items-center text-gray-600">
+                                            <span>Trip Price ({totalDays} days)</span>
+                                            <span className="font-bold text-gray-900">₹{totalDays * pricePerDay}</span>
+                                        </div>
+                                        {/* Security Deposit Line Item */}
+                                        {vehicle?.securityDeposit > 0 && (
+                                            <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-xl border border-yellow-100">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-yellow-800">Security Deposit</span>
+                                                    <div className="group relative">
+                                                        <svg className="w-4 h-4 text-yellow-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center">
+                                                            Refundable amount to be paid directly to the owner at pickup.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="block font-bold text-gray-900">₹{vehicle.securityDeposit}</span>
+                                                    <span className="text-[10px] uppercase font-bold text-yellow-700">Pay at Pickup</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="pt-4 border-t border-gray-100 flex justify-between items-end">
+                                            <span className="font-bold text-gray-900">Total Payable Now</span>
+                                            <span className="text-3xl font-black text-gray-900">₹{totalAmount}</span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handlePayment}
+                                        disabled={processing || !razorpayLoaded}
+                                        className="w-full bg-black text-white rounded-xl py-4 font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
+                                    >
+                                        {processing ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                Processing...
+                                            </>
+                                        ) : !razorpayLoaded ? (
+                                            'Loading Gateway...'
+                                        ) : (
+                                            <>
+                                                Pay Securely
+                                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <div className="mt-6 flex items-center justify-center gap-4 text-gray-400 grayscale opacity-70">
+                                        <div className="flex items-center gap-1.5">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                            <span className="text-xs font-bold">SSL Encrypted</span>
+                                        </div>
+                                        <div className="w-px h-4 bg-gray-200"></div>
+                                        <span className="text-xs font-bold">Trusted Payment</span>
+                                    </div>
+                                </div>
+
+                                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 flex gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-sm">Free Cancellation</h4>
+                                        <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                                            Cancel up to 24 hours before your trip starts for a full refund.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        )}
-
-                        {/* Payment Button */}
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                            <button
-                                onClick={handlePayment}
-                                disabled={processing || !razorpayLoaded}
-                                className="w-full bg-black text-white rounded-xl py-4 font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {processing ? (
-                                    <div className="flex items-center justify-center gap-2">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                        <span>Processing...</span>
-                                    </div>
-                                ) : !razorpayLoaded ? (
-                                    'Loading Payment Gateway...'
-                                ) : (
-                                    `Pay ₹${totalAmount}`
-                                )}
-                            </button>
-                            <p className="text-xs text-gray-500 text-center mt-3">
-                                🔒 Your payment is secure and encrypted
-                            </p>
                         </div>
                     </div>
                 </div>

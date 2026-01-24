@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useToast } from '@/context/ToastContext';
 import { isAuthenticated, getUser } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import Link from 'next/link';
 export default function VehicleDetailsPage() {
     const router = useRouter();
     const params = useParams();
+    const toast = useToast();
     const { id } = params;
 
     const [vehicle, setVehicle] = useState(null);
@@ -58,7 +60,7 @@ export default function VehicleDetailsPage() {
                 console.error('Failed to load vehicle:', vehicleData);
                 // Try to show error message
                 if (vehicleData.message) {
-                    alert(vehicleData.message);
+                    toast.error(vehicleData.message);
                 }
             }
 
@@ -75,7 +77,7 @@ export default function VehicleDetailsPage() {
 
         } catch (error) {
             console.error('Error loading details:', error);
-            alert('Failed to load vehicle details. Please try again.');
+            toast.error('Failed to load vehicle details. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -83,7 +85,7 @@ export default function VehicleDetailsPage() {
 
     const checkAvailability = async () => {
         if (!startDate) {
-            alert('Please select a start date');
+            toast.error('Please select a start date');
             return;
         }
 
@@ -163,12 +165,12 @@ export default function VehicleDetailsPage() {
                     {/* Left Column: Image & Info */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
-                        <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-96 relative">
+                        <div className="bg-gray-100 rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-96 relative flex items-center justify-center">
                             {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
                                 <img
                                     src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
                                     alt={vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
                                         if (e.target.nextSibling) {
@@ -315,6 +317,21 @@ export default function VehicleDetailsPage() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Security Deposit Info */}
+                            {vehicle.securityDeposit > 0 && (
+                                <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4 mb-6 flex items-start gap-3">
+                                    <div className="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center font-bold text-xs mt-0.5 shrink-0">i</div>
+                                    <div>
+                                        <div className="text-sm font-bold text-gray-900 mb-1">
+                                            ₹{vehicle.securityDeposit} Security Deposit
+                                        </div>
+                                        <p className="text-xs text-gray-600 leading-relaxed">
+                                            Refundable deposit payable directly to the owner at vehicle pickup.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
 
                             {isAvailable ? (
                                 <button

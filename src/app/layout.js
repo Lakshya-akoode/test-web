@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { ToastProvider } from "@/components/Toast";
+import { ToastProvider } from "@/context/ToastContext";
 import StructuredData from "@/components/StructuredData";
 import { generateMetadata as generateSEOMetadata, pageMetadata } from "@/lib/metadata";
 

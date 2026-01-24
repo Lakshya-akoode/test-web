@@ -276,6 +276,15 @@ export default function BookBikePage() {
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-lg font-bold text-gray-900">₹{vehicle.rentalPrice}</span>
                                             </div>
+                                            {vehicle.securityDeposit > 0 && (
+                                                <div className="flex items-center gap-1 mt-1 group/tooltip relative">
+                                                    <span className="text-[10px] text-gray-500 font-medium">+ ₹{vehicle.securityDeposit} Deposit</span>
+                                                    <div className="w-3 h-3 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[8px] font-bold cursor-help">i</div>
+                                                    <div className="absolute bottom-full left-0 mb-2 w-32 bg-gray-900 text-white text-[9px] p-2 rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-20">
+                                                        Refundable security deposit paid to owner
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-lg shadow-gray-200">

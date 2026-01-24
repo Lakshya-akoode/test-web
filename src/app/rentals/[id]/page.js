@@ -11,6 +11,13 @@ export default function RentalVehiclesPage() {
     const [loading, setLoading] = useState(true);
     const [rental, setRental] = useState(null);
     const [vehicles, setVehicles] = useState([]);
+    const [nearbyRentals, setNearbyRentals] = useState([]);
+    const [nearbyLoading, setNearbyLoading] = useState(false);
+
+    // Filter & Sort State
+    const [filteredVehicles, setFilteredVehicles] = useState([]);
+    const [filterCategory, setFilterCategory] = useState('All');
+    const [sortOrder, setSortOrder] = useState('price_asc'); // price_asc, price_desc
 
     // Fetch rental details and vehicles
     useEffect(() => {
@@ -30,6 +37,12 @@ export default function RentalVehiclesPage() {
             if (data.status === 'Success') {
                 setRental(data.data.rental);
                 setVehicles(data.data.vehicles || []);
+                setFilteredVehicles(data.data.vehicles || []); // Initialize filtered list
+
+                // Fetch nearby rentals once we have rental details
+                if (data.data.rental) {
+                    fetchNearbyRentals(data.data.rental);
+                }
             }
         } catch (error) {
             console.error('Error fetching rental vehicles:', error);
@@ -37,6 +50,73 @@ export default function RentalVehiclesPage() {
             setLoading(false);
         }
     };
+
+    const fetchNearbyRentals = async (currentRental) => {
+        try {
+            setNearbyLoading(true);
+            const params = new URLSearchParams({
+                limit: 4,
+                excludeId: currentRental._id // Exclude current rental
+            });
+
+            // Prioritize Lat/Long, fallback to City
+            if (currentRental.latitude && currentRental.longitude) {
+                params.append('latitude', currentRental.latitude);
+                params.append('longitude', currentRental.longitude);
+                params.append('radius', 50); // 50km radius
+            } else if (currentRental.City) {
+                params.append('city', currentRental.City);
+            }
+
+            const url = `${API_BASE_URL}${API_ENDPOINTS.RENTALS}?${params.toString()}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.status === 'Success') {
+                setNearbyRentals(data.data.rentals || []);
+            }
+        } catch (error) {
+            console.error('Error fetching nearby rentals:', error);
+        } finally {
+            setNearbyLoading(false);
+        }
+    };
+
+    // Filter Logic
+    useEffect(() => {
+        let result = [...vehicles];
+
+        // 1. Filter by Category
+        if (filterCategory !== 'All') {
+            result = result.filter(v => {
+                const type = (v.vehicleType || '').toLowerCase();
+                const cat = (v.category || '').toLowerCase();
+                const sub = (v.subcategory || '').toLowerCase();
+
+                if (filterCategory === 'Bike') {
+                    return type.includes('bike') || cat.includes('bike') || sub.includes('bike') ||
+                        type.includes('motorcycle') || cat.includes('2-wheeler');
+                }
+                if (filterCategory === 'Scooter') {
+                    return type.includes('scoot') || cat.includes('scoot') || sub.includes('scoot');
+                }
+                if (filterCategory === 'Car') {
+                    return type.includes('car') || cat.includes('car') || sub.includes('car') ||
+                        cat.includes('4-wheeler') || ['suv', 'sedan', 'hatchback'].includes(sub);
+                }
+                return true;
+            });
+        }
+
+        // 2. Sort by Price
+        result.sort((a, b) => {
+            const priceA = parseInt(a.rentalPrice) || 0;
+            const priceB = parseInt(b.rentalPrice) || 0;
+            return sortOrder === 'price_asc' ? priceA - priceB : priceB - priceA;
+        });
+
+        setFilteredVehicles(result);
+    }, [vehicles, filterCategory, sortOrder]);
 
     return (
         <div className="min-h-screen bg-gray-50 pt-20 pb-10 px-4 sm:px-6 lg:px-8">
@@ -104,10 +184,49 @@ export default function RentalVehiclesPage() {
                     </div>
                 )}
 
-                {/* Vehicles Grid */}
+                {/* Filters Section */}
                 {!loading && vehicles.length > 0 && (
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sticky top-20 z-30 bg-gray-50/95 backdrop-blur py-2">
+                        {/* Category Tabs */}
+                        <div className="flex items-center gap-2 p-1 bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto max-w-full">
+                            {['All', 'Bike', 'Scooter', 'Car'].map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setFilterCategory(cat)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${filterCategory === cat
+                                            ? 'bg-black text-white shadow-md'
+                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Sort Dropdown */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block">Sort by:</span>
+                            <div className="relative">
+                                <select
+                                    value={sortOrder}
+                                    onChange={(e) => setSortOrder(e.target.value)}
+                                    className="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-black/5 cursor-pointer shadow-sm hover:border-gray-300 transition-colors"
+                                >
+                                    <option value="price_asc">Price: Low to High</option>
+                                    <option value="price_desc">Price: High to Low</option>
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Vehicles Grid */}
+                {!loading && filteredVehicles.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {vehicles.map((vehicle) => (
+                        {filteredVehicles.map((vehicle) => (
                             <div
                                 key={vehicle._id || vehicle.additionalVehicleId}
                                 className="group relative bg-white rounded-2xl overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 border border-gray-100 h-full flex flex-col transform hover:-translate-y-1"
@@ -141,6 +260,13 @@ export default function RentalVehiclesPage() {
                                                 <span className="text-[9px] text-gray-500 font-bold uppercase">/day</span>
                                             </div>
                                         </div>
+                                        {vehicle.securityDeposit > 0 && (
+                                            <div className="bg-yellow-500/90 backdrop-blur px-2.5 py-1 rounded-lg border border-yellow-400/20 shadow-sm mt-1">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] font-bold text-white uppercase">Deposit: ₹{vehicle.securityDeposit}</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -171,6 +297,54 @@ export default function RentalVehiclesPage() {
                     </div>
                 )}
             </div>
+
+            {/* Nearby Rentals Section */}
+            {nearbyRentals.length > 0 && (
+                <div className="max-w-6xl mx-auto mt-16 pt-10 border-t border-gray-200">
+                    <h2 className="text-2xl font-black text-gray-900 mb-6">Nearby Rental Services</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {nearbyRentals.map((item) => (
+                            <Link
+                                key={item._id}
+                                href={`/rentals/${item._id}`}
+                                className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"
+                            >
+                                <div className="h-40 bg-gray-100 relative overflow-hidden">
+                                    {item.rentalImage ? (
+                                        <img
+                                            src={item.rentalImage}
+                                            alt={item.businessName}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-gray-100 to-gray-200">
+                                            🏢
+                                        </div>
+                                    )}
+                                    {item.distance !== null && (
+                                        <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2 py-1 rounded-lg">
+                                            {item.distance} km
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-4">
+                                    <h3 className="font-bold text-gray-900 text-base line-clamp-1 mb-1 group-hover:text-blue-600 transition-colors">
+                                        {item.businessName}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 mb-3 flex items-center gap-1">
+                                        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        {item.City}, {item.State}
+                                    </p>
+                                    <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{item.vehicleCount} Vehicles</span>
+                                        <span className="text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">View →</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

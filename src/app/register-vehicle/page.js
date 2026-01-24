@@ -4,11 +4,13 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useToast } from '@/context/ToastContext';
 import { isAuthenticated, getUser, getToken } from '@/lib/auth';
 import API from '@/lib/api';
 
 function RegisterVehicleContent() {
     const router = useRouter();
+    const toast = useToast();
     const searchParams = useSearchParams();
     const vehicleType = searchParams.get('type') || 'bike';
     const vehicleCategory = vehicleType === 'car' ? '4-wheeler' : '2-wheeler';
@@ -32,7 +34,10 @@ function RegisterVehicleContent() {
         vehicleType: '',
         returnDuration: '',
         rentalPrice: '',
+        returnDuration: '',
+        rentalPrice: '',
         hourlyPrice: '',
+        securityDeposit: '', // Added field
         agreed: false,
         latitude: '',
         longitude: '',
@@ -76,12 +81,12 @@ function RegisterVehicleContent() {
                 (error) => {
                     console.error('Error getting location:', error);
                     setIsLoadingLocation(false);
-                    alert('Please enable location access to register your vehicle.');
+                    toast.error('Please enable location access to register your vehicle.');
                 }
             );
         } else {
             setIsLoadingLocation(false);
-            alert('Geolocation is not supported by your browser.');
+            toast.error('Geolocation is not supported by your browser.');
         }
     };
 
@@ -117,7 +122,7 @@ function RegisterVehicleContent() {
             !formData.addressPhoto || !formData.vehicleRC || !formData.PUC ||
             !latitude || !longitude
         ) {
-            alert('Please fill all required fields and upload all documents.');
+            toast.error('Please fill all required fields and upload all documents.');
             return;
         }
 
@@ -142,6 +147,9 @@ function RegisterVehicleContent() {
             formDataToSend.append('rentalPrice', formData.rentalPrice);
             if (formData.hourlyPrice) {
                 formDataToSend.append('hourlyPrice', formData.hourlyPrice);
+            }
+            if (formData.securityDeposit) {
+                formDataToSend.append('securityDeposit', formData.securityDeposit);
             }
             formDataToSend.append('agreed', formData.agreed ? '1' : '0');
             formDataToSend.append('latitude', latitude.toString());
@@ -172,14 +180,14 @@ function RegisterVehicleContent() {
             const data = await response.json();
 
             if (data.status === 'Success') {
-                alert('Vehicle registered successfully!');
+                toast.success('Vehicle registered successfully!');
                 router.push('/my-vehicles');
             } else {
-                alert(data.message || 'Failed to register vehicle. Please try again.');
+                toast.error(data.message || 'Failed to register vehicle. Please try again.');
             }
         } catch (error) {
             console.error('Registration error:', error);
-            alert('Error registering vehicle. Please try again.');
+            toast.error('Error registering vehicle. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -561,6 +569,22 @@ function RegisterVehicleContent() {
                                             className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none font-bold text-gray-900"
                                         />
                                     </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-gray-700 ml-1">Security Deposit (Optional)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₹</span>
+                                        <input
+                                            type="number"
+                                            name="securityDeposit"
+                                            value={formData.securityDeposit}
+                                            onChange={handleChange}
+                                            placeholder="0"
+                                            min="0"
+                                            className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none font-bold text-gray-900"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-gray-500 ml-1">Paid directly to you by renter</p>
                                 </div>
                             </div>
                         </div>

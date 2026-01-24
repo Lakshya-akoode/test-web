@@ -100,8 +100,8 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex bg-white">
             {/* Left Side: Branding / Image */}
-            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-black">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 z-10 opacity-90"></div>
+            <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-white">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1a0b2e] via-[#000000] to-[#11001c] z-10"></div>
                 <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10 z-10"></div>
                 <Image
                     src="/background.png"

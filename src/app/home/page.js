@@ -28,8 +28,8 @@ export default function HomePage() {
     const fetchVehicles = async () => {
         try {
             setLoading(true);
-            // Defaulting to 2-wheeler as per mobile app preference
-            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?category=2-wheeler`, {
+            // Fetch all vehicles (remove category filter)
+            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
