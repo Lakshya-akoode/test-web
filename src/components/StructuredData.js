@@ -106,6 +106,42 @@ export default function StructuredData() {
         },
     };
 
+    // SiteNavigationElement Schema
+    const siteNavigationSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: [
+            {
+                '@type': 'SiteNavigationElement',
+                position: 1,
+                name: 'Bikes in Bangalore',
+                description: 'Rent bikes in Bangalore',
+                url: `${siteConfig.url}/bikes-for-rent/bangalore`,
+            },
+            {
+                '@type': 'SiteNavigationElement',
+                position: 2,
+                name: 'Bikes in Delhi',
+                description: 'Rent bikes in Delhi',
+                url: `${siteConfig.url}/bikes-for-rent/delhi`,
+            },
+            {
+                '@type': 'SiteNavigationElement',
+                position: 3,
+                name: 'Bikes in Gurugram',
+                description: 'Rent bikes in Gurugram',
+                url: `${siteConfig.url}/bikes-for-rent/gurugram`,
+            },
+            {
+                '@type': 'SiteNavigationElement',
+                position: 4,
+                name: 'Bikes in Rishikesh',
+                description: 'Rent bikes in Rishikesh',
+                url: `${siteConfig.url}/bikes-for-rent/rishikesh`,
+            },
+        ],
+    };
+
     return (
         <>
             <script
@@ -130,6 +166,12 @@ export default function StructuredData() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(serviceSchema),
+                }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(siteNavigationSchema),
                 }}
             />
         </>

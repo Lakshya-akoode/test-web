@@ -416,8 +416,43 @@ export default function RootPage() {
         </div>
       </div>
 
-      {/* Features Section - UPGRADED UI */}
+      {/* Popular Cities Section - SITELINKS OPTIMIZATION */}
       <div className="py-24 px-5 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
+              Our Locations
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Find the perfect ride in your city. Select your location to see available bikes and scooters.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { name: 'Bangalore', link: '/bikes-for-rent/bangalore', img: 'bg-gradient-to-br from-purple-500 to-indigo-600' },
+              { name: 'Delhi', link: '/bikes-for-rent/delhi', img: 'bg-gradient-to-br from-orange-400 to-red-500' },
+              { name: 'Gurugram', link: '/bikes-for-rent/gurugram', img: 'bg-gradient-to-br from-blue-400 to-cyan-500' },
+              { name: 'Rishikesh', link: '/bikes-for-rent/rishikesh', img: 'bg-gradient-to-br from-emerald-400 to-teal-500' },
+            ].map((city, i) => (
+              <Link key={i} href={city.link} className="group relative h-48 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                <div className={`absolute inset-0 ${city.img} opacity-90 group-hover:opacity-100 transition-opacity`}></div>
+                <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
+                  <div>
+                    <h3 className="text-2xl font-black text-white mb-2 drop-shadow-md">{city.name}</h3>
+                    <span className="inline-block px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/30 group-hover:bg-white group-hover:text-black transition-all">
+                      View Bikes
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section - UPGRADED UI */}
+      <div className="py-24 px-5 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center text-gray-900 mb-16 tracking-tight">
             What Makes Zugo Different?
