@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useToast } from '@/context/ToastContext';
-import { isAuthenticated, getUser } from '@/lib/auth';
+import { isAuthenticated, getUser, setAuth } from '@/lib/auth';
 import API from '@/lib/api';
 
 export default function RegisterRentalPage() {
@@ -513,14 +513,26 @@ export default function RegisterRentalPage() {
                                                 </button>
                                             </div>
                                         ) : location.latitude && location.longitude ? (
-                                            <div className="flex items-center gap-3 text-green-600">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
-                                                <span className="text-sm font-bold">
-                                                    Location captured: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
-                                                </span>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex items-center gap-3 text-green-600">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    <span className="text-sm font-bold">
+                                                        Location captured: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={getCurrentLocation}
+                                                    className="self-start text-xs font-bold text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                                                >
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                    </svg>
+                                                    Update Location
+                                                </button>
                                             </div>
                                         ) : null}
                                     </div>

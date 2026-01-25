@@ -17,14 +17,33 @@ export default function BookBikePage() {
     const [selectedCity, setSelectedCity] = useState('');
     const [searchRadius, setSearchRadius] = useState(50);
     const [showRadiusModal, setShowRadiusModal] = useState(false);
+    const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
 
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
             return;
         }
+        // Try to get user location on mount
+        getCurrentLocation();
         fetchVehicles();
     }, [router]);
+
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.log("Error getting location:", error);
+                }
+            );
+        }
+    };
 
     useEffect(() => {
         filterVehiclesByCategory(activeTab);
@@ -42,6 +61,7 @@ export default function BookBikePage() {
         }
     }, [searchQuery]);
 
+    // ... helper functions ...
     const filterVehiclesByCategory = (category) => {
         const normalized = (v) => (v || '').toString().trim().toLowerCase();
         const isBikeLike = (type) => ['bike'].includes(type);
@@ -82,6 +102,11 @@ export default function BookBikePage() {
                 queryParams += `&city=${selectedCity}`;
             }
 
+            // Add location params if available
+            if (userLocation.latitude && userLocation.longitude) {
+                queryParams += `&latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=${searchRadius * 1000}`;
+            }
+
             const url = `${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?${queryParams}`;
             const response = await fetch(url, {
                 method: 'GET',
@@ -101,6 +126,13 @@ export default function BookBikePage() {
             setLoading(false);
         }
     };
+
+    // Re-fetch when location or radius changes
+    useEffect(() => {
+        if (userLocation.latitude && userLocation.longitude) {
+            fetchVehicles();
+        }
+    }, [userLocation, searchRadius]);
 
     useEffect(() => {
         fetchVehicles();
@@ -145,7 +177,7 @@ export default function BookBikePage() {
                 <div className="bg-white rounded-2xl p-4 mb-10 shadow-xl shadow-gray-200/50 border border-gray-100">
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
+                            <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500/20 focus:ring-blue-500 focus-within:border-blue-500 transition-all">
                                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
@@ -171,6 +203,15 @@ export default function BookBikePage() {
                                 >
                                     <span>📍</span>
                                     <span>{searchRadius} km</span>
+                                </button>
+                                <button
+                                    onClick={getCurrentLocation}
+                                    className="px-4 py-3.5 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-all flex items-center gap-2"
+                                    title="Update Location"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>

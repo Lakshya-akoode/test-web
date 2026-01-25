@@ -16,14 +16,32 @@ export default function BookCarPage() {
     const [selectedCity, setSelectedCity] = useState('');
     const [searchRadius, setSearchRadius] = useState(50);
     const [showRadiusModal, setShowRadiusModal] = useState(false);
+    const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
 
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
             return;
         }
+        getCurrentLocation();
         fetchVehicles();
     }, [router]);
+
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.log("Error getting location:", error);
+                }
+            );
+        }
+    };
 
     useEffect(() => {
         if (searchQuery.trim() === '') {
@@ -45,6 +63,11 @@ export default function BookCarPage() {
                 queryParams += `&city=${selectedCity}`;
             }
 
+            // Add location params if available
+            if (userLocation.latitude && userLocation.longitude) {
+                queryParams += `&latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=${searchRadius * 1000}`;
+            }
+
             const url = `${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?${queryParams}`;
             const response = await fetch(url, {
                 method: 'GET',
@@ -64,6 +87,13 @@ export default function BookCarPage() {
             setLoading(false);
         }
     };
+
+    // Re-fetch when location or radius changes
+    useEffect(() => {
+        if (userLocation.latitude && userLocation.longitude) {
+            fetchVehicles();
+        }
+    }, [userLocation, searchRadius]);
 
     useEffect(() => {
         fetchVehicles();
@@ -133,6 +163,15 @@ export default function BookCarPage() {
                             >
                                 <span>📍</span>
                                 <span>{searchRadius} km</span>
+                            </button>
+                            <button
+                                onClick={getCurrentLocation}
+                                className="px-4 py-3.5 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-all flex items-center gap-2"
+                                title="Update Location"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
                             </button>
                         </div>
                     </div>
