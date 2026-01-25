@@ -13,6 +13,12 @@ export default function sitemap() {
             priority: 1,
         },
         {
+            url: `${baseUrl}/bike-rent-pricing`,
+            lastModified: currentDate,
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
             url: `${baseUrl}/book/bike`,
             lastModified: currentDate,
             changeFrequency: 'daily',
