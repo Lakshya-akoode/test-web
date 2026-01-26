@@ -60,7 +60,7 @@ export default function HomePage() {
     });
 
     return (
-        <div className="min-h-screen bg-gray-50/50">
+        <div className="min-h-screen bg-gray-50/50 overflow-x-hidden">
             {/* Hero Section - Blended with Navbar */}
             <section className="relative bg-black text-white pt-24 pb-32 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>

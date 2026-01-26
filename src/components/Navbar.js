@@ -9,6 +9,7 @@ import { getUser, clearAuth, isAuthenticated } from '@/lib/auth';
 export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [user, setUser] = useState(null);
     const [isScrolled, setIsScrolled] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -26,8 +27,14 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [pathname]);
 
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
+
     const handleLogout = () => {
         setShowLogoutModal(true);
+        setIsMobileMenuOpen(false);
     };
 
     const confirmLogout = () => {
@@ -45,7 +52,7 @@ export default function Navbar() {
     // Determine if we are on the home page hero section (transparent state)
     const isHome = pathname === '/home' || pathname === '/';
     // Transparent if on Home AND not scrolled. Otherwise white/glass.
-    const isTransparent = isHome && !isScrolled;
+    const isTransparent = isHome && !isScrolled && !isMobileMenuOpen;
 
     const navClass = isTransparent
         ? 'bg-transparent border-transparent'
@@ -54,6 +61,7 @@ export default function Navbar() {
     const textColorClass = isTransparent ? 'text-white' : 'text-gray-900';
     const logoFilterClass = isTransparent ? 'invert brightness-0' : ''; // Turn black logo to white
     const hoverTextClass = isTransparent ? 'hover:text-gray-200' : 'hover:text-black';
+    const hamburgerColorClass = isTransparent ? 'text-white' : 'text-gray-900';
 
     return (
         <>
@@ -76,25 +84,25 @@ export default function Navbar() {
 
                         </div>
 
-                        {/* Right Side Actions */}
-                        <div className="flex items-center gap-4 lg:gap-6">
+                        {/* Right Side Actions (Desktop) */}
+                        <div className="hidden lg:flex items-center gap-4 lg:gap-6">
                             {isAuthenticated() ? (
                                 <>
-                                    <div className={`hidden lg:flex items-center gap-4 xl:gap-6 text-sm font-semibold ${textColorClass}`}>
+                                    <div className={`flex items-center gap-4 xl:gap-6 text-sm font-semibold ${textColorClass}`}>
                                         <Link href="/bookings" className={`transition-colors ${pathname === '/bookings' && !isTransparent ? 'text-black font-bold' : ''} ${hoverTextClass}`}>My Bookings</Link>
                                         <Link href="/my-vehicles" className={`transition-colors ${pathname === '/my-vehicles' && !isTransparent ? 'text-black font-bold' : ''} ${hoverTextClass}`}>My Vehicles</Link>
                                         <Link href="/owner-bookings" className={`transition-colors ${pathname === '/owner-bookings' && !isTransparent ? 'text-black font-bold' : ''} ${hoverTextClass}`}>Owner Bookings</Link>
                                     </div>
 
-                                    <div className={`h-6 w-px hidden lg:block ${isTransparent ? 'bg-white/20' : 'bg-gray-200'}`}></div>
+                                    <div className={`h-6 w-px ${isTransparent ? 'bg-white/20' : 'bg-gray-200'}`}></div>
 
                                     <div className="flex items-center gap-2 lg:gap-3">
-                                        <div className="hidden md:flex items-center gap-2.5 lg:gap-3">
-                                            <div className="text-right hidden sm:block">
+                                        <div className="flex items-center gap-2.5 lg:gap-3">
+                                            <div className="text-right">
                                                 <div className={`text-xs font-bold leading-tight ${isTransparent ? 'text-white' : 'text-gray-900'}`}>User</div>
                                                 <div className={`text-[10px] font-semibold uppercase tracking-wide ${isTransparent ? 'text-gray-300' : 'text-gray-500'}`}>VERIFIED</div>
                                             </div>
-                                            <Link href="/profile" className={`w-9 h-9 lg:w-10 lg:h-10 ${isTransparent ? 'bg-white/20 ring-2 ring-white/30' : 'bg-gray-900 ring-2 ring-gray-200'} rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold shadow-md hover:scale-105 transition-transform cursor-pointer`}>
+                                            <Link href="/profile" className={`w-10 h-10 ${isTransparent ? 'bg-white/20 ring-2 ring-white/30' : 'bg-gray-900 ring-2 ring-gray-200'} rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md hover:scale-105 transition-transform cursor-pointer`}>
                                                 {(user?.Name || user?.username || 'U').charAt(0).toUpperCase()}
                                             </Link>
                                         </div>
@@ -120,9 +128,90 @@ export default function Navbar() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Hamburger Button (Mobile) */}
+                        <div className="flex lg:hidden items-center gap-4 z-50">
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className={`p-2.5 rounded-full shadow-lg border border-gray-100 transition-all active:scale-95 ${isTransparent ? 'bg-white text-black' : 'bg-white text-gray-900'}`}
+                                aria-label="Toggle menu"
+                            >
+                                {isMobileMenuOpen ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </nav>
+
+            {/* Mobile Menu Overlay */}
+            <div
+                className={`lg:hidden fixed inset-0 z-[9999] bg-white transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+                    }`}
+                style={{ backgroundColor: '#ffffff' }}
+            >
+                <div className="flex flex-col h-full bg-white">
+                    {/* Menu Header with Close Button */}
+                    <div className="flex items-center justify-between px-6 h-16 border-b border-gray-100 shrink-0">
+                        {/* Optional: Add Logo here if desired, otherwise just space or "Menu" title */}
+                        <div className="text-xl font-bold tracking-tight text-gray-900">Menu</div>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="p-2 -mr-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                            aria-label="Close menu"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-hide">
+                        <div className="flex flex-col gap-6 text-lg font-medium text-gray-900">
+                            {isAuthenticated() ? (
+                                <>
+                                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                                        <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-sm shrink-0">
+                                            {(user?.Name || user?.username || 'U').charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-bold text-gray-900 truncate">{user?.Name || user?.username || 'User'}</div>
+                                            <div className="text-xs font-semibold text-green-600 uppercase tracking-wide">Verified Member</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Link href="/home" className="py-3 px-2 border-b border-gray-100 hover:bg-gray-50 hover:pl-4 transition-all rounded-lg">Home</Link>
+                                        <Link href="/bookings" className="py-3 px-2 border-b border-gray-100 hover:bg-gray-50 hover:pl-4 transition-all rounded-lg">My Bookings</Link>
+                                        <Link href="/my-vehicles" className="py-3 px-2 border-b border-gray-100 hover:bg-gray-50 hover:pl-4 transition-all rounded-lg">My Vehicles</Link>
+                                        <Link href="/owner-bookings" className="py-3 px-2 border-b border-gray-100 hover:bg-gray-50 hover:pl-4 transition-all rounded-lg">Owner Bookings</Link>
+                                        <Link href="/profile" className="py-3 px-2 border-b border-gray-100 hover:bg-gray-50 hover:pl-4 transition-all rounded-lg">My Profile</Link>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="py-3 px-2 text-left text-red-600 font-bold hover:bg-red-50 hover:pl-4 transition-all rounded-lg mt-2"
+                                    >
+                                        Log Out
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/" className="py-3 border-b border-gray-100 hover:text-blue-600 transition-colors">Home</Link>
+                                    <Link href="/login" className="py-3 border-b border-gray-100 hover:text-blue-600 transition-colors">Log In</Link>
+                                    <Link href="/register" className="py-3 px-4 bg-black text-white text-center rounded-xl font-bold shadow-lg hover:bg-gray-800 transition-all mt-6">Sign Up</Link>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Logout Modal */}
             {showLogoutModal && (

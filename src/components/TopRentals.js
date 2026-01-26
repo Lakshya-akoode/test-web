@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function TopRentals() {
     return (
-        <div className="w-full py-16 px-4">
+        <div className="w-full py-16 px-4 overflow-hidden">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Main Heading Section */}
                 <div className="text-center mb-12 relative">
