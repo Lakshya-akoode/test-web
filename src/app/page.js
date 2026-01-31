@@ -72,7 +72,7 @@ export default function RootPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <Link
-                href="/login"
+                href="/book/bike"
                 className="group w-full sm:w-auto px-8 py-4 bg-white text-gray-900 rounded-xl font-bold text-base hover:bg-gray-50 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-105 transform inline-flex items-center justify-center"
               >
                 Book a Vehicle

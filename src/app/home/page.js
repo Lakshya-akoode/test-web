@@ -17,13 +17,12 @@ export default function HomePage() {
     const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated()) {
-            router.push('/login');
-            return;
+        // Set user if authenticated, but don't redirect if not
+        if (isAuthenticated()) {
+            setUser(getUser());
         }
-        setUser(getUser());
         fetchVehicles();
-    }, [router]);
+    }, []);
 
     const fetchVehicles = async () => {
         try {
