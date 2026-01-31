@@ -24,4 +24,5 @@ export const API_ENDPOINTS = {
     HOST_REVIEWS: '/reviews/host', // + /:id
     ADD_REVIEW: '/reviews/add',
     GET_USER: '/getUser',
+    CITIES: '/search/cities',
 };

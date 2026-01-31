@@ -239,8 +239,8 @@ export default function ManageRentalPage() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${vehicle.status === 'Available' ? 'bg-green-100 text-green-700' :
-                                                            vehicle.status === 'Rented' ? 'bg-blue-100 text-blue-700' :
-                                                                'bg-orange-100 text-orange-700'
+                                                        vehicle.status === 'Rented' ? 'bg-blue-100 text-blue-700' :
+                                                            'bg-orange-100 text-orange-700'
                                                         }`}>
                                                         {vehicle.status}
                                                     </span>

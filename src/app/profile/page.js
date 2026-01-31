@@ -10,6 +10,13 @@ export default function ProfilePage() {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [rentalProfile, setRentalProfile] = useState(null);
+    const [isEditingRental, setIsEditingRental] = useState(false);
+    const [editFormData, setEditFormData] = useState({});
+    const [rentalLoading, setRentalLoading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated()) {
@@ -18,6 +25,13 @@ export default function ProfilePage() {
         }
         fetchUserProfile();
     }, [router]);
+
+    useEffect(() => {
+        if (user?.userType === 'rental_owner') {
+            console.log('User is a rental owner');
+            fetchRentalProfile();
+        }
+    }, [user]);
 
     const fetchUserProfile = async () => {
         try {
@@ -39,6 +53,89 @@ export default function ProfilePage() {
             console.error('Error fetching profile:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchRentalProfile = async () => {
+        try {
+
+            setRentalLoading(true);
+            const token = getToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/rental/profile`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+
+            if (data.status === 'Success') {
+                setRentalProfile(data.data);
+                setEditFormData(data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching rental profile:', error);
+        } finally {
+            setRentalLoading(false);
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRentalUpdate = async (e) => {
+        e.preventDefault();
+        setIsUpdating(true);
+        try {
+            const token = getToken();
+            const formData = new FormData();
+
+            // Append all form fields
+            Object.keys(editFormData).forEach(key => {
+                if (editFormData[key]) {
+                    formData.append(key, editFormData[key]);
+                }
+            });
+
+            // Append image if selected
+            if (selectedImage) {
+                formData.append('rentalImage', selectedImage);
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/user/rental/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    // Don't set Content-Type, let browser set it with boundary for FormData
+                },
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.status === 'Success') {
+                setRentalProfile(data.data);
+                setIsEditingRental(false);
+                setSelectedImage(null);
+                setImagePreview(null);
+                alert('Rental profile updated successfully!');
+            } else {
+                alert(data.message || 'Failed to update profile');
+            }
+        } catch (error) {
+            console.error('Error updating rental profile:', error);
+            alert('An error occurred while updating');
+        } finally {
+            setIsUpdating(false);
         }
     };
 
@@ -79,7 +176,7 @@ export default function ProfilePage() {
                                 </h1>
                                 <p className="text-gray-400 font-medium flex items-center gap-2">
                                     <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                    {user?.userType === 'owner' ? 'Vehicle Owner' : 'Verified Renter'}
+                                    {user?.userType === 'rental_owner' || user?.userType === 'owner' ? 'Rental Business Owner' : 'Verified Renter'}
                                 </p>
                             </div>
                         </div>
@@ -101,8 +198,187 @@ export default function ProfilePage() {
             <div className="relative max-w-5xl mx-auto px-4 md:px-6 -mt-20 z-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* Left Column: Personal Info */}
+                    {/* Left Column: Info Sections */}
                     <div className="md:col-span-2 space-y-6">
+
+                        {/* Rental Business Details (Only for Rental Owners) */}
+                        {user?.userType === 'rental_owner' && rentalProfile && (
+                            <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-6">
+                                    {!isEditingRental && (
+                                        <button
+                                            onClick={() => {
+                                                setIsEditingRental(true);
+                                                setImagePreview(rentalProfile.rentalImage || null);
+                                            }}
+                                            className="text-blue-600 hover:text-blue-700 text-sm font-bold bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                                        >
+                                            Edit Details
+                                        </button>
+                                    )}
+                                </div>
+                                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                    Rental Business Details
+                                </h2>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+                                    {isEditingRental ? (
+                                        <form onSubmit={handleRentalUpdate} className="col-span-2 space-y-6">
+                                            {/* Business Image Upload */}
+                                            <div className="col-span-2 space-y-2">
+                                                <label className="text-xs font-bold text-gray-500 uppercase">Business Logo/Image</label>
+                                                <div className="flex items-center gap-4">
+                                                    {(imagePreview || rentalProfile.rentalImage) && (
+                                                        <div className="w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-200 flex-shrink-0">
+                                                            <img
+                                                                src={imagePreview || rentalProfile.rentalImage}
+                                                                alt="Business"
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleImageChange}
+                                                            className="hidden"
+                                                            id="rental-image-upload"
+                                                        />
+                                                        <label
+                                                            htmlFor="rental-image-upload"
+                                                            className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-sm font-bold cursor-pointer transition-colors"
+                                                        >
+                                                            {imagePreview || rentalProfile.rentalImage ? 'Change Image' : 'Upload Image'}
+                                                        </label>
+                                                        <p className="text-xs text-gray-500 mt-1">Recommended: Square image, max 5MB</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase">Business Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={editFormData.businessName || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, businessName: e.target.value })}
+                                                        className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase">Owner Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={editFormData.ownerName || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, ownerName: e.target.value })}
+                                                        className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase">Contact No</label>
+                                                    <input
+                                                        type="text"
+                                                        value={editFormData.ContactNo || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, ContactNo: e.target.value })}
+                                                        className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase">City</label>
+                                                    <input
+                                                        type="text"
+                                                        value={editFormData.City || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, City: e.target.value })}
+                                                        className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="col-span-2 space-y-1">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase">Address</label>
+                                                    <textarea
+                                                        value={editFormData.Address || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, Address: e.target.value })}
+                                                        className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                        rows="2"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-3 pt-2">
+                                                <button
+                                                    type="submit"
+                                                    disabled={isUpdating}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                                >
+                                                    {isUpdating ? (
+                                                        <>
+                                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                            Saving...
+                                                        </>
+                                                    ) : (
+                                                        'Save Changes'
+                                                    )}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setIsEditingRental(false);
+                                                        setSelectedImage(null);
+                                                        setImagePreview(null);
+                                                    }}
+                                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    ) : (
+                                        <>
+                                            {rentalProfile.rentalImage && (
+                                                <div className="col-span-2 mb-4">
+                                                    <div className="w-32 h-32 rounded-xl overflow-hidden border-2 border-gray-200 shadow-md">
+                                                        <img
+                                                            src={rentalProfile.rentalImage}
+                                                            alt="Business Logo"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Business Name</label>
+                                                <p className="font-semibold text-gray-900 text-lg">{rentalProfile.businessName}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Owner Name</label>
+                                                <p className="font-semibold text-gray-900 text-lg">{rentalProfile.ownerName}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</label>
+                                                <p className="font-semibold text-gray-900 text-lg">{rentalProfile.ContactNo}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Location</label>
+                                                <p className="font-semibold text-gray-900 text-lg">{rentalProfile.City}, {rentalProfile.State}</p>
+                                            </div>
+                                            <div className="col-span-2 space-y-1">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Address</label>
+                                                <p className="font-semibold text-gray-900">{rentalProfile.Address} - {rentalProfile.Pincode}</p>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,21 +429,38 @@ export default function ProfilePage() {
                         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
                             <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Quick Links</h2>
                             <div className="space-y-3">
-                                {user?.userType === 'rental_owner' && (
-                                    <Link href="/dashboard/analytics" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
-                                        <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                {(user?.userType === 'rental_owner' || user?.userType === 'owner') && (
+                                    <>
+                                        <Link href="/dashboard/analytics" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
+                                            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-gray-900">Analytics</h3>
+                                                <p className="text-xs text-gray-500">View earnings & stats</p>
+                                            </div>
+                                            <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                             </svg>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-gray-900">Analytics</h3>
-                                            <p className="text-xs text-gray-500">View earnings & stats</p>
-                                        </div>
-                                        <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </Link>
+                                        </Link>
+
+                                        <Link href="/my-vehicles" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
+                                            <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-gray-900">My Vehicles</h3>
+                                                <p className="text-xs text-gray-500">Manage your fleet</p>
+                                            </div>
+                                            <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </Link>
+                                    </>
                                 )}
 
                                 <Link href="/refer-earn" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
@@ -194,21 +487,6 @@ export default function ProfilePage() {
                                     <div>
                                         <h3 className="font-bold text-gray-900">My Bookings</h3>
                                         <p className="text-xs text-gray-500">View your trip history</p>
-                                    </div>
-                                    <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </Link>
-
-                                <Link href="/my-vehicles" className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors group border border-gray-100 hover:border-gray-200">
-                                    <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-gray-900">My Vehicles</h3>
-                                        <p className="text-xs text-gray-500">Manage your fleet</p>
                                     </div>
                                     <svg className="w-5 h-5 ml-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

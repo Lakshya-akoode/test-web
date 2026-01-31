@@ -15,9 +15,12 @@ export default function BookBikePage() {
     const [activeTab, setActiveTab] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCity, setSelectedCity] = useState('');
-    const [searchRadius, setSearchRadius] = useState(50);
-    const [showRadiusModal, setShowRadiusModal] = useState(false);
+    const [radius, setRadius] = useState(1000000000); // Default 5000m (5km) to match Rentals page
     const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
+
+    // Date Filters (Default: Today to Tomorrow)
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]);
 
     useEffect(() => {
         if (!isAuthenticated()) {
@@ -51,15 +54,45 @@ export default function BookBikePage() {
 
     useEffect(() => {
         if (searchQuery.trim() === '') {
-            filterVehiclesByCategory(activeTab);
+            setFilteredVehicles(vehicles);
         } else {
-            const filtered = vehicles.filter(vehicle =>
-                (vehicle.vehicleModel || vehicle.VehicleModel)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                vehicle.City?.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            // Filter grouped vehicles
+            const filtered = vehicles.filter(group => {
+                const vehicle = group.mainVehicle;
+                return (
+                    (vehicle.vehicleModel || vehicle.VehicleModel)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    vehicle.City?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (vehicle.businessName && vehicle.businessName.toLowerCase().includes(searchQuery.toLowerCase()))
+                );
+            });
             setFilteredVehicles(filtered);
         }
-    }, [searchQuery]);
+    }, [searchQuery, vehicles]);
+
+    // Helper to group vehicles by Model + Rental/Owner
+    const groupVehicles = (vehicleList) => {
+        const groups = {};
+        vehicleList.forEach(vehicle => {
+            // Create a unique key for grouping: Model + (RentalId OR UserId)
+            // Use businessName or ownerName/userId to distinguish providers
+            const modelKey = (vehicle.vehicleModel || vehicle.VehicleModel || 'Unknown').trim().toLowerCase();
+            const providerKey = vehicle.rentalId ? `rental-${vehicle.rentalId}` : `user-${vehicle.userId}`;
+
+            const key = `${modelKey}-${providerKey}`;
+
+            if (!groups[key]) {
+                groups[key] = {
+                    id: key,
+                    mainVehicle: vehicle, // Store the first vehicle as the main display
+                    count: 0,
+                    vehicles: [] // Store all vehicles in this group
+                };
+            }
+            groups[key].count++;
+            groups[key].vehicles.push(vehicle);
+        });
+        return Object.values(groups);
+    };
 
     // ... helper functions ...
     const filterVehiclesByCategory = (category) => {
@@ -67,7 +100,9 @@ export default function BookBikePage() {
         const isBikeLike = (type) => ['bike'].includes(type);
         const isScootyLike = (type) => ['scooty', 'scooter'].includes(type);
 
-        const onlyTwoWheelers = vehicles.filter(v => {
+        // Filter the already grouped vehicles
+        const onlyTwoWheelers = vehicles.filter(group => {
+            const v = group.mainVehicle;
             const vc = normalized(v.category);
             const vt = normalized(v.vehicleType);
             const vs = normalized(v.subcategory);
@@ -80,7 +115,8 @@ export default function BookBikePage() {
             return;
         }
 
-        const filtered = onlyTwoWheelers.filter(v => {
+        const filtered = onlyTwoWheelers.filter(group => {
+            const v = group.mainVehicle;
             const vt = normalized(v.vehicleType);
             const vs = normalized(v.subcategory);
             if (tab === 'bikes' || tab === 'bike') {
@@ -104,7 +140,12 @@ export default function BookBikePage() {
 
             // Add location params if available
             if (userLocation.latitude && userLocation.longitude) {
-                queryParams += `&latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=${searchRadius * 1000}`;
+                queryParams += `&latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&radius=${radius}`;
+            }
+
+            // Add date params
+            if (startDate && endDate) {
+                queryParams += `&startDate=${startDate}&endDate=${endDate}`;
             }
 
             const url = `${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?${queryParams}`;
@@ -117,8 +158,9 @@ export default function BookBikePage() {
 
             if (data.status === 'Success') {
                 const fetchedVehicles = data.data.vehicles || [];
-                setVehicles(fetchedVehicles);
-                setFilteredVehicles(fetchedVehicles);
+                const groupedVehicles = groupVehicles(fetchedVehicles);
+                setVehicles(groupedVehicles);
+                setFilteredVehicles(groupedVehicles);
             }
         } catch (error) {
             console.error('Fetch vehicles error:', error);
@@ -132,11 +174,11 @@ export default function BookBikePage() {
         if (userLocation.latitude && userLocation.longitude) {
             fetchVehicles();
         }
-    }, [userLocation, searchRadius]);
+    }, [userLocation, radius]);
 
     useEffect(() => {
         fetchVehicles();
-    }, [selectedCity]);
+    }, [selectedCity, startDate, endDate]);
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-20">
@@ -197,22 +239,53 @@ export default function BookBikePage() {
                                     onChange={(e) => setSelectedCity(e.target.value)}
                                     className="px-5 py-3.5 bg-gray-50 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-gray-900 placeholder:text-gray-400"
                                 />
-                                <button
-                                    onClick={() => setShowRadiusModal(true)}
-                                    className="px-6 py-3.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
-                                >
-                                    <span>📍</span>
-                                    <span>{searchRadius} km</span>
-                                </button>
-                                <button
-                                    onClick={getCurrentLocation}
-                                    className="px-4 py-3.5 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-all flex items-center gap-2"
-                                    title="Update Location"
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                    </svg>
-                                </button>
+
+                                <div className="relative group min-w-[160px]">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    </div>
+                                    <select
+                                        value={radius}
+                                        onChange={(e) => setRadius(Number(e.target.value))}
+                                        className="block w-full pl-10 pr-8 py-3.5 bg-gray-50 text-gray-900 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium appearance-none cursor-pointer"
+                                    >
+                                        <option value={10000000000}>All cities</option>
+                                        <option value={5000}>Within 5 km</option>
+                                        <option value={10000}>Within 10 km</option>
+                                        <option value={20000}>Within 20 km</option>
+                                        <option value={50000}>Within 50 km</option>
+                                        <option value={100000}>Within 100 km</option>
+
+                                    </select>
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* Date Pickers */}
+                            <div className="flex gap-3">
+                                <div className="flex items-center gap-2 px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200">
+                                    <span className="text-xs text-gray-500 font-bold uppercase">Start</span>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="bg-transparent outline-none text-gray-900 font-medium text-sm"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2 px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200">
+                                    <span className="text-xs text-gray-500 font-bold uppercase">End</span>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        min={startDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="bg-transparent outline-none text-gray-900 font-medium text-sm"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -256,7 +329,7 @@ export default function BookBikePage() {
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">No bikes found</h3>
                         <p className="text-gray-500 max-w-sm mx-auto">We couldn't find any bikes or scooters matching your search. Try adjusting your filters.</p>
                         <button
-                            onClick={() => { setSearchQuery(''); setSelectedCity(''); }}
+                            onClick={() => { setSearchQuery(''); setSelectedCity(''); setRadius(5000); }}
                             className="mt-6 px-6 py-2.5 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-colors"
                         >
                             Clear Filters
@@ -264,79 +337,80 @@ export default function BookBikePage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredVehicles.map((vehicle) => (
-                            <Link
-                                href={`/vehicle/${vehicle._id}`}
-                                key={vehicle._id}
-                                className="group bg-white rounded-3xl p-3 border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 hover:-translate-y-1 flex flex-col"
-                            >
-                                <div className="relative h-56 w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden mb-4">
-                                    {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
-                                        <Image
-                                            src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                            alt={vehicle.vehicleModel || 'Vehicle'}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                        <span className="text-gray-800">{vehicle.distance ? `${vehicle.distance} km` : 'Available'}</span>
-                                    </div>
-
-                                    <div className="absolute bottom-3 left-3 flex gap-2">
-                                        <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white uppercase tracking-wide border border-white/10">
-                                            {vehicle.vehicleType || 'Bike'}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="px-2 pb-2 flex-1 flex flex-col">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <div>
-                                            <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{vehicle.vehicleModel || vehicle.VehicleModel}</h3>
-                                            <div className="flex items-center gap-1 text-gray-500 text-xs mt-0.5">
-                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        {filteredVehicles.map((group) => {
+                            const vehicle = group.mainVehicle;
+                            return (
+                                <Link
+                                    href={`/vehicle/${vehicle._id}`}
+                                    key={vehicle._id}
+                                    className="group bg-white rounded-3xl p-3 border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                                >
+                                    <div className="relative h-56 w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden mb-4">
+                                        {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
+                                            <Image
+                                                src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
+                                                alt={vehicle.vehicleModel || 'Vehicle'}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                                <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
-                                                <span className="truncate max-w-[150px]">{vehicle.City || selectedCity || 'Nearby'}</span>
                                             </div>
+                                        )}
+                                        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
+                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                            <span className="text-gray-800">{vehicle.distance ? `${vehicle.distance} km` : 'Available'}</span>
+                                        </div>
+
+                                        {group.count > 1 && (
+                                            <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md z-10">
+                                                {group.count} Available
+                                            </div>
+                                        )}
+
+                                        <div className="absolute bottom-3 left-3 flex gap-2">
+                                            <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white uppercase tracking-wide border border-white/10">
+                                                {vehicle.vehicleType || 'Bike'}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
-                                        <div>
-                                            <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Daily Rate</span>
-                                            <div className="flex items-baseline gap-1">
-                                                <span className="text-lg font-bold text-gray-900">₹{vehicle.rentalPrice}</span>
-                                            </div>
-                                            {vehicle.securityDeposit > 0 && (
-                                                <div className="flex items-center gap-1 mt-1 group/tooltip relative">
-                                                    <span className="text-[10px] text-gray-500 font-medium">+ ₹{vehicle.securityDeposit} Deposit</span>
-                                                    <div className="w-3 h-3 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[8px] font-bold cursor-help">i</div>
-                                                    <div className="absolute bottom-full left-0 mb-2 w-32 bg-gray-900 text-white text-[9px] p-2 rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-20">
-                                                        Refundable security deposit paid to owner
-                                                    </div>
+                                    <div className="px-2 pb-2 flex-1 flex flex-col">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{vehicle.vehicleModel || vehicle.VehicleModel}</h3>
+                                                <div className="flex items-center gap-1 text-gray-500 text-xs mt-0.5">
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    <span className="truncate max-w-[150px]">{vehicle.businessName || vehicle.City || selectedCity || 'Nearby'}</span>
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
 
-                                        <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-lg shadow-gray-200">
-                                            <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                            </svg>
+                                        <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
+                                            <div>
+                                                <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Daily Rate</span>
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-lg font-bold text-gray-900">₹{vehicle.rentalPrice}</span>
+                                                    <span className="text-xs text-gray-400">/day</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-lg shadow-gray-200">
+                                                <svg className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -365,49 +439,7 @@ export default function BookBikePage() {
                 </div>
             </section>
 
-            {/* Radius Modal */}
-            {
-                showRadiusModal && (
-                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowRadiusModal(false)}>
-                        <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl transform transition-all scale-100" onClick={(e) => e.stopPropagation()}>
-                            <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Search Radius</h3>
-                                <p className="text-gray-500">Find bikes within {searchRadius}km of your location</p>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-3 mb-8">
-                                {[10, 25, 50, 100].map((radius) => (
-                                    <button
-                                        key={radius}
-                                        onClick={() => {
-                                            setSearchRadius(radius);
-                                            setShowRadiusModal(false);
-                                        }}
-                                        className={`px-4 py-4 rounded-xl font-bold text-lg transition-all border-2 ${searchRadius === radius
-                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                            : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200'
-                                            }`}
-                                    >
-                                        {radius} km
-                                    </button>
-                                ))}
-                            </div>
-                            <button
-                                onClick={() => setShowRadiusModal(false)}
-                                className="w-full py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                )
-            }
         </div >
     );
 }

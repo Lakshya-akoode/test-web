@@ -14,7 +14,7 @@ export default function RentalsPage() {
     // Search & Filter States
     const [searchQuery, setSearchQuery] = useState('');
     const [cityFilter, setCityFilter] = useState('');
-    const [radius, setRadius] = useState(5000); // Default 5km
+    const [radius, setRadius] = useState(1000000000); // Default all cities
 
     // Fetch rentals
     useEffect(() => {
@@ -140,11 +140,13 @@ export default function RentalsPage() {
                                         onChange={(e) => setRadius(Number(e.target.value))}
                                         className="block w-full pl-11 pr-10 py-3 bg-gray-50 border-transparent text-gray-900 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium appearance-none cursor-pointer"
                                     >
+                                        <option value={10000000000}>All cities</option>
                                         <option value={5000}>Within 5 km</option>
                                         <option value={10000}>Within 10 km</option>
                                         <option value={20000}>Within 20 km</option>
                                         <option value={50000}>Within 50 km</option>
                                         <option value={100000}>Within 100 km</option>
+
                                     </select>
                                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                         <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
