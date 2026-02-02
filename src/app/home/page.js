@@ -111,21 +111,9 @@ export default function HomePage() {
             {/* Content Section */}
             <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 mt-4 relative z-0">
                 <main>
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900">Top Rated Rentals</h2>
-                            <p className="text-gray-500 mt-1">Explore our most popular vehicles</p>
-                        </div>
-                        <button className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline">
-                            View All
-                        </button>
-                    </div>
-
                     <TopRentals
                         vehicles={filteredVehicles}
                         loading={loading}
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
                     />
                 </main>
             </div>
