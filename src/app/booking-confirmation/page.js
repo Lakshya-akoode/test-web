@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { isAuthenticated, getToken } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
+import API from '@/lib/api';
 
 import { Suspense } from 'react';
 
@@ -13,18 +14,73 @@ function BookingConfirmationContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookingId = searchParams.get('bookingId');
+    const orderId = searchParams.get('order_id');
+    
     const [booking, setBooking] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [verifying, setVerifying] = useState(false);
+    const [verificationStatus, setVerificationStatus] = useState(null); // 'success', 'failed'
 
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
             return;
         }
+
         if (bookingId) {
-            fetchBookingDetails();
+            if (orderId) {
+                // If order_id is present, we need to verify payment first
+                verifyPaymentAndFetchDetails();
+            } else {
+                // Just fetch details
+                fetchBookingDetails();
+            }
         }
-    }, [bookingId, router]);
+    }, [bookingId, orderId, router]);
+
+    const verifyPaymentAndFetchDetails = async () => {
+        setVerifying(true);
+        setLoading(true);
+        try {
+            const token = getToken();
+            console.log('Verifying payment for booking:', bookingId, 'Order:', orderId);
+            
+            // Call verify payment API
+            const verifyRes = await fetch(API.verifyPayment, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    bookingId: bookingId,
+                    orderId: orderId
+                })
+            });
+            
+            const verifyData = await verifyRes.json();
+            console.log('Verification result:', verifyData);
+
+            if (verifyData.status === 'Success') {
+                setVerificationStatus('success');
+                // Could use the booking returned from verification, but let's fetch fresh details to be consistent
+                if (verifyData.data && verifyData.data.booking) {
+                    setBooking(verifyData.data.booking);
+                } else {
+                    await fetchBookingDetails();
+                }
+            } else {
+                setVerificationStatus('failed');
+            }
+
+        } catch (error) {
+            console.error('Payment verification error:', error);
+            setVerificationStatus('failed');
+        } finally {
+            setLoading(false);
+            setVerifying(false);
+        }
+    };
 
     const fetchBookingDetails = async () => {
         try {
@@ -55,12 +111,31 @@ function BookingConfirmationContent() {
         return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     };
 
-    if (loading) {
+    if (loading || verifying) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading confirmation...</p>
+                    <p className="text-gray-600">{verifying ? 'Verifying payment status...' : 'Loading confirmation...'}</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (verificationStatus === 'failed') {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 max-w-md w-full text-center">
+                    <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Failed</h2>
+                    <p className="text-gray-600 mb-6">We couldn't verify your payment. If money was deducted, it will be refunded automatically.</p>
+                    <Link href={`/bookings/${bookingId}`} className="block w-full px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all">
+                        View Booking / Try Again
+                    </Link>
                 </div>
             </div>
         );
@@ -209,7 +284,3 @@ export default function BookingConfirmationPage() {
         </Suspense>
     );
 }
-
-
-
-

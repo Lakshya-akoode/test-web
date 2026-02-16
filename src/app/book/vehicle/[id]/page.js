@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { isAuthenticated, getUser, getToken } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import API from '@/lib/api';
-import Script from 'next/script';
+import { load } from '@cashfreepayments/cashfree-js';
 
 export default function BookVehiclePage() {
     const router = useRouter();
@@ -18,7 +18,7 @@ export default function BookVehiclePage() {
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState('');
-    const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+    const [cashfree, setCashfree] = useState(null);
 
     // Get data from localStorage (from previous page)
     const [startDate, setStartDate] = useState('');
@@ -33,10 +33,19 @@ export default function BookVehiclePage() {
             return;
         }
 
-        // Check if Razorpay is already loaded
-        if (typeof window !== 'undefined' && window.Razorpay) {
-            setRazorpayLoaded(true);
-        }
+        // Initialize Cashfree
+        const initializeCashfree = async () => {
+            try {
+                const cf = await load({
+                    mode: "sandbox" // Change to "production" for live
+                });
+                setCashfree(cf);
+            } catch (err) {
+                console.error('Cashfree initialization failed:', err);
+                setError('Failed to load payment gateway');
+            }
+        };
+        initializeCashfree();
 
         const currentUser = getUser();
         setUser(currentUser);
@@ -146,7 +155,7 @@ export default function BookVehiclePage() {
             return;
         }
 
-        if (!razorpayLoaded) {
+        if (!cashfree) {
             setError('Payment gateway is loading. Please wait...');
             return;
         }
@@ -156,74 +165,9 @@ export default function BookVehiclePage() {
         try {
             const endDate = calculateEndDate();
             const totalAmount = totalDays * pricePerDay;
-
-            // Step 1: Create Razorpay order
-            const token = getToken();
-            const orderResponse = await fetch(API.createPaymentOrder, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    amount: totalAmount,
-                    currency: 'INR',
-                    receipt: `booking_${Date.now()}`
-                })
-            });
-
-            const orderData = await orderResponse.json();
-
-            if (orderData.status !== 'Success') {
-                setError('Failed to create payment order. Please try again.');
-                setProcessing(false);
-                return;
-            }
-
-            const order = orderData.data.order;
-
-            // Step 2: Open Razorpay checkout
-            const options = {
-                key: 'rzp_test_S2qqGKFsiIoeZL', // Razorpay Key ID (client-side)
-                amount: order.amount,
-                currency: order.currency,
-                name: 'Zugo Rentals',
-                description: `${vehicle.vehicleModel || vehicle.VehicleModel} Rental`,
-                order_id: order.id,
-                handler: async function (response) {
-                    // Payment successful - verify and create booking
-                    await verifyPaymentAndCreateBooking(response, endDate, totalAmount);
-                },
-                prefill: {
-                    name: user.username || user.fullName || 'User',
-                    email: user.email || '',
-                    contact: user.mobile || ''
-                },
-                theme: {
-                    color: '#000000'
-                },
-                modal: {
-                    ondismiss: function () {
-                        setProcessing(false);
-                    }
-                }
-            };
-
-            const razorpay = new window.Razorpay(options);
-            razorpay.open();
-
-        } catch (err) {
-            console.error('Payment error:', err);
-            setError('Network error. Please try again.');
-            setProcessing(false);
-        }
-    };
-
-    const verifyPaymentAndCreateBooking = async (paymentResponse, endDate, totalAmount) => {
-        try {
             const token = getToken();
 
-            // First, create the booking
+            // Step 1: Create Booking Query (Pending State)
             const bookingData = {
                 renterId: user.id,
                 renterName: user.username || user.fullName || 'User',
@@ -250,39 +194,50 @@ export default function BookVehiclePage() {
 
             const bookingResult = await bookingResponse.json();
 
-            if (bookingResult.status === 'Success' && bookingResult.data?.bookingId) {
-                // Verify payment
-                const verifyResponse = await fetch(API.verifyPayment, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        orderId: paymentResponse.razorpay_order_id,
-                        paymentId: paymentResponse.razorpay_payment_id,
-                        signature: paymentResponse.razorpay_signature,
-                        bookingId: bookingResult.data.bookingId,
-                        amount: totalAmount
-                    })
-                });
-
-                const verifyResult = await verifyResponse.json();
-
-                if (verifyResult.status === 'Success') {
-                    // Payment verified successfully
-                    router.push(`/booking-confirmation?bookingId=${bookingResult.data.bookingId}`);
-                } else {
-                    setError('Payment verification failed. Please contact support.');
-                    setProcessing(false);
-                }
-            } else {
-                setError(bookingResult.message || 'Failed to create booking. Please try again.');
-                setProcessing(false);
+            if (bookingResult.status !== 'Success' || !bookingResult.data?.bookingId) {
+                throw new Error(bookingResult.message || 'Failed to create booking');
             }
+
+            const bookingId = bookingResult.data.bookingId;
+
+            // Step 2: Create Cashfree order
+            const orderResponse = await fetch(API.createPaymentOrder, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    amount: totalAmount,
+                    currency: 'INR',
+                    bookingId: bookingId,
+                    customerId: user.id,
+                    customerPhone: user.mobile || '9999999999',
+                    customerEmail: user.email || 'guest@example.com',
+                    customerName: user.username || 'User'
+                })
+            });
+
+            const orderData = await orderResponse.json();
+
+            if (orderData.status !== 'Success') {
+                console.log(orderData);
+                throw new Error(orderData.message || 'Failed to create payment order');
+            }
+
+            const paymentSessionId = orderData.data.order.payment_session_id;
+
+            // Step 3: Redirect to Cashfree
+            const checkoutOptions = {
+                paymentSessionId,
+                returnUrl: `${window.location.origin}/booking-confirmation?bookingId=${bookingId}&order_id={order_id}`
+            };
+
+            cashfree.checkout(checkoutOptions);
+
         } catch (err) {
-            console.error('Verification error:', err);
-            setError('Payment verification failed. Please contact support.');
+            console.error('Payment error:', err);
+            setError(err.message || 'Network error. Please try again.');
             setProcessing(false);
         }
     };
@@ -312,11 +267,6 @@ export default function BookVehiclePage() {
 
     return (
         <>
-            <Script
-                src="https://checkout.razorpay.com/v1/checkout.js"
-                onLoad={() => setRazorpayLoaded(true)}
-                onError={() => setError('Failed to load payment gateway')}
-            />
             <div className="min-h-screen bg-gray-50/50 pb-20 font-sans">
                 {/* Header Background */}
                 <div className="bg-white border-b border-gray-100 pt-24 pb-8 px-4 md:px-6">
@@ -482,7 +432,7 @@ export default function BookVehiclePage() {
 
                                     <button
                                         onClick={handlePayment}
-                                        disabled={processing || !razorpayLoaded}
+                                        disabled={processing || !cashfree}
                                         className="w-full bg-black text-white rounded-xl py-4 font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
                                     >
                                         {processing ? (
@@ -490,7 +440,7 @@ export default function BookVehiclePage() {
                                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                                 Processing...
                                             </>
-                                        ) : !razorpayLoaded ? (
+                                        ) : !cashfree ? (
                                             'Loading Gateway...'
                                         ) : (
                                             <>
@@ -502,11 +452,13 @@ export default function BookVehiclePage() {
 
                                     <div className="mt-6 flex items-center justify-center gap-4 text-gray-400 grayscale opacity-70">
                                         <div className="flex items-center gap-1.5">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                            <span className="text-xs font-bold">SSL Encrypted</span>
+                                            <svg className="w-4 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/>
+                                            </svg>
+                                            <span className="text-xs font-bold">Secure Payment</span>
                                         </div>
                                         <div className="w-px h-4 bg-gray-200"></div>
-                                        <span className="text-xs font-bold">Trusted Payment</span>
+                                        <span className="text-xs font-bold">Cashfree Payments</span>
                                     </div>
                                 </div>
 

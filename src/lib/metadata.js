@@ -25,7 +25,7 @@ export const siteConfig = {
         'weekly car rental',
     ],
     social: {
-        instagram: 'https://www.instagram.com/zugoforyou',
+        instagram: 'https://www.instagram.com/zugo_pvt',
     },
     company: {
         name: 'Zugo',
