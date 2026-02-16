@@ -220,12 +220,23 @@ export default function BookVehiclePage() {
 
             const orderData = await orderResponse.json();
 
+            // Debug: log the FULL response to see exact shape
+            console.log('[Frontend] Full order response:', JSON.stringify(orderData, null, 2));
+
             if (orderData.status !== 'Success') {
                 console.log(orderData);
                 throw new Error(orderData.message || 'Failed to create payment order');
             }
 
-            const paymentSessionId = orderData.data.order.payment_session_id;
+            // Extract payment_session_id — handle both old and new backend response shapes
+            const paymentSessionId = orderData.data?.payment_session_id
+                || orderData.data?.order?.payment_session_id;
+
+            console.log('[Frontend] Payment Session ID received:', paymentSessionId);
+
+            if (!paymentSessionId) {
+                throw new Error('Invalid payment session ID received from server');
+            }
 
             // Step 3: Redirect to Cashfree
             const checkoutOptions = {
