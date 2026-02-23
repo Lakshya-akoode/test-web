@@ -1,6 +1,7 @@
 'use client';
 
 import { siteConfig } from '@/lib/metadata';
+import { cityContent } from '@/lib/cityContent';
 
 export default function StructuredData() {
     // Organization Schema
@@ -10,7 +11,7 @@ export default function StructuredData() {
         name: siteConfig.company.name,
         legalName: siteConfig.company.legalName,
         url: siteConfig.url,
-        logo: `${siteConfig.url}/path2.png`,
+        logo: `${siteConfig.url}/black_logo.png`,
         foundingDate: siteConfig.company.foundingDate,
         description: siteConfig.description,
         sameAs: [
@@ -18,6 +19,7 @@ export default function StructuredData() {
         ],
         contactPoint: {
             '@type': 'ContactPoint',
+            telephone: siteConfig.company.phone,
             email: siteConfig.company.email,
             contactType: 'Customer Service',
             areaServed: 'IN',
@@ -42,13 +44,13 @@ export default function StructuredData() {
         },
     };
 
-    // LocalBusiness Schema
-    const localBusinessSchema = {
+    // AutoRental Schema (more specific than LocalBusiness for vehicle rental)
+    const autoRentalSchema = {
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': 'AutoRental',
         '@id': siteConfig.url,
         name: siteConfig.company.name,
-        image: `${siteConfig.url}/path2.png`,
+        image: `${siteConfig.url}/black_logo.png`,
         description: siteConfig.description,
         url: siteConfig.url,
         telephone: siteConfig.company.phone,
@@ -56,29 +58,28 @@ export default function StructuredData() {
         priceRange: '₹₹',
         address: {
             '@type': 'PostalAddress',
-            addressCountry: siteConfig.company.address.addressCountry,
             addressLocality: siteConfig.company.address.addressLocality,
             addressRegion: siteConfig.company.address.addressRegion,
+            addressCountry: siteConfig.company.address.addressCountry,
         },
         geo: {
             '@type': 'GeoCoordinates',
-            latitude: 28.7041, // Delhi - Update with actual coordinates
-            longitude: 77.1025,
+            latitude: 30.0869, // Rishikesh
+            longitude: 78.2676,
         },
         openingHoursSpecification: {
             '@type': 'OpeningHoursSpecification',
             dayOfWeek: [
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday',
-                'Sunday',
+                'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                'Friday', 'Saturday', 'Sunday',
             ],
             opens: '00:00',
             closes: '23:59',
         },
+        areaServed: Object.values(cityContent).map(city => ({
+            '@type': 'City',
+            name: city.name,
+        })),
         sameAs: [
             siteConfig.social.instagram,
         ],
@@ -94,50 +95,99 @@ export default function StructuredData() {
             name: siteConfig.company.name,
             url: siteConfig.url,
         },
-        areaServed: {
-            '@type': 'Country',
-            name: 'India',
-        },
-        description: 'Self-drive bike and car rental services across India. Hourly, daily, and weekly rental options available.',
+        areaServed: Object.values(cityContent).map(city => ({
+            '@type': 'City',
+            name: city.name,
+        })),
+        description: 'Self-drive bike, scooty and car rental services across India. Hourly, daily, weekly, and monthly rental options available in Rishikesh, Delhi, Bangalore, and Gurugram.',
         offers: {
-            '@type': 'Offer',
+            '@type': 'AggregateOffer',
             priceCurrency: 'INR',
+            lowPrice: '20',
+            highPrice: '5000',
+            offerCount: '100+',
             availability: 'https://schema.org/InStock',
+        },
+        hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'Vehicle Rental Catalog',
+            itemListElement: [
+                {
+                    '@type': 'OfferCatalog',
+                    name: 'Bike Rentals',
+                    description: 'Self-drive bike and motorcycle rentals',
+                },
+                {
+                    '@type': 'OfferCatalog',
+                    name: 'Scooty Rentals',
+                    description: 'Scooter and scooty on rent',
+                },
+                {
+                    '@type': 'OfferCatalog',
+                    name: 'Car Rentals',
+                    description: 'Self-drive car rentals',
+                },
+            ],
         },
     };
 
-    // SiteNavigationElement Schema
+    // SiteNavigationElement Schema — dynamic from cityContent
     const siteNavigationSchema = {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
-        itemListElement: [
+        itemListElement: Object.entries(cityContent).map(([key, city], idx) => ({
+            '@type': 'SiteNavigationElement',
+            position: idx + 1,
+            name: `Bike Rental in ${city.name}`,
+            description: `Rent bikes and scooters in ${city.name}`,
+            url: `${siteConfig.url}/bikes-for-rent/${key}`,
+        })),
+    };
+
+    // Global FAQPage Schema
+    const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': [
             {
-                '@type': 'SiteNavigationElement',
-                position: 1,
-                name: 'Bikes in Bangalore',
-                description: 'Rent bikes in Bangalore',
-                url: `${siteConfig.url}/bikes-for-rent/bangalore`,
+                '@type': 'Question',
+                'name': 'How does Zugo bike rental work?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Download the Zugo app, sign up with your driving license, browse available bikes near you, select your rental duration, and book instantly. Pick up the bike from the designated location and enjoy your ride!',
+                },
             },
             {
-                '@type': 'SiteNavigationElement',
-                position: 2,
-                name: 'Bikes in Delhi',
-                description: 'Rent bikes in Delhi',
-                url: `${siteConfig.url}/bikes-for-rent/delhi`,
+                '@type': 'Question',
+                'name': 'What cities does Zugo operate in?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Zugo currently operates in Rishikesh, Delhi, Bangalore, and Gurugram. We are rapidly expanding to more cities across India.',
+                },
             },
             {
-                '@type': 'SiteNavigationElement',
-                position: 3,
-                name: 'Bikes in Gurugram',
-                description: 'Rent bikes in Gurugram',
-                url: `${siteConfig.url}/bikes-for-rent/gurugram`,
+                '@type': 'Question',
+                'name': 'Is there a deposit for bike rental?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Verified Zugo users can rent bikes with zero deposit. New users may require a small refundable security deposit and valid ID verification.',
+                },
             },
             {
-                '@type': 'SiteNavigationElement',
-                position: 4,
-                name: 'Bikes in Rishikesh',
-                description: 'Rent bikes in Rishikesh',
-                url: `${siteConfig.url}/bikes-for-rent/rishikesh`,
+                '@type': 'Question',
+                'name': 'What is the price of bike rental on Zugo?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Bike and scooty rentals start from as low as ₹20 per hour. Daily, weekly, and monthly plans are available at discounted rates. Prices vary by city and vehicle type.',
+                },
+            },
+            {
+                '@type': 'Question',
+                'name': 'Can I rent a scooty in Rishikesh with Zugo?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'Yes! Zugo offers scooters and scooties on rent in Rishikesh. Pick up near the Bus Stand or Tapovan area. Hourly, daily, and weekly rentals available.',
+                },
             },
         ],
     };
@@ -159,7 +209,7 @@ export default function StructuredData() {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(localBusinessSchema),
+                    __html: JSON.stringify(autoRentalSchema),
                 }}
             />
             <script
@@ -172,6 +222,12 @@ export default function StructuredData() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(siteNavigationSchema),
+                }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(faqSchema),
                 }}
             />
         </>

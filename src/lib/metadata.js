@@ -2,10 +2,11 @@
 
 export const siteConfig = {
     name: 'Zugo',
-    description: 'India\'s most flexible self-drive vehicle rental platform. Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel.',
+    description: 'India\'s most flexible self-drive vehicle rental platform. Rent bikes, scooters & cars on your own terms in Rishikesh, Delhi, Bangalore & more. No hidden charges, zero fuel costs, and complete freedom to travel.',
     url: 'https://zugo.co.in',
     ogImage: 'https://zugo.co.in/black_logo.png',
     keywords: [
+        // Core keywords
         'vehicle rental India',
         'bike rental',
         'car rental',
@@ -23,6 +24,35 @@ export const siteConfig = {
         'daily car rental',
         'monthly bike rental',
         'weekly car rental',
+        // High-volume search keywords
+        'bike rent',
+        'bike on rent',
+        'scooty on rent',
+        'scooty rental',
+        'bike rent near me',
+        'rent bike near me',
+        'rent car near me',
+        'two wheeler on rent',
+        'self drive bike',
+        'self drive car',
+        // Location-specific keywords
+        'bike rental Rishikesh',
+        'scooty on rent in Rishikesh',
+        'rentals in Rishikesh',
+        'bike rent Rishikesh',
+        'bike rental Delhi',
+        'bike rental Bangalore',
+        'bike rental Gurugram',
+        'car rental Rishikesh',
+        'vehicle rental Rishikesh',
+        'two wheeler rental Rishikesh',
+        // Long-tail keywords
+        'cheap bike rental India',
+        'affordable scooty rental',
+        'bike rental for travel',
+        'rent bike for trip',
+        'bike rental without deposit',
+        'self drive two wheeler rental',
     ],
     social: {
         instagram: 'https://www.instagram.com/zugo_pvt',
@@ -31,12 +61,12 @@ export const siteConfig = {
         name: 'Zugo',
         legalName: 'Zugo India',
         foundingDate: '2024',
-        email: 'support@zugo.co.in',
-        phone: '+91-XXXXXXXXXX', // Update with actual phone number
+        email: 'info@zugo.co.in',
+        phone: '+91-9692031010',
         address: {
             streetAddress: '',
-            addressLocality: '',
-            addressRegion: '',
+            addressLocality: 'Rishikesh',
+            addressRegion: 'Uttarakhand',
             postalCode: '',
             addressCountry: 'IN',
         },
@@ -111,8 +141,8 @@ export function generateMetadata({
 // Page-specific metadata presets
 export const pageMetadata = {
     home: {
-        title: 'Zugo - India\'s Most Flexible Self-Drive Vehicle Rental Platform',
-        description: 'Rent bikes and cars on your own terms. No hidden charges, zero fuel costs, and complete freedom to travel. Book vehicles instantly across 100+ cities.',
+        title: 'Zugo - Bike & Car Rental in Rishikesh, Delhi, Bangalore | Self Drive Rentals India',
+        description: 'Rent bikes, scooters & cars on your own terms. Affordable self-drive vehicle rentals in Rishikesh, Delhi, Bangalore & Gurugram. No hidden charges, zero fuel costs. Book instantly!',
         keywords: [
             'vehicle rental India',
             'bike rental India',
@@ -121,11 +151,17 @@ export const pageMetadata = {
             'zugo',
             'rent bike near me',
             'rent car near me',
+            'bike rental Rishikesh',
+            'bike rent',
+            'scooty on rent',
+            'rentals in Rishikesh',
+            'two wheeler on rent',
+            'self drive bike rental',
         ],
     },
     bookBike: {
         title: 'Rent Bike in India - Self Drive Bikes & Scooters | Zugo',
-        description: 'Looking to rent a bike or scooty? Zugo offers the best self-drive two-wheeler rental service in India. Book bikes on rent near you starting at ₹20/hour. No hidden charges.',
+        description: 'Looking to rent a bike or scooty? Zugo offers the best self-drive two-wheeler rental service in Rishikesh, Delhi, Bangalore & more. Book bikes on rent near you starting at ₹20/hour. No hidden charges.',
         keywords: [
             'rent bike',
             'bike rental',
@@ -134,6 +170,11 @@ export const pageMetadata = {
             'two wheeler rental',
             'rent bike near me',
             'scooter rental India',
+            'bike rent',
+            'scooty on rent',
+            'bike rental Rishikesh',
+            'self drive bike',
+            'two wheeler on rent',
         ],
     },
     bookCar: {
@@ -147,17 +188,25 @@ export const pageMetadata = {
             'rent car for self drive',
             'suv rental',
             'car booking India',
+            'car rental Rishikesh',
+            'self drive car rental',
         ],
     },
     rentals: {
-        title: 'Browse Available Vehicles',
-        description: 'Explore thousands of bikes and cars available for rent across India. Filter by location, price, and vehicle type. Book instantly.',
+        title: 'Browse Vehicle Rentals Near You - Bikes, Scooters & Cars on Rent | Zugo',
+        description: 'Explore verified vehicle rental shops and services across India. Find bike rentals, scooty on rent, and car rentals in Rishikesh, Delhi, Bangalore, Gurugram. Book instantly with Zugo.',
         keywords: [
             'vehicle rental',
             'available bikes',
             'available cars',
             'rent vehicles',
             'vehicle listings',
+            'rentals in Rishikesh',
+            'bike rental near me',
+            'scooty rental near me',
+            'vehicle rental service',
+            'bike rent',
+            'two wheeler on rent',
         ],
     },
     registerVehicle: {

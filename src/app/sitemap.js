@@ -37,6 +37,12 @@ export default function sitemap() {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/contact-us`,
+            lastModified: currentDate,
+            changeFrequency: 'monthly',
+            priority: 0.7,
+        },
+        {
             url: `${baseUrl}/register-vehicle`,
             lastModified: currentDate,
             changeFrequency: 'weekly',
@@ -80,13 +86,21 @@ export default function sitemap() {
         },
     ];
 
-    // Dynamic City Pages
-    const cityPages = Object.keys(cityContent).map(city => ({
+    // Dynamic City Bike Pages: /bikes-for-rent/[city]
+    const cityBikePages = Object.keys(cityContent).map(city => ({
         url: `${baseUrl}/bikes-for-rent/${city}`,
         lastModified: currentDate,
         changeFrequency: 'weekly',
         priority: 0.9,
     }));
 
-    return [...routes, ...cityPages];
+    // Dynamic City Rental Pages: /rentals/[city]
+    const cityRentalPages = Object.keys(cityContent).map(city => ({
+        url: `${baseUrl}/rentals/${city}`,
+        lastModified: currentDate,
+        changeFrequency: 'weekly',
+        priority: 0.9,
+    }));
+
+    return [...routes, ...cityBikePages, ...cityRentalPages];
 }

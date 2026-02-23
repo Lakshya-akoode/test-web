@@ -2,11 +2,25 @@ export const cityContent = {
     bangalore: {
         name: 'Bangalore',
         formalName: 'Bengaluru',
-        title: 'Rent Bikes in Bangalore | Self Drive Two Wheelers @ ₹20/hr',
-        description: 'Rent bikes in Bangalore starting at ₹20/hr. Choose from scooters, bikes, and superbikes. Zero deposit, unlimited kms. Book now!',
+        title: 'Rent Bikes in Bangalore | Self Drive Two Wheelers @ ₹20/hr | Zugo',
+        description: 'Rent bikes & scooters in Bangalore starting at ₹20/hr. Choose from scooters, bikes, and superbikes. Zero deposit, unlimited kms. Best bike rental in Bengaluru. Book now!',
+        seoDescription: 'Zugo offers affordable self-drive bike rental and scooty on rent in Bangalore (Bengaluru). Locations in Koramangala, Indiranagar, HSR Layout, Whitefield & more. Hourly, daily, weekly rentals available.',
         heroTitle: 'Rent Freedom in <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Bangalore</span>',
         heroSubtitle: 'Skip the traffic and explore the Garden City on your own terms. From Koramangala to Whitefield, we have you covered.',
         intro: 'Bangalore, the Silicon Valley of India, is best explored on two wheels. Whether you need to beat the notorious traffic or enjoy a weekend ride to Nandi Hills, Zugo provides the most flexible self-drive bike rental service in the city.',
+        keywords: [
+            'bike rental Bangalore',
+            'scooty on rent Bangalore',
+            'rent bike Bangalore',
+            'two wheeler rental Bangalore',
+            'bike rent Bangalore',
+            'self drive bike Bangalore',
+            'scooter rental Bangalore',
+            'bike rental Bengaluru',
+            'rentals in Bangalore',
+            'bike on rent in Bangalore',
+        ],
+        coordinates: { latitude: 12.9716, longitude: 77.5946 },
         points: [
             { title: 'Beat the Traffic', desc: 'Zip through Bangalore traffic with ease on our well-maintained scooters and bikes.' },
             { title: 'Weekend Getaways', desc: 'Perfect for trips to Nandi Hills, Mysore, or Coorg.' },
@@ -14,65 +28,116 @@ export const cityContent = {
         ],
         faq: [
             { q: 'Where can I pick up the bike in Bangalore?', a: 'We have pickup locations in Koramangala, Indiranagar, HSR Layout, Whitefield, and near Majestic and Cantonment Railway Stations.' },
-            { q: 'Is fuel included?', a: 'No, fuel is not included. You will start with a full tank and must return it with a full tank, or pay for the fuel used.' }
+            { q: 'Is fuel included in bike rental in Bangalore?', a: 'No, fuel is not included. You will start with a full tank and must return it with a full tank, or pay for the fuel used.' },
+            { q: 'What is the cheapest bike rental in Bangalore?', a: 'Zugo offers bike and scooty rentals in Bangalore starting at just ₹20 per hour. Daily and monthly plans are also available at discounted rates.' },
+            { q: 'Can I rent a bike in Bangalore without a deposit?', a: 'Yes, verified Zugo users can rent bikes with zero deposit. New users may need minimal documentation.' },
         ],
         areas: ['Koramangala', 'Indiranagar', 'Whitefield', 'HSR Layout', 'Electronic City', 'Marathahalli', 'Jayanagar', 'Hebbal']
     },
     delhi: {
         name: 'Delhi',
         formalName: 'New Delhi',
-        title: 'Bike Rental in Delhi | Rent Two Wheeler in Delhi NCR',
-        description: 'Looking for bike rental in Delhi? Rent bikes and scooters in Delhi NCR from Zugo. Affordable rates, well-maintained fleet. Book online.',
+        title: 'Bike Rental in Delhi | Rent Two Wheeler in Delhi NCR | Zugo',
+        description: 'Looking for bike rental in Delhi? Rent bikes and scooters in Delhi NCR from Zugo. Affordable rates, well-maintained fleet. Self drive two wheeler on rent in Delhi. Book online.',
+        seoDescription: 'Zugo offers the best bike rental and scooty on rent service in Delhi NCR. Affordable self-drive two wheelers available near major Metro stations. Hourly, daily, and monthly plans.',
         heroTitle: 'Explore the Capital on <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-600">Two Wheels</span>',
         heroSubtitle: 'From the narrow lanes of Chandni Chowk to the wide avenues of Lutyens, experience Delhi like never before.',
-        intro: 'Delhi, the heart of India, offers a mix of history and modernity. Renting a bike in Delhi gives you the freedom to explore monuments, markets, and food joints at your own pace without dependending on public transport.',
+        intro: 'Delhi, the heart of India, offers a mix of history and modernity. Renting a bike in Delhi gives you the freedom to explore monuments, markets, and food joints at your own pace without depending on public transport.',
+        keywords: [
+            'bike rental Delhi',
+            'scooty on rent Delhi',
+            'rent bike Delhi',
+            'two wheeler rental Delhi',
+            'bike rent Delhi',
+            'self drive bike Delhi',
+            'bike on rent in Delhi',
+            'scooter rental Delhi NCR',
+            'rentals in Delhi',
+            'bike rental near me Delhi',
+        ],
+        coordinates: { latitude: 28.6139, longitude: 77.2090 },
         points: [
             { title: 'Metro Connectivity', desc: 'Pickup points near major Metro stations for last-mile connectivity.' },
             { title: 'Student Friendly', desc: 'Special discounts for students in North and South Campus.' },
             { title: 'Tour Ready', desc: 'Bikes available for trips to Agra, Jaipur, and Rishikesh.' }
         ],
         faq: [
-            { q: 'Can I take the bike to Ladakh?', a: 'For long trips like Ladakh, please check our specific heavy-duty cruiser section and read terms regarding interstate permits.' },
-            { q: 'Do I need a helmet?', a: 'Yes, a helmet for the rider is mandatory and provided by us. Pillion helmets are also available on request.' }
+            { q: 'Can I take the rented bike from Delhi to Ladakh?', a: 'For long trips like Ladakh, please check our specific heavy-duty cruiser section and read terms regarding interstate permits.' },
+            { q: 'Do I need a helmet with bike rental in Delhi?', a: 'Yes, a helmet for the rider is mandatory and provided by us. Pillion helmets are also available on request.' },
+            { q: 'What documents are needed for bike rental in Delhi?', a: 'You need a valid driving license and Aadhar card. The process is completely digital via the Zugo app.' },
         ],
         areas: ['Connaught Place', 'South Delhi', 'Dwarka', 'Karol Bagh', 'Laxmi Nagar', 'Rohini', 'Saket', 'Nehru Place']
     },
     gurugram: {
         name: 'Gurugram',
         formalName: 'Gurugram',
-        title: 'Rent Bike in Gurugram | Self Drive Bike Rentals Gurgaon',
-        description: 'Rent self-drive bikes in Gurugram (Gurgaon). Easy documentation, instant booking. Best for office commute and weekend rides.',
+        title: 'Rent Bike in Gurugram | Self Drive Bike & Scooty Rentals Gurgaon | Zugo',
+        description: 'Rent self-drive bikes and scooters in Gurugram (Gurgaon). Easy documentation, instant booking. Best for office commute and weekend rides. Affordable two wheeler on rent.',
+        seoDescription: 'Zugo provides self-drive bike rental and scooty on rent in Gurugram (Gurgaon). Perfect for daily office commute. Pickup near Huda City Centre and Cyber City.',
         heroTitle: 'Ride Smart in <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">Cyber City</span>',
         heroSubtitle: 'Commute to your office or explore Cyber Hub without the hassle of cabs.',
         intro: 'Gurugram is a hub of corporate offices and glitzy malls. Avoid the surge pricing of cabs and rent a bike for your daily commute or evening outings.',
+        keywords: [
+            'bike rental Gurugram',
+            'bike rental Gurgaon',
+            'scooty on rent Gurgaon',
+            'rent bike Gurugram',
+            'two wheeler rental Gurugram',
+            'bike rent Gurgaon',
+            'self drive bike Gurgaon',
+            'rentals in Gurugram',
+            'bike on rent in Gurgaon',
+        ],
+        coordinates: { latitude: 28.4595, longitude: 77.0266 },
         points: [
             { title: 'Corporate Packages', desc: 'Monthly rental plans perfect for daily office commuters.' },
             { title: 'Metro Access', desc: 'Pickup near Huda City Centre and Cyber City Rapid Metro.' },
             { title: 'Night Life', desc: 'Safe and reliable rides for your late-night food runs to Sector 29.' }
         ],
         faq: [
-            { q: 'Is there a security deposit?', a: 'We have a low security deposit policy for verified users with clean driving records.' },
-            { q: 'Can I extend my booking?', a: 'Yes, you can extend your booking via the app subject to vehicle availability.' }
+            { q: 'Is there a security deposit for bike rental in Gurugram?', a: 'We have a low security deposit policy for verified users with clean driving records.' },
+            { q: 'Can I extend my bike rental booking in Gurgaon?', a: 'Yes, you can extend your booking via the app subject to vehicle availability.' },
+            { q: 'What bikes are available for rent in Gurugram?', a: 'We offer scooters like Honda Activa, bikes like Pulsar, Royal Enfield, and more. Check the Zugo app for real-time availability.' },
         ],
         areas: ['Cyber City', 'Sector 29', 'MG Road', 'Sohna Road', 'Udyog Vihar', 'Golf Course Road', 'DLF Phase 3']
     },
     rishikesh: {
         name: 'Rishikesh',
         formalName: 'Rishikesh',
-        title: 'Scooty & Bike Rental in Rishikesh | Rafting & Riding',
-        description: 'Rent bikes and scooties in Rishikesh. Explore Tapovan, Laxman Jhula, and Neelkanth comfortably. Best rates guaranteed.',
+        title: 'Bike & Scooty Rental in Rishikesh | Two Wheeler on Rent | Zugo',
+        description: 'Looking for bike rental in Rishikesh? Rent bikes, scooters & scooties in Rishikesh starting at ₹20/hr. Explore Tapovan, Laxman Jhula, and Neelkanth on your own terms. Best rates guaranteed.',
+        seoDescription: 'Zugo is the best bike rental and scooty on rent service in Rishikesh, Uttarakhand. Rent two wheelers to explore Laxman Jhula, Tapovan, Neelkanth Mahadev Temple, and more. Affordable hourly, daily & weekly rental plans.',
         heroTitle: 'Find Peace in <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-500">Rishikesh</span>',
         heroSubtitle: 'Navigate the winding mountain roads and visit the ghats with the wind in your hair.',
-        intro: 'The Yoga Capital of the World is best experienced on a two-wheeler. Navigate the narrow streets near Laxman Jhula or ride up to Neelkanth Mahadev Temple with Zugo rentals.',
+        intro: 'The Yoga Capital of the World is best experienced on a two-wheeler. Navigate the narrow streets near Laxman Jhula or ride up to Neelkanth Mahadev Temple with Zugo rentals. Whether you are here for rafting, yoga, or adventure, renting a bike in Rishikesh gives you the ultimate freedom to explore at your own pace.',
+        keywords: [
+            'bike rental Rishikesh',
+            'scooty on rent in Rishikesh',
+            'rent bike Rishikesh',
+            'two wheeler rental Rishikesh',
+            'bike rent Rishikesh',
+            'rentals in Rishikesh',
+            'scooter rental Rishikesh',
+            'bike on rent in Rishikesh',
+            'self drive bike Rishikesh',
+            'scooty rental Rishikesh',
+            'vehicle rental Rishikesh',
+            'cheap bike rental Rishikesh',
+            'bike hire Rishikesh',
+        ],
+        coordinates: { latitude: 30.0869, longitude: 78.2676 },
         points: [
-            { title: 'Mountain Ready', desc: 'Powerful bikes suitable for steep mountain roads.' },
-            { title: 'Temple Run', desc: 'Easy access to Neelkanth, Beatles Ashram, and Ghats.' },
-            { title: 'Flexible Hours', desc: 'Hourly rentals available for short trips.' }
+            { title: 'Mountain Ready', desc: 'Powerful bikes suitable for steep mountain roads and curvy hill routes.' },
+            { title: 'Temple Run', desc: 'Easy access to Neelkanth Mahadev, Beatles Ashram, Ram Jhula, and Ghats.' },
+            { title: 'Flexible Hours', desc: 'Hourly rentals available for short trips. Daily and weekly plans for longer stays.' }
         ],
         faq: [
-            { q: 'Is usage allowed in hill areas?', a: 'Yes, our bikes are maintained for hill riding. Please drive carefully on curves.' },
-            { q: 'Where is the pickup point?', a: 'Our main hub is near the Bus Stand and Tapovan area.' }
+            { q: 'Where can I pick up a rental bike in Rishikesh?', a: 'Our main hub is near the Bus Stand and Tapovan area. We also have pickup points near Laxman Jhula and the main market.' },
+            { q: 'Is it safe to ride rented bikes in the hills around Rishikesh?', a: 'Yes, our bikes are maintained for hill riding. Please drive carefully on curves and always wear your helmet.' },
+            { q: 'What is the price of bike rental in Rishikesh?', a: 'Bike and scooty rentals in Rishikesh start from ₹20/hour. Daily rentals are available from ₹300/day. Check the app for exact pricing.' },
+            { q: 'Can I rent a bike in Rishikesh without a deposit?', a: 'Verified Zugo users can rent with zero deposit. For new users, a small refundable security deposit applies.' },
+            { q: 'Do you offer monthly bike rental in Rishikesh?', a: 'Yes! We offer discounted monthly plans perfect for yoga students and long-stay travellers in Rishikesh.' },
         ],
-        areas: ['Tapovan', 'Laxman Jhula', 'Ram Jhula', 'Main Market', 'Shivpuri', 'Neelkanth Road']
+        areas: ['Tapovan', 'Laxman Jhula', 'Ram Jhula', 'Main Market', 'Shivpuri', 'Neelkanth Road', 'Badrinath Highway', 'Bus Stand']
     }
 };
