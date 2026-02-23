@@ -144,53 +144,7 @@ export default function StructuredData() {
         })),
     };
 
-    // Global FAQPage Schema
-    const faqSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        'mainEntity': [
-            {
-                '@type': 'Question',
-                'name': 'How does Zugo bike rental work?',
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': 'Download the Zugo app, sign up with your driving license, browse available bikes near you, select your rental duration, and book instantly. Pick up the bike from the designated location and enjoy your ride!',
-                },
-            },
-            {
-                '@type': 'Question',
-                'name': 'What cities does Zugo operate in?',
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': 'Zugo currently operates in Rishikesh, Delhi, Bangalore, and Gurugram. We are rapidly expanding to more cities across India.',
-                },
-            },
-            {
-                '@type': 'Question',
-                'name': 'Is there a deposit for bike rental?',
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': 'Verified Zugo users can rent bikes with zero deposit. New users may require a small refundable security deposit and valid ID verification.',
-                },
-            },
-            {
-                '@type': 'Question',
-                'name': 'What is the price of bike rental on Zugo?',
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': 'Bike and scooty rentals start from as low as ₹20 per hour. Daily, weekly, and monthly plans are available at discounted rates. Prices vary by city and vehicle type.',
-                },
-            },
-            {
-                '@type': 'Question',
-                'name': 'Can I rent a scooty in Rishikesh with Zugo?',
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': 'Yes! Zugo offers scooters and scooties on rent in Rishikesh. Pick up near the Bus Stand or Tapovan area. Hourly, daily, and weekly rentals available.',
-                },
-            },
-        ],
-    };
+
 
     return (
         <>
@@ -224,12 +178,7 @@ export default function StructuredData() {
                     __html: JSON.stringify(siteNavigationSchema),
                 }}
             />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(faqSchema),
-                }}
-            />
+
         </>
     );
 }
