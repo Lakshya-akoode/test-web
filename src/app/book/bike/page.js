@@ -358,17 +358,9 @@ export default function BookBikePage() {
                                             {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
                                                 <>
                                                     {/* Blurred background layer */}
-                                                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
-                                                        <Image
-                                                            src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                                            alt=""
-                                                            fill
-                                                            className="object-cover opacity-40"
-                                                            style={{ filter: 'blur(8px) brightness(0.85)' }}
-                                                        />
-                                                    </div>
+                                                   
                                                     {/* Sharp vehicle image on top */}
-                                                    <div className="relative z-10 w-full h-full flex items-center justify-center">
+                                                    <div className="relative w-full h-full flex items-center justify-center">
                                                         <Image
                                                             src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
                                                             alt={vehicle.vehicleModel || 'Vehicle'}
@@ -390,7 +382,7 @@ export default function BookBikePage() {
                                             </div>
 
                                             {group.count > 1 && (
-                                                <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md z-10">
+                                                <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md ">
                                                     {group.count} Available
                                                 </div>
                                             )}

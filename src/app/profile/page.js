@@ -18,12 +18,23 @@ export default function ProfilePage() {
     const [imagePreview, setImagePreview] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
 
+    // License / KYC state
+    const [licenseStatus, setLicenseStatus] = useState(null);
+    const [licenseData, setLicenseData] = useState(null);
+    const [showLicenseForm, setShowLicenseForm] = useState(false);
+    const [licenseFrontPhoto, setLicenseFrontPhoto] = useState(null);
+    const [licenseBackPhoto, setLicenseBackPhoto] = useState(null);
+    const [frontPreview, setFrontPreview] = useState(null);
+    const [backPreview, setBackPreview] = useState(null);
+    const [licenseSubmitting, setLicenseSubmitting] = useState(false);
+
     useEffect(() => {
         if (!isAuthenticated()) {
             router.push('/login');
             return;
         }
         fetchUserProfile();
+        fetchLicenseStatus();
     }, [router]);
 
     useEffect(() => {
@@ -142,6 +153,72 @@ export default function ProfilePage() {
     const handleLogout = () => {
         clearAuth();
         router.push('/login');
+    };
+
+    // Fetch license/KYC status
+    const fetchLicenseStatus = async () => {
+        try {
+            const token = getToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/kyc-status`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.status === 'Success') {
+                setLicenseStatus(data.data.kycStatus);
+                setLicenseData(data.data.license);
+            }
+        } catch (error) {
+            console.error('Error fetching license status:', error);
+        }
+    };
+
+    // Handle license photo selection
+    const handleLicensePhoto = (e, side) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (side === 'front') {
+            setLicenseFrontPhoto(file);
+            setFrontPreview(URL.createObjectURL(file));
+        } else {
+            setLicenseBackPhoto(file);
+            setBackPreview(URL.createObjectURL(file));
+        }
+    };
+
+    // Submit license (photos only)
+    const handleLicenseSubmit = async (e) => {
+        e.preventDefault();
+        if (!licenseFrontPhoto || !licenseBackPhoto) {
+            alert('Please upload both front and back photos of your license');
+            return;
+        }
+        setLicenseSubmitting(true);
+        try {
+            const token = getToken();
+            const formData = new FormData();
+            formData.append('licenseFrontPhoto', licenseFrontPhoto);
+            formData.append('licenseBackPhoto', licenseBackPhoto);
+
+            const response = await fetch(`${API_BASE_URL}/api/user/submit-license`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+            const data = await response.json();
+            if (data.status === 'Success') {
+                alert('License submitted for verification!');
+                setShowLicenseForm(false);
+                setLicenseStatus('pending');
+                fetchLicenseStatus();
+            } else {
+                alert(data.message || 'Failed to submit license');
+            }
+        } catch (error) {
+            console.error('Error submitting license:', error);
+            alert('An error occurred');
+        } finally {
+            setLicenseSubmitting(false);
+        }
     };
 
     if (loading) {
@@ -409,6 +486,145 @@ export default function ProfilePage() {
                                     <p className="font-semibold text-gray-900">{new Date(user?.createdAt).toLocaleDateString()}</p>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Driver's License / KYC Section */}
+                        <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                </svg>
+                                Driver's License
+                                {licenseStatus === 'verified' && (
+                                    <span className="ml-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">✓ Verified</span>
+                                )}
+                                {licenseStatus === 'pending' && (
+                                    <span className="ml-2 px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full">⏳ Under Review</span>
+                                )}
+                                {licenseStatus === 'rejected' && (
+                                    <span className="ml-2 px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">✗ Rejected</span>
+                                )}
+                            </h2>
+
+                            {/* Not Submitted */}
+                            {(!licenseStatus || licenseStatus === 'not_submitted') && !showLicenseForm && (
+                                <div className="text-center py-8">
+                                    <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-gray-600 mb-4">Upload your driver's license to verify your identity and start booking vehicles.</p>
+                                    <button
+                                        onClick={() => setShowLicenseForm(true)}
+                                        className="px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                                    >
+                                        Upload License
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Rejected - show reason + re-upload */}
+                            {licenseStatus === 'rejected' && !showLicenseForm && (
+                                <div className="py-4">
+                                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+                                        <p className="text-red-700 text-sm font-medium">Reason: {licenseData?.rejectionReason || 'Documents unclear or incomplete'}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowLicenseForm(true)}
+                                        className="px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                                    >
+                                        Re-upload License
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Pending */}
+                            {licenseStatus === 'pending' && (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+                                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg className="w-6 h-6 text-yellow-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-yellow-800 font-semibold">Your license is under review</p>
+                                    <p className="text-yellow-600 text-sm mt-1">This usually takes 24-48 hours. We'll notify you once verified.</p>
+                                </div>
+                            )}
+
+                            {/* Verified - simple confirmation */}
+                            {licenseStatus === 'verified' && (
+                                <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-green-800 font-semibold">Your license has been verified</p>
+                                    <p className="text-green-600 text-sm mt-1">You're all set to book vehicles on Zugo.</p>
+                                </div>
+                            )}
+
+                            {/* Upload Form — photos only */}
+                            {showLicenseForm && (
+                                <form onSubmit={handleLicenseSubmit} className="space-y-6">
+                                    <p className="text-gray-600 text-sm">Upload clear photos of the front and back of your driver's license.</p>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase">Front Photo *</label>
+                                            <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-black transition-colors cursor-pointer"
+                                                onClick={() => document.getElementById('license-front').click()}>
+                                                {frontPreview ? (
+                                                    <img src={frontPreview} alt="Front" className="w-full h-40 object-cover rounded-lg" />
+                                                ) : (
+                                                    <div className="py-6">
+                                                        <svg className="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <p className="text-sm text-gray-500 font-medium">Front of License</p>
+                                                        <p className="text-xs text-gray-400 mt-1">Click to upload</p>
+                                                    </div>
+                                                )}
+                                                <input type="file" id="license-front" accept="image/*" className="hidden"
+                                                    onChange={e => handleLicensePhoto(e, 'front')} />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase">Back Photo *</label>
+                                            <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-black transition-colors cursor-pointer"
+                                                onClick={() => document.getElementById('license-back').click()}>
+                                                {backPreview ? (
+                                                    <img src={backPreview} alt="Back" className="w-full h-40 object-cover rounded-lg" />
+                                                ) : (
+                                                    <div className="py-6">
+                                                        <svg className="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <p className="text-sm text-gray-500 font-medium">Back of License</p>
+                                                        <p className="text-xs text-gray-400 mt-1">Click to upload</p>
+                                                    </div>
+                                                )}
+                                                <input type="file" id="license-back" accept="image/*" className="hidden"
+                                                    onChange={e => handleLicensePhoto(e, 'back')} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-2">
+                                        <button type="submit" disabled={licenseSubmitting}
+                                            className="px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                            {licenseSubmitting ? (
+                                                <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Submitting...</>
+                                            ) : 'Submit for Verification'}
+                                        </button>
+                                        <button type="button" onClick={() => setShowLicenseForm(false)}
+                                            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition-colors">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
                         </div>
 
                         {/* Recent Activity / Banner */}

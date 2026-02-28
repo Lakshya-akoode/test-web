@@ -37,7 +37,7 @@ export default function BookVehiclePage() {
         const initializeCashfree = async () => {
             try {
                 const cf = await load({
-                    mode: "production" // Change to "production" for live
+                    mode: "sandbox" // Change to "production" for live
                 });
                 setCashfree(cf);
             } catch (err) {

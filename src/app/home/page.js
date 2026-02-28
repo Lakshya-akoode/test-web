@@ -28,7 +28,7 @@ export default function HomePage() {
         try {
             setLoading(true);
             // Fetch all vehicles (remove category filter)
-            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}`, {
+            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?limit=30&dbLimit=30`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });

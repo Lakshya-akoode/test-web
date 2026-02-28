@@ -300,7 +300,7 @@ export default function RentalsPage() {
                                     </div>
 
                                     <Link
-                                        href={`/rentals/${rental.rentalId}`}
+                                        href={`/rental/${rental.rentalId}`}
                                         className="mt-4 w-full py-2.5 bg-gray-900 text-white text-center rounded-xl font-bold text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-gray-200"
                                     >
                                         View Vehicles

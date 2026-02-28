@@ -20,6 +20,12 @@ export default function AdminSidebar({ activeView, setActiveView }) {
       path: '/admin/dashboard?view=verifications'
     },
     {
+      id: 'license-verifications',
+      label: 'License Verifications',
+      icon: '🪪',
+      path: '/admin/dashboard?view=license-verifications'
+    },
+    {
       id: 'users',
       label: 'Users',
       icon: '👥',

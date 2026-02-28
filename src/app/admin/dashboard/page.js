@@ -9,6 +9,7 @@ import DashboardStats from '@/components/admin/DashboardStats';
 import UsersManagement from '@/components/admin/UsersManagement';
 import RegisteredVehicles from '@/components/admin/RegisteredVehicles';
 import VehicleVerification from '@/components/admin/VehicleVerification';
+import LicenseVerification from '@/components/admin/LicenseVerification';
 import OwnerRevenueAnalytics from '@/components/admin/OwnerRevenueAnalytics';
 import AdminMessages from '@/components/admin/AdminMessages';
 
@@ -119,6 +120,7 @@ function DashboardContent() {
                 <h1 className="text-2xl font-bold text-gray-800">
                   {activeView === 'dashboard' && 'Dashboard Stats'}
                   {activeView === 'verifications' && 'Vehicle Verifications'}
+                  {activeView === 'license-verifications' && 'License Verifications'}
                   {activeView === 'users' && 'Users Management'}
                   {activeView === 'register-rental' && 'Registered Vehicles & Rentals'}
                   {activeView === 'messages' && 'Messages & Inquiries'}
@@ -154,6 +156,7 @@ function DashboardContent() {
             />
           )}
           {activeView === 'verifications' && <VehicleVerification />}
+          {activeView === 'license-verifications' && <LicenseVerification />}
           {activeView === 'users' && <UsersManagement />}
           {activeView === 'register-rental' && <RegisteredVehicles />}
           {activeView === 'messages' && <AdminMessages />}

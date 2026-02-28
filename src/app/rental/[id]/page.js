@@ -306,7 +306,7 @@ export default function RentalVehiclesPage() {
                         {nearbyRentals.map((item) => (
                             <Link
                                 key={item._id}
-                                href={`/rentals/${item._id}`}
+                                href={`/rental/${item._id}`}
                                 className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"
                             >
                                 <div className="h-40 bg-gray-100 relative overflow-hidden">
