@@ -61,6 +61,9 @@ export default function RootPage() {
           </div>
 
           <div className="text-center mb-10 animate-fade-in-up">
+            <div className="inline-block mb-6 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600/90 to-purple-600/90 backdrop-blur-md border border-white/20 shadow-lg animate-pulse">
+              <span className="text-sm md:text-base font-bold text-white uppercase tracking-wider">🌟 Pay Only 10% Advance To Book!</span>
+            </div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-6 leading-tight drop-shadow-2xl">
               India's Most Flexible
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400 mt-2">Self-Drive Rental</span>
@@ -101,7 +104,7 @@ export default function RootPage() {
               </div>
             </div>
 
-            {/* Affordable Pricing */}
+            {/* 10% Advance Booking */}
             <div className="group flex items-center gap-4 bg-black/40 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:bg-black/50 hover:border-white/20">
               <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shadow-inner group-hover:bg-white/10 transition-all duration-300 border border-white/5">
                 <svg className="w-6 h-6 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,8 +112,8 @@ export default function RootPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-blue-400 transition-colors">Affordable</div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Pricing</div>
+                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-blue-400 transition-colors">10% Advance</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Pay Rest at Pickup</div>
               </div>
             </div>
 
@@ -466,6 +469,7 @@ export default function RootPage() {
               </h3>
               <ul className="space-y-5">
                 {[
+                  'Book with only 10% advance payment',
                   'No fuel charges - pay only for the rental',
                   'Flexible pickup and drop locations',
                   '24/7 roadside assistance',

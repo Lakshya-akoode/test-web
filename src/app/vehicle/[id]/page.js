@@ -166,24 +166,11 @@ export default function VehicleDetailsPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
                         <div className="bg-gray-100 rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-96 relative flex items-center justify-center">
-                            {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
-                                <img
-                                    src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                    alt={vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'}
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        if (e.target.nextSibling) {
-                                            e.target.nextSibling.style.display = 'flex';
-                                        }
-                                    }}
-                                />
-                            ) : null}
-                            <div className={`w-full h-full ${vehicle.vehiclePhoto || vehicle.VehiclePhoto ? 'hidden' : 'flex'} items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200`}>
-                                <svg className="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
+                            <img
+                                src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
+                                alt={vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'}
+                                className="w-full h-full object-contain"
+                            />
                             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
                                 {vehicle.distance ? `${vehicle.distance} km away` : 'Available Now'}
                             </div>
@@ -309,7 +296,12 @@ export default function VehicleDetailsPage() {
                             <div className="border-t border-gray-100 pt-4 mb-6">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-gray-600">Total Price</span>
-                                    <span className="font-bold text-xl">₹{totalPrice}</span>
+                                    <div className="text-right">
+                                        <span className="font-bold text-xl block">₹{totalPrice}</span>
+                                        <span className="text-[10px] sm:text-xs text-blue-600 font-bold uppercase tracking-wide bg-blue-50 px-2 py-1 rounded inline-block mt-1">
+                                            Pay only 10% (₹{Math.round(totalPrice * 0.1)}) now to book
+                                        </span>
+                                    </div>
                                 </div>
                                 {availabilityMsg && (
                                     <div className={`text-sm font-medium mb-2 ${isAvailable ? 'text-green-600' : 'text-red-600'}`}>

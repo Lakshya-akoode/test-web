@@ -28,7 +28,7 @@ export default function HomePage() {
         try {
             setLoading(true);
             // Fetch all vehicles (remove category filter)
-            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?limit=30&dbLimit=30`, {
+            const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VEHICLES}?limit=5&dbLimit=5`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -70,17 +70,17 @@ export default function HomePage() {
                         <div className="mb-6">
                             <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-sm font-bold text-white border border-white/10 shadow-lg">
                                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                India's Largest Self-Drive Platform
+                                Book on the go with Zugo
                             </span>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight tracking-tight">
-                            Find Your Perfect
+                            Pay Just 10%
                             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                                Ride Today
+                                Book In Advance
                             </span>
                         </h1>
                         <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-2xl leading-relaxed">
-                            Choose from over {vehicles.length > 0 ? vehicles.length : '100'}+ verified premium vehicles. Transparent pricing, zero hidden charges, and instant booking.
+                            Choose from our variety of ranges. Pay a 10% token amount to reserve, and settle the rest with the owner when you pick up your ride!
                         </p>
                     </div>
                 </div>

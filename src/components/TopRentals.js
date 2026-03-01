@@ -6,16 +6,6 @@ export default function TopRentals({ vehicles = [], loading = false }) {
     const scrollContainerRef = useRef(null);
     const [activeFilter, setActiveFilter] = useState('All');
 
-    const scroll = (direction) => {
-        if (scrollContainerRef.current) {
-            const scrollAmount = 340;
-            const newScrollPosition = scrollContainerRef.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
-            scrollContainerRef.current.scrollTo({
-                left: newScrollPosition,
-                behavior: 'smooth'
-            });
-        }
-    };
 
     const categories = ['All', 'Bike', 'Scooter', 'Car'];
 
@@ -61,30 +51,8 @@ export default function TopRentals({ vehicles = [], loading = false }) {
                                     ))}
                                 </div>
 
-                                {/* Nav Arrows */}
-                                <div className="hidden md:flex items-center gap-2">
-                                    <button
-                                        onClick={() => scroll('left')}
-                                        className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                                        aria-label="Scroll left"
-                                    >
-                                        <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onClick={() => scroll('right')}
-                                        className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center hover:bg-gray-800 transition-colors"
-                                        aria-label="Scroll right"
-                                    >
-                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
-                                </div>
-
                                 <Link
-                                    href="/rentals"
+                                    href="/book/bike"
                                     className="hidden md:flex items-center gap-1 px-4 py-2 text-sm font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all group"
                                 >
                                     View All
@@ -102,7 +70,7 @@ export default function TopRentals({ vehicles = [], loading = false }) {
                                 className="flex gap-5 overflow-x-auto pb-6 snap-x snap-mandatory"
                                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                             >
-                                {filteredVehicles.slice(0, 8).map((vehicle, idx) => (
+                                {filteredVehicles.slice(0, 5).map((vehicle, idx) => (
                                     <Link
                                         key={vehicle._id || idx}
                                         href={`/vehicle/${vehicle._id}`}
@@ -112,7 +80,7 @@ export default function TopRentals({ vehicles = [], loading = false }) {
                                             {/* Vehicle Image */}
                                             <div className="relative h-52 bg-gray-50 overflow-hidden">
                                                 <img
-                                                    src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/placeholder-vehicle.jpg'}
+                                                    src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
                                                     alt={vehicle.vehicleModel || vehicle.VehicleModel}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                     onError={(e) => {
@@ -216,7 +184,7 @@ export default function TopRentals({ vehicles = [], loading = false }) {
                         {/* Mobile View All */}
                         <div className="md:hidden mt-4 text-center">
                             <Link
-                                href="/rentals"
+                                href="/book/bike"
                                 className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-gray-900 rounded-xl hover:bg-gray-800 transition-colors"
                             >
                                 View All Vehicles

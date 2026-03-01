@@ -165,6 +165,7 @@ export default function BookVehiclePage() {
         try {
             const endDate = calculateEndDate();
             const totalAmount = totalDays * pricePerDay;
+            const advanceAmount = Math.round(totalAmount * 0.1);
             const token = getToken();
 
             // Step 1: Create Booking Query (Pending State)
@@ -200,7 +201,7 @@ export default function BookVehiclePage() {
 
             const bookingId = bookingResult.data.bookingId;
 
-            // Step 2: Create Cashfree order
+            // Step 2: Create Cashfree order for 10% Advance
             const orderResponse = await fetch(API.createPaymentOrder, {
                 method: 'POST',
                 headers: {
@@ -208,7 +209,7 @@ export default function BookVehiclePage() {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    amount: totalAmount,
+                    amount: advanceAmount, // Only charge 10% advance amount online
                     currency: 'INR',
                     bookingId: bookingId,
                     customerId: user.id,
@@ -317,20 +318,11 @@ export default function BookVehiclePage() {
                                 </h2>
                                 <div className="flex gap-6">
                                     <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
-                                        {(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? (
-                                            <img
-                                                src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto}
-                                                alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.style.display = 'none';
-                                                    if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div className={`w-full h-full ${(vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto) ? 'hidden' : 'flex'} items-center justify-center text-gray-300`}>
-                                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        </div>
+                                        <img
+                                            src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto || '/static_bike.png'}
+                                            alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
+                                            className="w-full h-full object-cover"
+                                        />
                                     </div>
                                     <div className="flex-1 py-1">
                                         <div className="flex items-start justify-between">
@@ -415,7 +407,7 @@ export default function BookVehiclePage() {
                                     <div className="space-y-4 mb-8">
                                         <div className="flex justify-between items-center text-gray-600">
                                             <span>Trip Price ({totalDays} days)</span>
-                                            <span className="font-bold text-gray-900">₹{totalDays * pricePerDay}</span>
+                                            <span className="font-bold text-gray-900">₹{totalAmount}</span>
                                         </div>
                                         {/* Security Deposit Line Item */}
                                         {vehicle?.securityDeposit > 0 && (
@@ -435,9 +427,13 @@ export default function BookVehiclePage() {
                                                 </div>
                                             </div>
                                         )}
-                                        <div className="pt-4 border-t border-gray-100 flex justify-between items-end">
-                                            <span className="font-bold text-gray-900">Total Payable Now</span>
-                                            <span className="text-3xl font-black text-gray-900">₹{totalAmount}</span>
+                                        <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-gray-600">
+                                            <span className="font-bold">Pay at Pickup (90%)</span>
+                                            <span className="font-bold text-gray-900">₹{totalAmount - Math.round(totalAmount * 0.1)}</span>
+                                        </div>
+                                        <div className="pt-2 flex justify-between items-end">
+                                            <span className="font-bold text-gray-900">Advance Payable Now (10%)</span>
+                                            <span className="text-3xl font-black text-gray-900">₹{Math.round(totalAmount * 0.1)}</span>
                                         </div>
                                     </div>
 

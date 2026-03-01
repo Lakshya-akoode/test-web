@@ -355,27 +355,14 @@ export default function BookBikePage() {
                                         className="group bg-white rounded-3xl p-3 border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 hover:-translate-y-1 flex flex-col cursor-pointer"
                                     >
                                         <div className="relative h-56 w-full rounded-2xl overflow-hidden mb-4 flex items-center justify-center">
-                                            {vehicle.vehiclePhoto || vehicle.VehiclePhoto ? (
-                                                <>
-                                                    {/* Blurred background layer */}
-                                                   
-                                                    {/* Sharp vehicle image on top */}
-                                                    <div className="relative w-full h-full flex items-center justify-center">
-                                                        <Image
-                                                            src={vehicle.vehiclePhoto || vehicle.VehiclePhoto}
-                                                            alt={vehicle.vehicleModel || 'Vehicle'}
-                                                            fill
-                                                            className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
-                                                        />
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gradient-to-br from-gray-50 to-gray-100">
-                                                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                </div>
-                                            )}
+                                            <div className="relative w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
+                                                <Image
+                                                    src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
+                                                    alt={vehicle.vehicleModel || 'Vehicle'}
+                                                    fill
+                                                    className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+                                                />
+                                            </div>
                                             <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
                                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                                                 <span className="text-gray-800">{vehicle.distance ? `${vehicle.distance} km` : 'Available'}</span>
