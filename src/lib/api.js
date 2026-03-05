@@ -1,4 +1,4 @@
-const endpoint = `${process.env.BACKEND_URL}`;
+const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/`;
 // const endpoint = `http://localhost:5001/`;
 
 export const API = {
