@@ -1,4 +1,4 @@
-const endpoint = `https://zugo-backend.onrender.com/`;
+const endpoint = `${process.env.BACKEND_URL}`;
 // const endpoint = `http://localhost:5001/`;
 
 export const API = {
