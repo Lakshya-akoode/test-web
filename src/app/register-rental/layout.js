@@ -4,7 +4,7 @@ export const metadata = generateSEOMetadata({
     title: pageMetadata.registerRental.title,
     description: pageMetadata.registerRental.description,
     keywords: pageMetadata.registerRental.keywords,
-    canonical: 'https://zugo.co.in/register-rental',
+    canonical: 'https://www.zugo.co.in/register-rental',
 });
 
 export default function RegisterRentalLayout({ children }) {

@@ -2,76 +2,47 @@
 
 export const siteConfig = {
     name: 'Zugo',
-    description: 'India\'s most flexible self-drive vehicle rental platform. Rent bikes, scooters & cars on your own terms in Rishikesh, Delhi, Bangalore & more. No hidden charges, zero fuel costs, and complete freedom to travel.',
-    url: 'https://zugo.co.in',
-    ogImage: 'https://zugo.co.in/black_logo.png',
+    description: 'Rent Royal Enfield, scooters and bikes in Rishikesh instantly. Pickup at Tapovan, Laxman Jhula and Ram Jhula. From Rs 300/day.',
+    url: 'https://www.zugo.co.in',
+    ogImage: 'https://www.zugo.co.in/og-image.jpg',
     keywords: [
-        // Core keywords
-        'vehicle rental India',
-        'bike rental',
-        'car rental',
-        'self drive car rental',
-        'self drive bike rental',
-        'rent bike',
-        'rent car',
+        'bike rental rishikesh',
+        'scooter rental rishikesh',
+        'royal enfield rent rishikesh',
+        'bike on rent rishikesh',
+        'scooty rental rishikesh',
+        'rent bike in rishikesh',
+        'activa on rent rishikesh',
+        'two wheeler rental rishikesh',
+        'self drive bike rental rishikesh',
         'zugo',
-        'vehicle rental platform',
-        'bike booking',
-        'car booking',
-        'two wheeler rental',
-        'four wheeler rental',
-        'hourly bike rental',
-        'daily car rental',
-        'monthly bike rental',
-        'weekly car rental',
-        // High-volume search keywords
-        'bike rent',
-        'bike on rent',
-        'scooty on rent',
-        'scooty rental',
-        'bike rent near me',
-        'rent bike near me',
-        'rent car near me',
-        'two wheeler on rent',
-        'self drive bike',
-        'self drive car',
-        // Location-specific keywords
-        'bike rental Rishikesh',
-        'scooty on rent in Rishikesh',
-        'rentals in Rishikesh',
-        'bike rent Rishikesh',
-        'bike rental Delhi',
-        'bike rental Bangalore',
-        'bike rental Gurugram',
-        'car rental Rishikesh',
-        'vehicle rental Rishikesh',
-        'two wheeler rental Rishikesh',
-        // Long-tail keywords
-        'cheap bike rental India',
-        'affordable scooty rental',
-        'bike rental for travel',
-        'rent bike for trip',
-        'bike rental without deposit',
-        'self drive two wheeler rental',
     ],
     social: {
         instagram: 'https://www.instagram.com/zugo_pvt',
     },
     company: {
-        name: 'Zugo',
+        name: 'Zugo Bike Rental Rishikesh',
         legalName: 'Zugo India',
         foundingDate: '2024',
         email: 'info@zugo.co.in',
-        phone: '+91-9692031010',
+        phone: '+919692031010',
         address: {
-            streetAddress: '',
+            streetAddress: 'Tapovan',
             addressLocality: 'Rishikesh',
             addressRegion: 'Uttarakhand',
-            postalCode: '',
+            postalCode: '249192',
             addressCountry: 'IN',
         },
     },
 };
+
+function formatPageTitle(title = siteConfig.name) {
+    if (!title) {
+        return siteConfig.name;
+    }
+
+    return /zugo/i.test(title) ? title : `${title} | ${siteConfig.name}`;
+}
 
 // Generate metadata for pages
 export function generateMetadata({
@@ -83,7 +54,7 @@ export function generateMetadata({
     canonical,
 }) {
     const metadata = {
-        title: title === siteConfig.name ? title : `${title} | ${siteConfig.name}`,
+        title: formatPageTitle(title),
         description,
         keywords: keywords ? keywords.join(', ') : siteConfig.keywords.join(', '),
         authors: [{ name: siteConfig.name }],
@@ -91,13 +62,13 @@ export function generateMetadata({
         publisher: siteConfig.name,
         metadataBase: new URL(siteConfig.url),
         alternates: {
-            canonical: canonical,
+            canonical: canonical || siteConfig.url,
         },
         openGraph: {
             type: 'website',
             locale: 'en_IN',
             url: canonical || siteConfig.url,
-            title: title === siteConfig.name ? title : `${title} | ${siteConfig.name}`,
+            title: formatPageTitle(title),
             description,
             siteName: siteConfig.name,
             images: [
@@ -105,13 +76,13 @@ export function generateMetadata({
                     url: image,
                     width: 1200,
                     height: 630,
-                    alt: `${siteConfig.name} - ${description}`,
+                    alt: `${siteConfig.name} bike rental in Rishikesh`,
                 },
             ],
         },
         twitter: {
             card: 'summary_large_image',
-            title: title === siteConfig.name ? title : `${title} | ${siteConfig.name}`,
+            title: formatPageTitle(title),
             description,
             images: [image],
             creator: '@zugoforyou', // Can be updated if Twitter account is created
@@ -141,22 +112,15 @@ export function generateMetadata({
 // Page-specific metadata presets
 export const pageMetadata = {
     home: {
-        title: 'Zugo - Bike & Car Rental in Rishikesh, Delhi, Bangalore | Self Drive Rentals India',
-        description: 'Rent bikes, scooters & cars on your own terms. Affordable self-drive vehicle rentals in Rishikesh, Delhi, Bangalore & Gurugram. No hidden charges, zero fuel costs. Book instantly!',
+        title: 'Bike & Scooter Rental in Rishikesh | Book Online | Zugo',
+        description: 'Rent Royal Enfield, scooters & bikes in Rishikesh instantly. 50+ verified vehicles. Pickup at Tapovan, Laxman Jhula & Ram Jhula. From Rs 300/day. Book now at zugo.co.in',
         keywords: [
-            'vehicle rental India',
-            'bike rental India',
-            'car rental India',
-            'self drive rental',
-            'zugo',
-            'rent bike near me',
-            'rent car near me',
             'bike rental Rishikesh',
-            'bike rent',
-            'scooty on rent',
-            'rentals in Rishikesh',
-            'two wheeler on rent',
-            'self drive bike rental',
+            'scooter rental Rishikesh',
+            'royal enfield rent Rishikesh',
+            'activa on rent Rishikesh',
+            'rent bike in Rishikesh',
+            'zugo',
         ],
     },
     bookBike: {
@@ -241,5 +205,15 @@ export const pageMetadata = {
         title: 'Sign Up',
         description: 'Create a new account on Zugo to start renting bikes and cars.',
         keywords: ['register', 'sign up', 'create account', 'zugo register'],
+    },
+    pricing: {
+        title: 'Bike Rental Prices in Rishikesh | Scooter & Royal Enfield Rates | Zugo',
+        description: 'Transparent bike rental pricing in Rishikesh. Royal Enfield from Rs 800/day, scooters from Rs 300/day. No hidden charges. See full pricing at zugo.co.in',
+        keywords: [
+            'bike rental prices rishikesh',
+            'scooter rent price rishikesh',
+            'royal enfield rent price rishikesh',
+            'bike rental rates rishikesh',
+        ],
     },
 };

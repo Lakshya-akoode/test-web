@@ -17,6 +17,10 @@ export async function generateMetadata({ params }) {
 
     const title = `Rentals in ${content.name} — Bikes, Scooters & Cars on Rent | Zugo`;
     const description = `Find the best vehicle rental services in ${content.name}. Rent bikes, scooters & cars at affordable rates. ${content.seoDescription || content.description}`;
+    const canonicalUrl = cityKey === 'rishikesh'
+        ? 'https://www.zugo.co.in/bikes-for-rent/rishikesh'
+        : `https://www.zugo.co.in/rentals/${city}`;
+    const pageUrl = `https://www.zugo.co.in/rentals/${city}`;
 
     return {
         title,
@@ -29,12 +33,12 @@ export async function generateMetadata({ params }) {
             ...(content.keywords || []),
         ].join(', '),
         alternates: {
-            canonical: `https://zugo.co.in/rentals/${city}`,
+            canonical: canonicalUrl,
         },
         openGraph: {
             type: 'website',
             locale: 'en_IN',
-            url: `https://zugo.co.in/rentals/${city}`,
+            url: pageUrl,
             title,
             description,
             siteName: siteConfig.name,
@@ -43,7 +47,7 @@ export async function generateMetadata({ params }) {
                     url: siteConfig.ogImage,
                     width: 1200,
                     height: 630,
-                    alt: `Rentals in ${content.name} - Zugo`,
+                    alt: `Rentals in ${content.name} by Zugo`,
                 },
             ],
         },
@@ -72,15 +76,16 @@ export default async function CityRentalsPage({ params }) {
     }
 
     const { name, formalName, intro, points, faq, areas } = content;
+    const pageUrl = `https://www.zugo.co.in/rentals/${city}`;
 
     // Breadcrumb JSON-LD
     const breadcrumbSchema = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://zugo.co.in' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Rentals', 'item': 'https://zugo.co.in/rentals' },
-            { '@type': 'ListItem', 'position': 3, 'name': `Rentals in ${name}`, 'item': `https://zugo.co.in/rentals/${city}` },
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.zugo.co.in' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Rentals', 'item': 'https://www.zugo.co.in/rentals' },
+            { '@type': 'ListItem', 'position': 3, 'name': `Rentals in ${name}`, 'item': pageUrl },
         ],
     };
 
@@ -100,9 +105,9 @@ export default async function CityRentalsPage({ params }) {
         '@context': 'https://schema.org',
         '@type': 'AutoRental',
         'name': `Zugo Vehicle Rentals - ${name}`,
-        'image': 'https://zugo.co.in/black_logo.png',
+        'image': siteConfig.ogImage,
         'description': content.seoDescription || content.description,
-        'url': `https://zugo.co.in/rentals/${city}`,
+        'url': pageUrl,
         'telephone': siteConfig.company.phone,
         'email': siteConfig.company.email,
         'priceRange': '₹₹',

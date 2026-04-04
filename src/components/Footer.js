@@ -22,7 +22,7 @@ export default function Footer() {
                             />
                         </Link>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                            Zugo is India&apos;s most flexible self-drive vehicle rental platform. Rent bikes, scooters & cars in Rishikesh, Delhi, Bangalore & more.
+                            Zugo helps travellers book bikes and scooters in Rishikesh with transparent pricing, verified listings and convenient pickup near Tapovan and Laxman Jhula.
                         </p>
                     </div>
 
@@ -36,6 +36,7 @@ export default function Footer() {
                             <li><Link href="/rentals" className="hover:text-black transition-colors">Browse Rentals</Link></li>
                             <li><Link href="/register-vehicle" className="hover:text-black transition-colors">List Your Vehicle</Link></li>
                             <li><Link href="/bike-rent-pricing" className="hover:text-black transition-colors">Pricing</Link></li>
+                            <li><Link href="/blog" className="hover:text-black transition-colors">Blog</Link></li>
                         </ul>
                     </div>
 

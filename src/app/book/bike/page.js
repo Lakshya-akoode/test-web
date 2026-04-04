@@ -330,7 +330,7 @@ export default function BookBikePage() {
                                 </svg>
                             </div>
                             <h3 className="text-2xl font-bold text-gray-900 mb-2">No bikes found</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto">We couldn't find any bikes or scooters matching your search. Try adjusting your filters.</p>
+                            <p className="text-gray-500 max-w-sm mx-auto">We couldn&apos;t find any bikes or scooters matching your search. Try adjusting your filters.</p>
                             <button
                                 onClick={() => { setSearchQuery(''); setSelectedCity(''); setRadius(5000); }}
                                 className="mt-6 px-6 py-2.5 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-colors"
@@ -358,8 +358,10 @@ export default function BookBikePage() {
                                             <div className="relative w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
                                                 <Image
                                                     src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
-                                                    alt={vehicle.vehicleModel || 'Vehicle'}
+                                                    alt={`${vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'} for rent in ${vehicle.City || selectedCity || 'Rishikesh'} - Zugo`}
                                                     fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                                                    unoptimized
                                                     className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                                                 />
                                             </div>
@@ -436,7 +438,7 @@ export default function BookBikePage() {
                                 <li><strong>Zero Fuel Cost:</strong> Pay only for the rental duration.</li>
                             </ul>
                             <p>
-                                Search for "<strong>rent bike near me</strong>" and you'll find Zugo ready to serve you. Experience the freedom of self-drive with India's most flexible vehicle rental platform. Book your ride today!
+                                Search for &quot;<strong>rent bike near me</strong>&quot; and you&apos;ll find Zugo ready to serve you. Experience the freedom of self-drive with India&apos;s most flexible vehicle rental platform. Book your ride today!
                             </p>
                         </div>
                     </div>

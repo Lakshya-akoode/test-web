@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 export default function TopRentals({ vehicles = [], loading = false }) {
@@ -79,14 +80,13 @@ export default function TopRentals({ vehicles = [], loading = false }) {
                                         <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
                                             {/* Vehicle Image */}
                                             <div className="relative h-52 bg-gray-50 overflow-hidden">
-                                                <img
+                                                <Image
                                                     src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
-                                                    alt={vehicle.vehicleModel || vehicle.VehicleModel}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                    onError={(e) => {
-                                                        e.target.style.objectFit = 'contain';
-                                                        e.target.style.padding = '1rem';
-                                                    }}
+                                                    alt={`${vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'} for rent in ${vehicle.City || 'Rishikesh'} - Zugo`}
+                                                    fill
+                                                    sizes="300px"
+                                                    unoptimized
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                                                 />
 
                                                 {/* Vehicle Type Tag */}
@@ -242,7 +242,13 @@ export default function TopRentals({ vehicles = [], loading = false }) {
 
                             {/* Visual Element */}
                             <div className="relative mt-auto mb-8 h-48 w-full group-hover:scale-105 transition-transform duration-700">
-                                <img src="/travel.png" alt="Rent Vehicle" className="w-full h-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition-opacity" />
+                                <Image
+                                    src="/travel.png"
+                                    alt="Scenic road trip near Rishikesh with scooters and cars"
+                                    fill
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
+                                    className="object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition-opacity"
+                                />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
                             </div>
 

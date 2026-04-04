@@ -2,8 +2,8 @@ export const cityContent = {
     bangalore: {
         name: 'Bangalore',
         formalName: 'Bengaluru',
-        title: 'Rent Bikes in Bangalore | Self Drive Two Wheelers @ ₹20/hr | Zugo',
-        description: 'Rent bikes & scooters in Bangalore starting at ₹20/hr. Choose from scooters, bikes, and superbikes. Zero deposit, unlimited kms. Best bike rental in Bengaluru. Book now!',
+        title: 'Bike Rental in Bangalore | Self Drive Scooter & Bike on Rent | Zugo',
+        description: 'Self-drive bike and scooter rental in Bangalore. Hourly, daily and weekly plans available. Book online instantly at zugo.co.in',
         seoDescription: 'Zugo offers affordable self-drive bike rental and scooty on rent in Bangalore (Bengaluru). Locations in Koramangala, Indiranagar, HSR Layout, Whitefield & more. Hourly, daily, weekly rentals available.',
         heroTitle: 'Rent Freedom in <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Bangalore</span>',
         heroSubtitle: 'Skip the traffic and explore the Garden City on your own terms. From Koramangala to Whitefield, we have you covered.',
@@ -37,8 +37,8 @@ export const cityContent = {
     delhi: {
         name: 'Delhi',
         formalName: 'New Delhi',
-        title: 'Bike Rental in Delhi | Rent Two Wheeler in Delhi NCR | Zugo',
-        description: 'Looking for bike rental in Delhi? Rent bikes and scooters in Delhi NCR from Zugo. Affordable rates, well-maintained fleet. Self drive two wheeler on rent in Delhi. Book online.',
+        title: 'Bike Rental in Delhi | Self Drive Two Wheeler on Rent | Zugo',
+        description: 'Rent bikes and scooters in Delhi on self-drive. Hourly, daily and monthly plans. Verified vehicles, instant online booking at zugo.co.in',
         seoDescription: 'Zugo offers the best bike rental and scooty on rent service in Delhi NCR. Affordable self-drive two wheelers available near major Metro stations. Hourly, daily, and monthly plans.',
         heroTitle: 'Explore the Capital on <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-600">Two Wheels</span>',
         heroSubtitle: 'From the narrow lanes of Chandni Chowk to the wide avenues of Lutyens, experience Delhi like never before.',
@@ -104,12 +104,12 @@ export const cityContent = {
     rishikesh: {
         name: 'Rishikesh',
         formalName: 'Rishikesh',
-        title: 'Bike & Scooty Rental in Rishikesh | Two Wheeler on Rent | Zugo',
-        description: 'Looking for bike rental in Rishikesh? Rent bikes, scooters & scooties in Rishikesh starting at ₹20/hr. Explore Tapovan, Laxman Jhula, and Neelkanth on your own terms. Best rates guaranteed.',
+        title: 'Bike Rental in Rishikesh | Royal Enfield, Scooter & Activa | Zugo',
+        description: 'Rent bikes & scooters in Rishikesh from Rs 300/day. Royal Enfield, Activa, Dominar & more. Pickup at Laxman Jhula, Tapovan, Bus Stand. Instant booking. No hidden charges.',
         seoDescription: 'Zugo is the best bike rental and scooty on rent service in Rishikesh, Uttarakhand. Rent two wheelers to explore Laxman Jhula, Tapovan, Neelkanth Mahadev Temple, and more. Affordable hourly, daily & weekly rental plans.',
-        heroTitle: 'Find Peace in <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-500">Rishikesh</span>',
-        heroSubtitle: 'Navigate the winding mountain roads and visit the ghats with the wind in your hair.',
-        intro: 'The Yoga Capital of the World is best experienced on a two-wheeler. Navigate the narrow streets near Laxman Jhula or ride up to Neelkanth Mahadev Temple with Zugo rentals. Whether you are here for rafting, yoga, or adventure, renting a bike in Rishikesh gives you the ultimate freedom to explore at your own pace.',
+        heroTitle: 'Bike Rental in <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-500">Rishikesh</span>',
+        heroSubtitle: 'Book Royal Enfield, Activa, scooters and bikes in Rishikesh with pickup near Tapovan, Laxman Jhula, Ram Jhula and the Bus Stand.',
+        intro: 'Rishikesh is easiest to explore on two wheels. From Tapovan cafes and Laxman Jhula lanes to rides towards Neelkanth, Shivpuri and the Ganga ghats, Zugo helps travellers book verified bikes and scooters quickly without hidden charges. Choose from Activa, Royal Enfield, Dominar and more with flexible daily rentals.',
         keywords: [
             'bike rental Rishikesh',
             'scooty on rent in Rishikesh',
@@ -132,11 +132,11 @@ export const cityContent = {
             { title: 'Flexible Hours', desc: 'Hourly rentals available for short trips. Daily and weekly plans for longer stays.' }
         ],
         faq: [
-            { q: 'Where can I pick up a rental bike in Rishikesh?', a: 'Our main hub is near the Bus Stand and Tapovan area. We also have pickup points near Laxman Jhula and the main market.' },
-            { q: 'Is it safe to ride rented bikes in the hills around Rishikesh?', a: 'Yes, our bikes are maintained for hill riding. Please drive carefully on curves and always wear your helmet.' },
-            { q: 'What is the price of bike rental in Rishikesh?', a: 'Bike and scooty rentals in Rishikesh start from ₹20/hour. Daily rentals are available from ₹300/day. Check the app for exact pricing.' },
-            { q: 'Can I rent a bike in Rishikesh without a deposit?', a: 'Verified Zugo users can rent with zero deposit. For new users, a small refundable security deposit applies.' },
-            { q: 'Do you offer monthly bike rental in Rishikesh?', a: 'Yes! We offer discounted monthly plans perfect for yoga students and long-stay travellers in Rishikesh.' },
+            { q: 'What is the price of bike rental in Rishikesh?', a: 'Bike and scooty rentals in Rishikesh start from Rs 300 per day. Royal Enfield rentals start from Rs 800 per day. Check zugo.co.in for exact pricing.' },
+            { q: 'Where can I pick up a rental bike in Rishikesh?', a: 'Zugo has pickup points near Tapovan, Laxman Jhula, Ram Jhula, and the Rishikesh Bus Stand.' },
+            { q: 'Do I need a driving licence to rent a bike in Rishikesh?', a: 'Yes, a valid two-wheeler driving licence is required to rent a bike through Zugo in Rishikesh.' },
+            { q: 'Can I rent a Royal Enfield in Rishikesh?', a: 'Yes, Zugo offers Royal Enfield Classic 350, Bullet 350, and Himalayan for rent in Rishikesh starting from Rs 800 per day.' },
+            { q: 'Is a deposit required to rent a bike in Rishikesh?', a: 'Verified Zugo users can rent with zero deposit. New users pay a small refundable security deposit.' },
         ],
         areas: ['Tapovan', 'Laxman Jhula', 'Ram Jhula', 'Main Market', 'Shivpuri', 'Neelkanth Road', 'Badrinath Highway', 'Bus Stand']
     }

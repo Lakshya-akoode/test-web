@@ -1,0 +1,67 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B3B5B"/>
+      <stop offset="0.55" stop-color="#1A6A7A"/>
+      <stop offset="1" stop-color="#F4E4B4"/>
+    </linearGradient>
+    <linearGradient id="mountainBack" x1="201" y1="122" x2="393" y2="343" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8BC6B3"/>
+      <stop offset="1" stop-color="#255E61"/>
+    </linearGradient>
+    <linearGradient id="mountainFront" x1="770" y1="131" x2="633" y2="397" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2D6A6F"/>
+      <stop offset="1" stop-color="#143B4E"/>
+    </linearGradient>
+    <linearGradient id="road" x1="747" y1="362" x2="654" y2="629" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20272D"/>
+      <stop offset="1" stop-color="#111417"/>
+    </linearGradient>
+    <linearGradient id="bikeBody" x1="858" y1="350" x2="1088" y2="454" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1114"/>
+      <stop offset="1" stop-color="#252A2F"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(829 155) rotate(90) scale(120 120)">
+      <stop stop-color="#FFF6D6"/>
+      <stop offset="1" stop-color="#FFF6D6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-40" y="-40" width="1280" height="710" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#051117" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <rect width="1200" height="630" fill="#03131C" fill-opacity="0.22"/>
+  <ellipse cx="829" cy="155" rx="120" ry="120" fill="url(#sun)"/>
+
+  <path d="M0 366C131 326 244 326 340 356C430 384 525 421 626 420C734 419 832 361 939 338C1044 316 1128 333 1200 369V630H0V366Z" fill="#8BC6B3" fill-opacity="0.25"/>
+  <path d="M0 312L132 226L243 301L365 150L500 284L603 214L729 333L856 147L1002 278L1112 224L1200 284V630H0V312Z" fill="url(#mountainBack)"/>
+  <path d="M0 375L116 304L225 347L382 194L489 287L651 205L742 305L850 171L1015 298L1097 247L1200 304V630H0V375Z" fill="url(#mountainFront)"/>
+  <path d="M638 630C648 543 696 470 744 420C779 383 811 357 845 345C927 317 1019 370 1104 374C1143 376 1176 370 1200 359V630H638Z" fill="url(#road)"/>
+  <path d="M735 629C749 542 794 472 838 423C880 375 924 344 973 333C1021 322 1067 337 1118 354C1147 364 1174 368 1200 366" stroke="#F2E6C5" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 14"/>
+  <path d="M709 409C770 445 888 454 962 430C1030 409 1114 378 1200 388V630H706L709 409Z" fill="#142229" fill-opacity="0.45"/>
+  <path d="M860 352L908 317H1000L1048 349L1078 399L1040 412L998 381H933L905 406L870 405L846 381L860 352Z" fill="url(#bikeBody)" filter="url(#shadow)"/>
+  <path d="M904 405H1058L1086 430H1059L1030 411H904V405Z" fill="#30363D"/>
+  <path d="M905 331L950 292H1006L1033 314H969L930 346L905 331Z" fill="#1F2328"/>
+  <path d="M848 373L808 340L820 332L864 357L848 373Z" fill="#1F2328"/>
+  <path d="M985 316L1035 278L1047 289L1007 322L985 316Z" fill="#1F2328"/>
+  <circle cx="885" cy="435" r="48" fill="#13181D"/>
+  <circle cx="885" cy="435" r="26" fill="#BAC3CA"/>
+  <circle cx="1062" cy="435" r="54" fill="#13181D"/>
+  <circle cx="1062" cy="435" r="28" fill="#BAC3CA"/>
+  <path d="M930 378H991L1026 414" stroke="#BAC3CA" stroke-width="8" stroke-linecap="round"/>
+  <path d="M884 388L925 378L938 405" stroke="#BAC3CA" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1005 329L1037 335" stroke="#BAC3CA" stroke-width="7" stroke-linecap="round"/>
+  <path d="M816 339L786 318" stroke="#BAC3CA" stroke-width="7" stroke-linecap="round"/>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="72" width="552" height="486" rx="34" fill="#08151C" fill-opacity="0.58"/>
+  </g>
+  <text x="116" y="174" fill="#A7F3D0" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="6">ZUGO RISHIKESH</text>
+  <text x="116" y="262" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800">Bike &amp; Scooter</text>
+  <text x="116" y="344" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800">Rental</text>
+  <text x="116" y="405" fill="#D8F3EA" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="500">Royal Enfield, Activa and scooters near</text>
+  <text x="116" y="447" fill="#D8F3EA" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="500">Tapovan, Laxman Jhula and Ram Jhula</text>
+  <rect x="116" y="486" width="208" height="58" rx="29" fill="#10B981"/>
+  <text x="151" y="523" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">From Rs 300/day</text>
+</svg>

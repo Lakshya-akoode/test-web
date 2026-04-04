@@ -6,6 +6,7 @@ import { useToast } from '@/context/ToastContext';
 import { isAuthenticated, getUser } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function VehicleDetailsPage() {
     const router = useRouter();
@@ -166,10 +167,13 @@ export default function VehicleDetailsPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Image Gallery */}
                         <div className="bg-gray-100 rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-96 relative flex items-center justify-center">
-                            <img
+                            <Image
                                 src={vehicle.vehiclePhoto || vehicle.VehiclePhoto || '/static_bike.png'}
-                                alt={vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'}
-                                className="w-full h-full object-contain"
+                                alt={`${vehicle.vehicleModel || vehicle.VehicleModel || 'Vehicle'} for rent in ${vehicle.City || 'Rishikesh'} - Zugo`}
+                                fill
+                                sizes="(max-width: 1024px) 100vw, 66vw"
+                                unoptimized
+                                className="object-contain"
                             />
                             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
                                 {vehicle.distance ? `${vehicle.distance} km away` : 'Available Now'}
@@ -358,7 +362,7 @@ export default function VehicleDetailsPage() {
                             )}
 
                             <p className="text-center text-xs text-gray-400 mt-4">
-                                You won't be charged yet
+                                You won&apos;t be charged yet
                             </p>
                         </div>
                     </div>

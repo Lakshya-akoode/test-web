@@ -5,6 +5,7 @@ import LayoutWrapper from "@/components/LayoutWrapper";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ToastProvider } from "@/context/ToastContext";
 import StructuredData from "@/components/StructuredData";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { generateMetadata as generateSEOMetadata, pageMetadata } from "@/lib/metadata";
 
 const geistSans = Geist({
@@ -21,7 +22,7 @@ export const metadata = generateSEOMetadata({
   title: pageMetadata.home.title,
   description: pageMetadata.home.description,
   keywords: pageMetadata.home.keywords,
-  canonical: 'https://zugo.co.in',
+  canonical: 'https://www.zugo.co.in',
 });
 
 export default function RootLayout({ children }) {
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
         <ErrorBoundary>
           <ToastProvider>
             <LayoutWrapper>{children}</LayoutWrapper>
+            <WhatsAppButton />
           </ToastProvider>
         </ErrorBoundary>
       </body>

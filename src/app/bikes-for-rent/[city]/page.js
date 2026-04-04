@@ -22,17 +22,19 @@ export async function generateMetadata({ params }) {
         };
     }
 
+    const canonicalUrl = `https://www.zugo.co.in/bikes-for-rent/${cityKey}`;
+
     return {
         title: content.title,
         description: content.description,
         keywords: content.keywords ? content.keywords.join(', ') : '',
         alternates: {
-            canonical: `https://zugo.co.in/bikes-for-rent/${city}`,
+            canonical: canonicalUrl,
         },
         openGraph: {
             type: 'website',
             locale: 'en_IN',
-            url: `https://zugo.co.in/bikes-for-rent/${city}`,
+            url: canonicalUrl,
             title: content.title,
             description: content.description,
             siteName: siteConfig.name,
@@ -41,7 +43,7 @@ export async function generateMetadata({ params }) {
                     url: siteConfig.ogImage,
                     width: 1200,
                     height: 630,
-                    alt: `Bike Rental in ${content.name} - Zugo`,
+                    alt: `${content.name} bike rental by Zugo`,
                 },
             ],
         },
@@ -70,6 +72,48 @@ export default async function CityPage({ params }) {
     }
 
     const { name, formalName, heroTitle, heroSubtitle, intro, points, faq, areas } = content;
+    const canonicalUrl = `https://www.zugo.co.in/bikes-for-rent/${cityKey}`;
+    const serviceSchema = cityKey === 'rishikesh' ? {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        serviceType: 'Vehicle Rental',
+        name: 'Bike Rental in Rishikesh',
+        provider: {
+            '@type': 'LocalBusiness',
+            name: 'Zugo',
+            url: 'https://www.zugo.co.in',
+        },
+        areaServed: {
+            '@type': 'City',
+            name: 'Rishikesh',
+        },
+        offers: [
+            {
+                '@type': 'Offer',
+                name: 'Scooty Rental Rishikesh',
+                price: '300',
+                priceCurrency: 'INR',
+                priceSpecification: {
+                    '@type': 'UnitPriceSpecification',
+                    price: '300',
+                    priceCurrency: 'INR',
+                    unitText: 'per day',
+                },
+            },
+            {
+                '@type': 'Offer',
+                name: 'Royal Enfield Rental Rishikesh',
+                price: '800',
+                priceCurrency: 'INR',
+                priceSpecification: {
+                    '@type': 'UnitPriceSpecification',
+                    price: '800',
+                    priceCurrency: 'INR',
+                    unitText: 'per day',
+                },
+            },
+        ],
+    } : null;
 
     // JSON-LD Schema for Breadcrumbs
     const breadcrumbSchema = {
@@ -80,19 +124,13 @@ export default async function CityPage({ params }) {
                 '@type': 'ListItem',
                 'position': 1,
                 'name': 'Home',
-                'item': 'https://zugo.co.in'
+                'item': 'https://www.zugo.co.in'
             },
             {
                 '@type': 'ListItem',
                 'position': 2,
-                'name': 'Bikes for Rent',
-                'item': 'https://zugo.co.in/rentals'
-            },
-            {
-                '@type': 'ListItem',
-                'position': 3,
                 'name': `Bike Rental in ${name}`,
-                'item': `https://zugo.co.in/bikes-for-rent/${city}`
+                'item': canonicalUrl
             }
         ]
     };
@@ -111,38 +149,6 @@ export default async function CityPage({ params }) {
         })),
     };
 
-    // LocalBusiness Schema for this city
-    const localBusinessSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'AutoRental',
-        'name': `Zugo Bike Rental - ${name}`,
-        'image': 'https://zugo.co.in/black_logo.png',
-        'description': content.seoDescription || content.description,
-        'url': `https://zugo.co.in/bikes-for-rent/${city}`,
-        'telephone': siteConfig.company.phone,
-        'email': siteConfig.company.email,
-        'priceRange': '₹₹',
-        'address': {
-            '@type': 'PostalAddress',
-            'addressLocality': name,
-            'addressRegion': name === 'Rishikesh' ? 'Uttarakhand' : name === 'Bangalore' ? 'Karnataka' : name === 'Delhi' ? 'Delhi' : 'Haryana',
-            'addressCountry': 'IN',
-        },
-        ...(content.coordinates && {
-            'geo': {
-                '@type': 'GeoCoordinates',
-                'latitude': content.coordinates.latitude,
-                'longitude': content.coordinates.longitude,
-            },
-        }),
-        'openingHoursSpecification': {
-            '@type': 'OpeningHoursSpecification',
-            'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-            'opens': '00:00',
-            'closes': '23:59',
-        },
-    };
-
     return (
         <div className="min-h-screen bg-gray-50/50 pb-20">
             <script
@@ -153,10 +159,12 @@ export default async function CityPage({ params }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-            />
+            {serviceSchema && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+                />
+            )}
 
             {/* Hero Section */}
             <section className="relative bg-black text-white pt-32 pb-32 overflow-hidden">
@@ -207,6 +215,17 @@ export default async function CityPage({ params }) {
                             </div>
                         ))}
                     </div>
+                    {cityKey === 'rishikesh' && (
+                        <div className="mt-8 rounded-2xl bg-emerald-50 border border-emerald-100 p-6">
+                            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-700 mb-3">Plan Your Ride</p>
+                            <Link
+                                href="/blog/bike-rental-guide-rishikesh"
+                                className="text-lg font-semibold text-emerald-900 underline underline-offset-4 hover:text-emerald-700"
+                            >
+                                Read our complete Rishikesh bike rental guide
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* Popular Areas */}
@@ -225,33 +244,56 @@ export default async function CityPage({ params }) {
                     </div>
                 </div>
 
-                {/* Nearby Cities Links */}
-                <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-black text-white rounded-3xl p-8 md:p-12 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/20 blur-[80px] rounded-full group-hover:bg-purple-600/30 transition-all"></div>
-                        <h3 className="text-2xl font-bold mb-4">Bike Rentals in Other Cities</h3>
-                        <p className="text-gray-400 mb-6">Traveling soon? Check out our fleet in other major cities.</p>
-                        <div className="flex gap-3 flex-wrap">
-                            {Object.keys(cityContent).filter(k => k !== cityKey).map(k => (
-                                <Link
-                                    key={k}
-                                    href={`/bikes-for-rent/${k}`}
-                                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors font-semibold"
-                                >
-                                    {cityContent[k].name}
-                                </Link>
-                            ))}
+                {cityKey === 'rishikesh' ? (
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="bg-black text-white rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 blur-[80px] rounded-full group-hover:bg-emerald-500/30 transition-all"></div>
+                            <h3 className="text-2xl font-bold mb-4">Need help choosing the right bike?</h3>
+                            <p className="text-gray-300 mb-6">Get route ideas, documents, pricing tips and the best bike types for Rishikesh roads.</p>
+                            <Link
+                                href="/blog/bike-rental-guide-rishikesh"
+                                className="inline-flex px-6 py-3 bg-white text-black rounded-xl font-bold shadow-lg hover:bg-emerald-50 transition-colors"
+                            >
+                                Read our complete Rishikesh bike rental guide
+                            </Link>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-emerald-600 to-cyan-700 text-white rounded-3xl p-8 md:p-12 relative overflow-hidden hover:scale-[1.01] transition-transform duration-300">
+                            <h3 className="text-2xl font-bold mb-4">See exact rates before you book</h3>
+                            <p className="text-emerald-100 mb-6">Compare scooter, Activa and Royal Enfield pricing with no hidden charges.</p>
+                            <Link href="/bike-rent-pricing" className="inline-block px-6 py-3 bg-white text-emerald-700 rounded-xl font-bold shadow-lg hover:bg-emerald-50 transition-colors">
+                                View Rishikesh pricing
+                            </Link>
                         </div>
                     </div>
+                ) : (
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="bg-black text-white rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/20 blur-[80px] rounded-full group-hover:bg-purple-600/30 transition-all"></div>
+                            <h3 className="text-2xl font-bold mb-4">Bike Rentals in Other Cities</h3>
+                            <p className="text-gray-400 mb-6">Traveling soon? Check out our fleet in other major cities.</p>
+                            <div className="flex gap-3 flex-wrap">
+                                {Object.keys(cityContent).filter(k => k !== cityKey).map(k => (
+                                    <Link
+                                        key={k}
+                                        href={`/bikes-for-rent/${k}`}
+                                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors font-semibold"
+                                    >
+                                        {cityContent[k].name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
 
-                    <div className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white rounded-3xl p-8 md:p-12 relative overflow-hidden hover:scale-[1.01] transition-transform duration-300">
-                        <h3 className="text-2xl font-bold mb-4">Long Term Bike Rentals in {name}</h3>
-                        <p className="text-purple-100 mb-6">Need a bike for a month or more? Get exclusive discounts on long-term bookings in {name}.</p>
-                        <Link href="/contact-us" className="inline-block px-6 py-3 bg-white text-purple-700 rounded-xl font-bold shadow-lg hover:bg-purple-50 transition-colors">
-                            Enquire Now
-                        </Link>
+                        <div className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white rounded-3xl p-8 md:p-12 relative overflow-hidden hover:scale-[1.01] transition-transform duration-300">
+                            <h3 className="text-2xl font-bold mb-4">Long Term Bike Rentals in {name}</h3>
+                            <p className="text-purple-100 mb-6">Need a bike for a month or more? Get exclusive discounts on long-term bookings in {name}.</p>
+                            <Link href="/contact-us" className="inline-block px-6 py-3 bg-white text-purple-700 rounded-xl font-bold shadow-lg hover:bg-purple-50 transition-colors">
+                                Enquire Now
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* FAQ Section */}
                 <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl shadow-gray-200/50 border border-gray-100">

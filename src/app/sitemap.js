@@ -1,106 +1,66 @@
-import { cityContent } from '@/lib/cityContent';
-
 export default function sitemap() {
-    const baseUrl = 'https://zugo.co.in';
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = new Date();
 
-    // Static pages
-    const routes = [
+    return [
         {
-            url: baseUrl,
+            url: 'https://www.zugo.co.in',
             lastModified: currentDate,
-            changeFrequency: 'daily',
+            changeFrequency: 'weekly',
             priority: 1,
         },
         {
-            url: `${baseUrl}/bike-rent-pricing`,
+            url: 'https://www.zugo.co.in/bikes-for-rent/rishikesh',
+            lastModified: currentDate,
+            changeFrequency: 'daily',
+            priority: 0.9,
+        },
+        {
+            url: 'https://www.zugo.co.in/bikes-for-rent/delhi',
             lastModified: currentDate,
             changeFrequency: 'weekly',
-            priority: 0.9,
+            priority: 0.7,
         },
         {
-            url: `${baseUrl}/book/bike`,
+            url: 'https://www.zugo.co.in/bikes-for-rent/bangalore',
+            lastModified: currentDate,
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        },
+        {
+            url: 'https://www.zugo.co.in/bikes-for-rent/gurugram',
+            lastModified: currentDate,
+            changeFrequency: 'weekly',
+            priority: 0.6,
+        },
+        {
+            url: 'https://www.zugo.co.in/bike-rent-pricing',
+            lastModified: currentDate,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: 'https://www.zugo.co.in/book/bike',
             lastModified: currentDate,
             changeFrequency: 'daily',
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/book/car`,
-            lastModified: currentDate,
-            changeFrequency: 'daily',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/rentals`,
+            url: 'https://www.zugo.co.in/rentals/rishikesh',
             lastModified: currentDate,
             changeFrequency: 'daily',
             priority: 0.8,
         },
         {
-            url: `${baseUrl}/contact-us`,
-            lastModified: currentDate,
-            changeFrequency: 'monthly',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/register-vehicle`,
+            url: 'https://www.zugo.co.in/blog',
             lastModified: currentDate,
             changeFrequency: 'weekly',
             priority: 0.7,
         },
         {
-            url: `${baseUrl}/register-rental`,
+            url: 'https://www.zugo.co.in/blog/bike-rental-guide-rishikesh',
             lastModified: currentDate,
             changeFrequency: 'weekly',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/bookings`,
-            lastModified: currentDate,
-            changeFrequency: 'daily',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/privacy-policy`,
-            lastModified: currentDate,
-            changeFrequency: 'yearly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/terms-and-conditions`,
-            lastModified: currentDate,
-            changeFrequency: 'yearly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/cancellation-refund-policy`,
-            lastModified: currentDate,
-            changeFrequency: 'yearly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/shipping-policy`,
-            lastModified: currentDate,
-            changeFrequency: 'yearly',
-            priority: 0.5,
+            priority: 0.8,
         },
     ];
-
-    // Dynamic City Bike Pages: /bikes-for-rent/[city]
-    const cityBikePages = Object.keys(cityContent).map(city => ({
-        url: `${baseUrl}/bikes-for-rent/${city}`,
-        lastModified: currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.9,
-    }));
-
-    // Dynamic City Rental Pages: /rentals/[city]
-    const cityRentalPages = Object.keys(cityContent).map(city => ({
-        url: `${baseUrl}/rentals/${city}`,
-        lastModified: currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.9,
-    }));
-
-    return [...routes, ...cityBikePages, ...cityRentalPages];
 }

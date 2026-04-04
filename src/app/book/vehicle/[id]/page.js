@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { isAuthenticated, getUser, getToken } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import API from '@/lib/api';
@@ -318,10 +319,13 @@ export default function BookVehiclePage() {
                                 </h2>
                                 <div className="flex gap-6">
                                     <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
-                                        <img
+                                        <Image
                                             src={vehicleImage || vehicle?.vehiclePhoto || vehicle?.VehiclePhoto || '/static_bike.png'}
-                                            alt={vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'}
-                                            className="w-full h-full object-cover"
+                                            alt={`${vehicle?.vehicleModel || vehicle?.VehicleModel || 'Vehicle'} for rent in ${vehicle?.City || 'Rishikesh'} - Zugo`}
+                                            fill
+                                            sizes="160px"
+                                            unoptimized
+                                            className="object-cover"
                                         />
                                     </div>
                                     <div className="flex-1 py-1">

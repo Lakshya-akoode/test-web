@@ -6,36 +6,61 @@ import { isAuthenticated } from '@/lib/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Zugo Bike Rental Rishikesh',
+  description: 'Peer-to-peer bike and scooter rental platform in Rishikesh. Rent Royal Enfield, Activa, and Dominar for hourly, daily and weekly trips.',
+  url: 'https://www.zugo.co.in',
+  telephone: '+919692031010',
+  email: 'info@zugo.co.in',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Tapovan',
+    addressLocality: 'Rishikesh',
+    addressRegion: 'Uttarakhand',
+    postalCode: '249192',
+    addressCountry: 'IN',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 30.1260,
+    longitude: 78.3188,
+  },
+  openingHours: 'Mo-Su 07:00-20:00',
+  priceRange: 'Rs 300 - Rs 1500 per day',
+  image: 'https://www.zugo.co.in/og-image.jpg',
+  sameAs: ['https://www.instagram.com/zugo_pvt'],
+  hasMap: 'https://maps.google.com/?q=Zugo+Bike+Rental+Rishikesh',
+  areaServed: {
+    '@type': 'City',
+    name: 'Rishikesh',
+  },
+};
+
 export default function RootPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('signup');
 
   useEffect(() => {
     if (isAuthenticated()) {
-      router.push('/home');
-    } else {
-      setIsLoading(false);
+      router.replace('/home');
     }
   }, [router]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
       {/* Hero Section - PRESERVED */}
       <div className="relative min-h-screen flex items-center justify-center px-5 py-8 overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/background.png"
-            alt="Background"
+            alt="Scenic bike rental backdrop for Rishikesh"
             fill
             className="object-cover"
             priority
@@ -61,32 +86,35 @@ export default function RootPage() {
           </div>
 
           <div className="text-center mb-10 animate-fade-in-up">
-            <div className="inline-block mb-6 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600/90 to-purple-600/90 backdrop-blur-md border border-white/20 shadow-lg animate-pulse">
-              <span className="text-sm md:text-base font-bold text-white uppercase tracking-wider">🌟 Pay Only 10% Advance To Book!</span>
+            <div className="inline-block mb-6 px-5 py-2 rounded-full bg-gradient-to-r from-emerald-600/90 to-cyan-600/90 backdrop-blur-md border border-white/20 shadow-lg">
+              <span className="text-sm md:text-base font-bold text-white uppercase tracking-wider">Bike Rentals From Rs 300/Day</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-6 leading-tight drop-shadow-2xl">
-              India's Most Flexible
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400 mt-2">Self-Drive Rental</span>
+              Bike & Scooter
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-sky-300 mt-2">Rental Platform</span>
             </h1>
             <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed font-medium drop-shadow-lg">
-              Rent bikes and cars on your own terms. No hidden charges, no fuel charges,
-              and complete freedom to travel wherever you want.
+              Rent Royal Enfield, Activa and scooters with instant online booking,
+              verified vehicles and transparent pricing for every trip.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <Link
-                href="/book/bike"
+                href="/bikes-for-rent/rishikesh"
                 className="group w-full sm:w-auto px-8 py-4 bg-white text-gray-900 rounded-xl font-bold text-base hover:bg-gray-50 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-105 transform inline-flex items-center justify-center"
               >
-                Book a Vehicle
+                Rent a bike in Rishikesh
               </Link>
               <Link
-                href="/register"
+                href="/bike-rent-pricing"
                 className="group w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md text-white rounded-xl font-bold text-base border border-white/30 hover:bg-white hover:text-gray-900 transition-all duration-300 shadow-lg hover:shadow-white/20 hover:scale-105 transform inline-flex items-center justify-center"
               >
-                List Your Vehicle
+                See pricing
               </Link>
             </div>
+            <p className="text-sm text-gray-300">
+              Prefer to host a vehicle instead? <Link href="/register-vehicle" className="font-semibold text-white underline underline-offset-4">List your bike on Zugo</Link>
+            </p>
           </div>
 
           {/* Stats */}
@@ -99,8 +127,8 @@ export default function RootPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-black text-white tracking-tight leadng-none mb-0.5 group-hover:text-green-400 transition-colors">Verified</div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Vehicles</div>
+                <div className="text-2xl font-black text-white tracking-tight leadng-none mb-0.5 group-hover:text-green-400 transition-colors">50+</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Verified Vehicles</div>
               </div>
             </div>
 
@@ -112,8 +140,8 @@ export default function RootPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-blue-400 transition-colors">10% Advance</div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Pay Rest at Pickup</div>
+                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-blue-400 transition-colors">Rs 300+</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Scooters Per Day</div>
               </div>
             </div>
 
@@ -125,8 +153,8 @@ export default function RootPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-purple-400 transition-colors">Flexible</div>
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Bookings</div>
+                <div className="text-2xl font-black text-white tracking-tight leading-none mb-0.5 group-hover:text-purple-400 transition-colors">Tapovan</div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors">Laxman & Ram Jhula</div>
               </div>
             </div>
           </div>
@@ -141,7 +169,7 @@ export default function RootPage() {
               Why Choose Zugo?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Zugo is India's most flexible self-drive vehicle rental platform, dedicated to transforming how you travel.
+              Zugo is India&apos;s most flexible self-drive vehicle rental platform, dedicated to transforming how you travel.
               We make it incredibly easy for you to rent bikes and rent cars for any duration.
               By connecting verified vehicle owners with trusted renters, we create a community built on freedom, flexibility, and trust.
             </p>
