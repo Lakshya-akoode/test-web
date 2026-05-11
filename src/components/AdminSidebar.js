@@ -48,6 +48,12 @@ export default function AdminSidebar({ activeView, setActiveView }) {
       label: 'Analytics',
       icon: '📈',
       path: '/admin/dashboard?view=analytics'
+    },
+    {
+      id: 'coupons',
+      label: 'Coupons',
+      icon: '🎟️',
+      path: '/admin/dashboard?view=coupons'
     }
   ];
 

@@ -4,6 +4,9 @@ export const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 export const API_ENDPOINTS = {
     LOGIN: '/login',
     REGISTER: '/register',
+    REQUEST_SIGNUP_OTP: '/signup/request-otp',
+    VERIFY_SIGNUP_OTP: '/signup/verify-otp',
+    RESEND_SIGNUP_OTP: '/signup/resend-otp',
     GOOGLE_AUTH: '/google-auth',
     VEHICLES: '/search/vehicles/category',
     VEHICLE_DETAILS: '/search/vehicle',

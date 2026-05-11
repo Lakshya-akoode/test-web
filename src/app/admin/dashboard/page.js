@@ -12,6 +12,7 @@ import VehicleVerification from '@/components/admin/VehicleVerification';
 import LicenseVerification from '@/components/admin/LicenseVerification';
 import OwnerRevenueAnalytics from '@/components/admin/OwnerRevenueAnalytics';
 import AdminMessages from '@/components/admin/AdminMessages';
+import CouponManagement from '@/components/admin/CouponManagement';
 
 import { Suspense } from 'react';
 
@@ -125,6 +126,7 @@ function DashboardContent() {
                   {activeView === 'register-rental' && 'Registered Vehicles & Rentals'}
                   {activeView === 'messages' && 'Messages & Inquiries'}
                   {activeView === 'analytics' && 'Revenue Analytics'}
+                  {activeView === 'coupons' && 'Coupon Management'}
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
                   Welcome back, {admin?.fullName || admin?.username}
@@ -161,6 +163,7 @@ function DashboardContent() {
           {activeView === 'register-rental' && <RegisteredVehicles />}
           {activeView === 'messages' && <AdminMessages />}
           {activeView === 'analytics' && <OwnerRevenueAnalytics />}
+          {activeView === 'coupons' && <CouponManagement />}
         </main>
       </div>
     </div>

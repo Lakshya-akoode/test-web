@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { setAuth } from '@/lib/auth';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/api-config';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useToast } from '@/context/ToastContext';
 
 export default function RegisterPage() {
     const router = useRouter();
+    const toast = useToast();
     const [formData, setFormData] = useState({
         name: '',
         mobile: '',
@@ -22,6 +24,30 @@ export default function RegisterPage() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const [otpModalOpen, setOtpModalOpen] = useState(false);
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [otpError, setOtpError] = useState('');
+    const [isOtpVerifying, setIsOtpVerifying] = useState(false);
+    const [isOtpResending, setIsOtpResending] = useState(false);
+    const [resendTimer, setResendTimer] = useState(60);
+    const otpRefs = [
+        useRef(null),
+        useRef(null),
+        useRef(null),
+        useRef(null),
+        useRef(null),
+        useRef(null),
+    ];
+
+    const otpValue = otp.join('');
+    const canResend = resendTimer === 0;
+    const isOtpComplete = otp.every((digit) => digit.length === 1);
+
+    useEffect(() => {
+        if (!otpModalOpen || resendTimer === 0) return;
+        const timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
+        return () => clearTimeout(timer);
+    }, [otpModalOpen, resendTimer]);
 
     const handleGoogleAuth = async (accessToken) => {
         setIsGoogleLoading(true);
@@ -68,6 +94,100 @@ export default function RegisterPage() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const resetOtpState = () => {
+        setOtp(['', '', '', '', '', '']);
+        setOtpError('');
+        setResendTimer(60);
+        setIsOtpVerifying(false);
+        setIsOtpResending(false);
+    };
+
+    const handleOtpChange = (index, value) => {
+        const next = [...otp];
+        next[index] = value.slice(-1).replace(/\D/g, '');
+        setOtp(next);
+        setOtpError('');
+
+        if (value && index < otpRefs.length - 1) {
+            otpRefs[index + 1]?.current?.focus();
+        }
+    };
+
+    const handleOtpKeyDown = (index, e) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            otpRefs[index - 1]?.current?.focus();
+        }
+    };
+
+    const verifyOtp = async () => {
+        if (!isOtpComplete || isOtpVerifying) return;
+
+        setOtpError('');
+        setIsOtpVerifying(true);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.VERIFY_SIGNUP_OTP}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: formData.email.trim().toLowerCase(),
+                    otp: otpValue,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'Success') {
+                toast.success('OTP verified. Account created.');
+                setOtpModalOpen(false);
+                resetOtpState();
+                router.push('/login');
+                return;
+            }
+
+            setOtpError(data.message || 'Invalid OTP');
+        } catch (err) {
+            console.error('Verify OTP error:', err);
+            setOtpError('Network error. Please try again.');
+        } finally {
+            setIsOtpVerifying(false);
+        }
+    };
+
+    const resendOtp = async () => {
+        if (!canResend || isOtpResending) return;
+
+        setOtpError('');
+        setIsOtpResending(true);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.RESEND_SIGNUP_OTP}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: formData.email.trim().toLowerCase(),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'Success') {
+                setOtp(['', '', '', '', '', '']);
+                setResendTimer(60);
+                toast.success('OTP resent to your email.');
+                otpRefs[0]?.current?.focus();
+                return;
+            }
+
+            setOtpError(data.message || 'Unable to resend OTP');
+        } catch (err) {
+            console.error('Resend OTP error:', err);
+            setOtpError('Network error. Please try again.');
+        } finally {
+            setIsOtpResending(false);
+        }
+    };
+
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
@@ -85,7 +205,7 @@ export default function RegisterPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.REGISTER}`, {
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.REQUEST_SIGNUP_OTP}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -100,12 +220,10 @@ export default function RegisterPage() {
             const data = await response.json();
 
             if (data.status === 'Success') {
-                if (data.data?.token) {
-                    setAuth(data.data.token, data.data);
-                    router.push('/home');
-                } else {
-                    router.push('/login');
-                }
+                resetOtpState();
+                setOtpModalOpen(true);
+                toast.success('OTP sent to your email.');
+                setTimeout(() => otpRefs[0]?.current?.focus(), 100);
             } else {
                 setError(data.message || 'Registration failed. Please try again.');
             }
@@ -310,6 +428,77 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </div>
+
+            {otpModalOpen && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/55 px-4">
+                    <div className="w-full max-w-md rounded-[28px] bg-white p-6 shadow-2xl">
+                        <div className="mb-6 text-center">
+                            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-white">
+                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 4.26a2.25 2.25 0 002.22 0L21 8m-16.5 9h15A1.5 1.5 0 0021 15.5v-7A1.5 1.5 0 0019.5 7h-15A1.5 1.5 0 003 8.5v7A1.5 1.5 0 004.5 17z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-extrabold text-gray-900">Verify OTP</h2>
+                            <p className="mt-2 text-sm text-gray-500">6-digit code sent to</p>
+                            <p className="mt-1 break-all text-sm font-bold text-gray-900">{formData.email.trim().toLowerCase()}</p>
+                        </div>
+
+                        {otpError && (
+                            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                                {otpError}
+                            </div>
+                        )}
+
+                        <div className="mb-5 flex justify-between gap-2">
+                            {otp.map((digit, index) => (
+                                <input
+                                    key={index}
+                                    ref={otpRefs[index]}
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={1}
+                                    value={digit}
+                                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                                    className="h-14 w-12 rounded-2xl border border-gray-200 bg-gray-50 text-center text-xl font-extrabold outline-none transition focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10"
+                                />
+                            ))}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={verifyOtp}
+                            disabled={!isOtpComplete || isOtpVerifying}
+                            className="mb-4 w-full rounded-2xl bg-black py-3 text-sm font-bold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isOtpVerifying ? 'Verifying...' : 'Verify & Create Account'}
+                        </button>
+
+                        <div className="mb-4 text-center text-sm text-gray-500">
+                            Resend OTP{' '}
+                            <button
+                                type="button"
+                                onClick={resendOtp}
+                                disabled={!canResend || isOtpResending}
+                                className="font-bold text-black disabled:text-gray-300"
+                            >
+                                {isOtpResending ? 'Sending...' : canResend ? 'Now' : `in 00:${String(resendTimer).padStart(2, '0')}`}
+                            </button>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setOtpModalOpen(false);
+                                resetOtpState();
+                            }}
+                            className="w-full rounded-2xl border border-gray-200 py-3 text-sm font-bold text-gray-600 transition hover:border-gray-300 hover:text-black"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

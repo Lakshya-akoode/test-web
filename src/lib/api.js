@@ -74,6 +74,12 @@ export const API = {
   // Contact endpoints
   contactSend: `${endpoint}contact/send`,
   contactMessages: `${endpoint}contact/messages`,
+
+  // Coupon endpoints (admin)
+  adminCoupons: `${endpoint}coupons`,
+  adminCreateCoupon: `${endpoint}coupons/create`,
+  adminToggleCoupon: `${endpoint}coupons`,   // + /:id/toggle
+  adminDeleteCoupon: `${endpoint}coupons`,   // + /:id
 };
 
 export default API;
