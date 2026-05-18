@@ -169,7 +169,6 @@ export default function BookVehiclePage() {
             const advanceAmount = Math.round(totalAmount * 0.1);
             const token = getToken();
 
-            // Step 1: Create Booking Query (Pending State)
             const bookingData = {
                 renterId: user.id,
                 renterName: user.username || user.fullName || 'User',
@@ -185,24 +184,7 @@ export default function BookVehiclePage() {
                 specialRequests: ''
             };
 
-            const bookingResponse = await fetch(API.createBooking, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(bookingData)
-            });
-
-            const bookingResult = await bookingResponse.json();
-
-            if (bookingResult.status !== 'Success' || !bookingResult.data?.bookingId) {
-                throw new Error(bookingResult.message || 'Failed to create booking');
-            }
-
-            const bookingId = bookingResult.data.bookingId;
-
-            // Step 2: Create Cashfree order for 10% Advance
+            // Create Cashfree order with booking data. Booking is saved only after payment success.
             const orderResponse = await fetch(API.createPaymentOrder, {
                 method: 'POST',
                 headers: {
@@ -212,7 +194,7 @@ export default function BookVehiclePage() {
                 body: JSON.stringify({
                     amount: advanceAmount, // Only charge 10% advance amount online
                     currency: 'INR',
-                    bookingId: bookingId,
+                    bookingData,
                     customerId: user.id,
                     customerPhone: user.mobile || '9999999999',
                     customerEmail: user.email || 'guest@example.com',
@@ -243,7 +225,7 @@ export default function BookVehiclePage() {
             // Step 3: Redirect to Cashfree
             const checkoutOptions = {
                 paymentSessionId,
-                returnUrl: `${window.location.origin}/booking-confirmation?bookingId=${bookingId}&order_id={order_id}`
+                returnUrl: `${window.location.origin}/booking-confirmation?order_id={order_id}`
             };
 
             cashfree.checkout(checkoutOptions);

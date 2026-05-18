@@ -27,14 +27,12 @@ function BookingConfirmationContent() {
             return;
         }
 
-        if (bookingId) {
-            if (orderId) {
-                // If order_id is present, we need to verify payment first
-                verifyPaymentAndFetchDetails();
-            } else {
-                // Just fetch details
-                fetchBookingDetails();
-            }
+        if (orderId) {
+            verifyPaymentAndFetchDetails();
+        } else if (bookingId) {
+            fetchBookingDetails();
+        } else {
+            setLoading(false);
         }
     }, [bookingId, orderId, router]);
 
@@ -53,8 +51,8 @@ function BookingConfirmationContent() {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    bookingId: bookingId,
-                    orderId: orderId
+                    orderId: orderId,
+                    ...(bookingId ? { bookingId } : {})
                 })
             });
             
@@ -66,6 +64,9 @@ function BookingConfirmationContent() {
                 // Could use the booking returned from verification, but let's fetch fresh details to be consistent
                 if (verifyData.data && verifyData.data.booking) {
                     setBooking(verifyData.data.booking);
+                    if (!bookingId && verifyData.data.bookingId) {
+                        router.replace(`/booking-confirmation?bookingId=${verifyData.data.bookingId}&order_id=${orderId}`);
+                    }
                 } else {
                     await fetchBookingDetails();
                 }
@@ -132,9 +133,9 @@ function BookingConfirmationContent() {
                         </svg>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Failed</h2>
-                    <p className="text-gray-600 mb-6">We couldn't verify your payment. If money was deducted, it will be refunded automatically.</p>
-                    <Link href={`/bookings/${bookingId}`} className="block w-full px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all">
-                        View Booking / Try Again
+                    <p className="text-gray-600 mb-6">We could not verify your payment. If money was deducted, it will be refunded automatically.</p>
+                    <Link href={bookingId ? `/bookings/${bookingId}` : '/bookings'} className="block w-full px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all">
+                        {bookingId ? 'View Booking / Try Again' : 'Go to Bookings'}
                     </Link>
                 </div>
             </div>
@@ -227,7 +228,7 @@ function BookingConfirmationContent() {
 
                 {/* Next Steps */}
                 <div className="bg-blue-50 rounded-2xl p-6 mb-6 border border-blue-100">
-                    <h3 className="font-bold text-gray-900 mb-3">What's Next?</h3>
+                    <h3 className="font-bold text-gray-900 mb-3">What is Next?</h3>
                     <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start gap-2">
                             <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
