@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useToast } from '@/context/ToastContext';
-import { isAuthenticated, getUser, setAuth } from '@/lib/auth';
+import { isAuthenticated, getToken, getUser, setAuth } from '@/lib/auth';
 import API from '@/lib/api';
 
 export default function RegisterRentalPage() {
@@ -306,11 +306,18 @@ export default function RegisterRentalPage() {
         if (vehicleRegFile) submitFormData.append('vehicleRegistration', vehicleRegFile);
 
         try {
+            const token = getToken();
+            if (!token) {
+                toast.error('Session expired. Please login again.');
+                router.push('/login');
+                return;
+            }
+
             const response = await fetch(`${API.endpoint}reg/registerRental`, {
                 method: 'POST',
                 body: submitFormData,
                 headers: {
-                    'Authorization': `Bearer ${getUser().token}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
@@ -328,7 +335,7 @@ export default function RegisterRentalPage() {
                 const currentUser = getUser();
                 if (currentUser) {
                     const updatedUser = { ...currentUser, userType: 'rental_owner' };
-                    setAuth(currentUser.token, updatedUser); // Assuming setAuth updates localStorage
+                    setAuth(token, updatedUser);
                 }
 
                 toast.success(data.message || 'Rental Form Submitted Successfully!');
@@ -374,7 +381,7 @@ export default function RegisterRentalPage() {
                                 </div>
                             </div>
                             <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
-                                You're all set! Your rental business is registered with Zugo. Add more vehicles to expand your fleet.
+                                You&apos;re all set! Your rental business is registered with Zugo. Add more vehicles to expand your fleet.
                             </p>
                         </>
                     ) : (
@@ -402,7 +409,7 @@ export default function RegisterRentalPage() {
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
-                                You're All Set!
+                                You&apos;re All Set!
                             </h2>
 
                             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
